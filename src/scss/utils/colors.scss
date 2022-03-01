@@ -1,0 +1,9 @@
+@use "../abstracts/variables";
+
+.u__bg--blue {
+  background-color: variables.$color-primary;
+}
+
+.u__text--white {
+  color: variables.$color-text-primary;
+}
