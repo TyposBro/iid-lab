@@ -32,7 +32,7 @@ export const Header = () => {
             News
           </a>
         </li>
-
+        <div className="header__placeholder"></div>
         <li className="header__item">
           <a href="/contact" className="header__link">
             Contact
