@@ -1,0 +1,56 @@
+@use "../abstracts/variables";
+.tracks {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  &__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: variables.$color-tertiary;
+    height: 7rem;
+    margin-block: 0;
+    padding-inline: 0;
+    text-transform: uppercase;
+  }
+
+  &__block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: variables.$color-primary;
+    color: variables.$color-text-primary;
+    &--2 {
+      text-align: right;
+    }
+  }
+  &__block-header {
+    width: 60%;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &__img {
+    width: 50vw;
+    &--1 {
+    }
+    &--2 {
+    }
+    &--3 {
+    }
+  }
+  &__paragraph {
+    width: 60%;
+    &--1 {
+    }
+    &--2 {
+    }
+    &--3 {
+    }
+  }
+}

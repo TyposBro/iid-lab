@@ -1,13 +1,14 @@
-import { Carousel } from "../components/Carousel";
 import { Intro } from "../components/Intro";
-import { Footer } from "../components/Footer";
+import { Tracks } from "../components/Tracks";
+import { Showcase } from "../components/Showcase";
 
 export const Home = () => {
   return (
     <div className="home">
-      <Carousel></Carousel>
-      <Intro></Intro>
-      <Footer></Footer>
+      {/* <Carousel /> */}
+      <Intro />
+      <Tracks />
+      <Showcase />
     </div>
   );
 };
