@@ -1,0 +1,10 @@
+.home {
+  &__content {
+    //! infinite scroll effect
+    overflow-y: scroll;
+    scrollbar-width: none; //* hide scrollbar in firefox
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
