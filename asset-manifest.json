@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/khasanjonovich/iid-lab/static/css/main.f4069889.css",
-    "main.js": "/khasanjonovich/iid-lab/static/js/main.5056a20d.js",
-    "index.html": "/khasanjonovich/iid-lab/index.html",
-    "main.f4069889.css.map": "/khasanjonovich/iid-lab/static/css/main.f4069889.css.map",
-    "main.5056a20d.js.map": "/khasanjonovich/iid-lab/static/js/main.5056a20d.js.map"
+    "main.css": "/iid-lab/static/css/main.f4069889.css",
+    "main.js": "/iid-lab/static/js/main.5056a20d.js",
+    "index.html": "/iid-lab/index.html",
+    "main.f4069889.css.map": "/iid-lab/static/css/main.f4069889.css.map",
+    "main.5056a20d.js.map": "/iid-lab/static/js/main.5056a20d.js.map"
   },
   "entrypoints": [
     "static/css/main.f4069889.css",
