@@ -23,17 +23,23 @@ export const Carousel = () => {
         }}
         navigation={true}
         modules={[Pagination, Navigation]}
-        className="mySwiper"
+        className="carousel__swiper"
       >
-        <SwiperSlide>Slide 1</SwiperSlide>
-        <SwiperSlide>Slide 2</SwiperSlide>
-        <SwiperSlide>Slide 3</SwiperSlide>
-        <SwiperSlide>Slide 4</SwiperSlide>
-        <SwiperSlide>Slide 5</SwiperSlide>
-        <SwiperSlide>Slide 6</SwiperSlide>
-        <SwiperSlide>Slide 7</SwiperSlide>
-        <SwiperSlide>Slide 8</SwiperSlide>
-        <SwiperSlide>Slide 9</SwiperSlide>
+        <SwiperSlide className="carousel__slide">
+          <img className="carousel__slide-img" src="img/we-are-creative.jpg" alt="" />
+        </SwiperSlide>
+        <SwiperSlide className="carousel__slide">
+          <img className="carousel__slide-img" src="img/we-are-creative.jpg" alt="" />
+        </SwiperSlide>
+        <SwiperSlide className="carousel__slide">
+          <img className="carousel__slide-img" src="img/we-are-creative.jpg" alt="" />
+        </SwiperSlide>
+        <SwiperSlide className="carousel__slide">
+          <img className="carousel__slide-img" src="img/we-are-creative.jpg" alt="" />
+        </SwiperSlide>
+        <SwiperSlide className="carousel__slide">
+          <img className="carousel__slide-img" src="img/we-are-creative.jpg" alt="" />
+        </SwiperSlide>
       </Swiper>
     </div>
   );
