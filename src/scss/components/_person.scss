@@ -5,7 +5,7 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(2, 20rem);
-  padding: 5rem;
+  padding: 5rem 10rem 0 10rem;
 
   &--bg {
     background-color: variables.$color-tertiary;

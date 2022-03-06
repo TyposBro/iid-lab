@@ -1,8 +1,8 @@
 import { CustomLink } from "./CustomLink";
-import data from "../data.json";
+import PEOPLE from "../people.json";
 
 export const Section = () => {
-  const members = Object.keys(data.PEOPLE);
+  const members = Object.keys(PEOPLE);
 
   return (
     <div className="section">
@@ -11,9 +11,9 @@ export const Section = () => {
       </div>
       <ul className="section__list">
         {members.map((m) => (
-          <li key={m} className="section__item">
-            <CustomLink to={m}>{m}</CustomLink>
-          </li>
+          <CustomLink key={m} className="section__item" to={m}>
+            {m}
+          </CustomLink>
         ))}
       </ul>
     </div>

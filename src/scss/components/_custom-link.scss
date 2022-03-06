@@ -1,13 +1,5 @@
 @use "../abstracts/variables";
 .custom-link {
-  &,
-  &:link,
-  &:active,
-  &:visited {
-    text-decoration: none;
-    color: currentColor;
-  }
-
   &--active {
     text-decoration: none;
     color: variables.$color-text-secondary;
