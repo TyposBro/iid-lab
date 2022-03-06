@@ -1,0 +1,39 @@
+@use "../abstracts/variables";
+.person {
+  width: 55vw;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  padding: 5rem;
+
+  &__title {
+  }
+
+  &__img-box {
+    width: 15rem;
+    height: 15rem;
+  }
+  &__img {
+    width: 100%;
+  }
+  &__info {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: start;
+    // margin-left: -11rem;
+  }
+  &__name {
+    color: variables.$color-primary;
+  }
+  &__detail {
+    margin-block: 0.5rem;
+    padding-inline: 0;
+  }
+
+  &__bio {
+    margin: 1rem 0;
+    grid-column: 1/-1;
+    line-height: 1.5;
+  }
+}
