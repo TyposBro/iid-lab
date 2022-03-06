@@ -1,0 +1,17 @@
+.members {
+  display: flex;
+  flex-direction: column;
+  /*  Infinite scroll effect  */
+  overflow-y: scroll;
+  /*hide scrollbar in firefox*/
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &__heading {
+    font-size: 3rem;
+    text-transform: uppercase;
+    margin: 0 5rem;
+  }
+}

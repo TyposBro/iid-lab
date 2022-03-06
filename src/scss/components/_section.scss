@@ -1,0 +1,31 @@
+@use "../abstracts/variables";
+
+.section {
+  &__logo-wrap {
+    width: 15rem;
+    height: 5rem;
+  }
+  &__logo {
+    width: 100%;
+    height: 100%;
+    border-radius: 1.5rem;
+    box-shadow: variables.$box-shadow;
+  }
+  &__list {
+    list-style: none;
+    padding-inline: 0;
+  }
+  &__item {
+    padding: 1rem 3rem;
+    // border: 0.2rem dashed variables.$color-secondary;
+    border-radius: 1rem;
+    margin: 1rem;
+    box-shadow: variables.$box-shadow;
+    text-align: center;
+    cursor: pointer;
+    color: currentColor;
+  }
+  &__active {
+    color: variables.$color-text-secondary;
+  }
+}
