@@ -1,5 +1,4 @@
-export const Person = ({ person }) => {
-  console.log(person);
+export const Person = ({ person, index }) => {
   return (
     <div className="person">
       <div className="person__img-box">

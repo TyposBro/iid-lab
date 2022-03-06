@@ -2,7 +2,7 @@
 
 .section {
   &__logo-wrap {
-    width: 15rem;
+    width: 20rem;
     height: 5rem;
   }
   &__logo {
@@ -23,8 +23,8 @@
     box-shadow: variables.$box-shadow;
     text-align: center;
     cursor: pointer;
-    color: currentColor;
   }
+
   &__active {
     color: variables.$color-text-secondary;
   }
