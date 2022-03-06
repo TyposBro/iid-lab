@@ -1,6 +1,10 @@
 @use "../abstracts/variables";
 
 .section {
+  grid-row: 1/-1;
+  grid-column: 6/ 7;
+  margin-left: -10rem;
+  margin-right: 10rem;
   &__logo-wrap {
     width: 20rem;
     height: 5rem;

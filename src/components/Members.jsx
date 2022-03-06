@@ -7,6 +7,7 @@ export const Members = ({ link }) => {
   return (
     <div className="members">
       <h3 className="members__heading">{link}</h3>
+
       {people}
     </div>
   );

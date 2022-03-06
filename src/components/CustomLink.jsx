@@ -1,14 +1,17 @@
-import { Link, useResolvedPath, useMatch } from "react-router-dom";
+import { useResolvedPath, useMatch, Link } from "react-router-dom";
 
 export const CustomLink = ({ children, to, ...props }) => {
-  let resolved = useResolvedPath(to);
-  let match = useMatch({ path: resolved.pathname, end: true });
+  const resolved = useResolvedPath(to);
+  const match = useMatch({ path: resolved.pathname });
+  console.log(resolved);
 
   return (
     <div>
-      <Link className={match ? "custom-link--active" : "custom-link"} to={to} {...props}>
+      <Link to={`../${to}`} className={match ? "custom-link--active" : "custom-link"} {...props}>
         {children}
       </Link>
+
+      {match && "Match"}
     </div>
   );
 };

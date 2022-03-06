@@ -1,4 +1,3 @@
-import { Section } from "../components/Section";
 import { Outlet } from "react-router-dom";
 
 export const People = () => {
@@ -7,9 +6,9 @@ export const People = () => {
       <div className="people__img-box">
         <img className="people__img" src="img/team.jpg" alt="" />
       </div>
+
       <div className="people__content">
         <Outlet />
-        <Section />
       </div>
     </div>
   );
