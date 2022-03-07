@@ -94,21 +94,21 @@ export const Footer = () => {
         <ul className="footer__list">
           <li className="footer__item">
             <FaMapMarkerAlt className="footer__icon footer__icon--location" />
-            <span href="/yt" className="footer__link">
+            <a href="/#" className="footer__link">
               UNIST, 50-gil, Eonyang-eup, Ulju-gun, Ulsan, S.Korea
-            </span>
+            </a>
           </li>
           <li className="footer__item">
             <BsTelephoneFill className="footer__icon footer__icon--phone" />
-            <span href="/yt" className="footer__link">
+            <a href="tel:+82-52-217-2714" className="footer__link">
               +82-52-217-2714
-            </span>
+            </a>
           </li>
           <li className="footer__item">
             <AiOutlineMail className="footer__icon footer__icon--email" />
-            <span href="/yt" className="footer__link">
+            <a href="mailto:info@iidl.unist.ac.kr" className="footer__link">
               info@iidl.unist.ac.kr
-            </span>
+            </a>
           </li>
         </ul>
       </div>

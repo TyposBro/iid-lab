@@ -5,6 +5,7 @@ import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { Members } from "./components/Members";
 import PEOPLE from "./people.json";
+import { Contact } from "./pages/Contact";
 
 function App() {
   const members = Object.keys(PEOPLE);
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate replace to={"home"} />}></Route>
         <Route path="/home" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
 
         <Route path="people" element={<People />}>
           <Route index element={<Navigate replace to={members[0]} />}></Route>

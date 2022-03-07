@@ -1,9 +1,12 @@
+import img from "../img.json";
+
 export const Intro = () => {
+  const { creative, logo } = img.HOME.INTRO;
   return (
     <div className="intro">
       <div className="intro__row intro__row--1">
         <div className="intro__img-container intro__img-container--1">
-          <img src="img/we-are-creative.jpg" className="intro__img intro__img--1" alt="" />
+          <img src={`/img/home/intro/${creative}`} className="intro__img intro__img--1" alt="" />
         </div>
 
         <div className="intro__block intro__block--1">
@@ -40,7 +43,7 @@ export const Intro = () => {
           </p>
         </div>
         <div className="intro__img-container intro__img-container--2">
-          <img className="intro__img intro__img--2" src="img/we-are-creative.jpg" alt="" />
+          <img className="intro__img intro__img--2" src={`/img/home/intro/${logo}`} alt="" />
         </div>
       </div>
     </div>

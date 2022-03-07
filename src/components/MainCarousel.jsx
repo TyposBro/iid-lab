@@ -1,6 +1,6 @@
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-
+import img from "../img.json";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -9,6 +9,8 @@ import "swiper/css/navigation";
 import { Autoplay, Navigation } from "swiper";
 
 export const MainCarousel = () => {
+  const slides = img.HOME.SLIDES;
+
   return (
     <>
       <Swiper
@@ -20,17 +22,11 @@ export const MainCarousel = () => {
         modules={[Autoplay, Navigation]}
         className="main-carousel"
       >
-        <SwiperSlide>
-          <img src="img/we-are-creative.jpg" alt="" />
-        </SwiperSlide>
-        <SwiperSlide>Slide 2</SwiperSlide>
-        <SwiperSlide>Slide 3</SwiperSlide>
-        <SwiperSlide>Slide 4</SwiperSlide>
-        <SwiperSlide>Slide 5</SwiperSlide>
-        <SwiperSlide>Slide 6</SwiperSlide>
-        <SwiperSlide>Slide 7</SwiperSlide>
-        <SwiperSlide>Slide 8</SwiperSlide>
-        <SwiperSlide>Slide 9</SwiperSlide>
+        {slides.map((slide) => (
+          <SwiperSlide key={slide}>
+            <img src={`/img/home/carousel/${slide}`} alt="" />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </>
   );

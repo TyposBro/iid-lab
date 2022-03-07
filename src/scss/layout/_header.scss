@@ -1,11 +1,15 @@
 @use "../abstracts/variables";
 .header {
   background-color: variables.$color-primary;
-  height: 11.4rem;
+
   display: flex;
   align-items: center;
+
+  &__logo {
+    width: 20%;
+    padding: 0 3rem;
+  }
   &__list {
-    margin-left: 15rem;
     flex: 1;
     list-style: none;
     display: flex;
