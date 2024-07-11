@@ -1,7 +1,0 @@
-@use "../abstracts/variables";
-.custom-link {
-  &--active {
-    text-decoration: none;
-    color: variables.$color-text-secondary;
-  }
-}
