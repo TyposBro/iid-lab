@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "assets": ["./src/assets/*"],
+      "components": ["./src/components/*"],
+      // "context": ["./src/context/*"],
+      // "exp": ["src/exp/*"],
+      "pages": ["./src/pages/*"],
+      "styles": ["./src/styles/*"]
+      // "utils": ["./src/utils/*"]
+    }
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
