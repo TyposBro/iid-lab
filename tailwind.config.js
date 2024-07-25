@@ -13,6 +13,7 @@ export default {
       text_white_tertiary: "#ffffff66",
       text_black_primary: "#231F20",
       primary_main: "#25AAE1",
+      background_light: "#e6e6e6",
     },
   },
   plugins: [],
