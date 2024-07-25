@@ -7,6 +7,13 @@ export default {
       regular: ["Inter", "sans-serif"],
       special: ["Space Grotesk", "sans-serif"],
     },
+    colors: {
+      text_white_primary: "#fffffff2",
+      text_white_secondary: "#ffffff7f",
+      text_white_tertiary: "#ffffff66",
+      text_black_primary: "#231F20",
+      primary_main: "#25AAE1",
+    },
   },
   plugins: [],
 };
