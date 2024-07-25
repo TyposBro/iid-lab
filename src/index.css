@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* html {
-  font-size: 16px;
-  color: #ffffff66;
-} */
+html {
+  background-color: rebeccapurple;
+}
