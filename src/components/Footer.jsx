@@ -2,31 +2,40 @@ import Arrow from "../assets/footer_arrow.svg";
 import Email from "../assets/footer_email.svg";
 import Location from "../assets/footer_location.svg";
 import Logo from "../assets/footer_logo.svg";
+import Phone from "../assets/footer_phone.svg";
 
 export const Footer = () => {
   return (
-    <footer className="p-[30px] bg-[#231F20] grid grid-cols-2 grid-rows-2 gap-y-16 font-regular">
-      {/* CTA */}
-      <div className="flex flex-col gap-4">
-        <h1 className="text-white font-special text-[40px] leading-[72px] font-light">
-          Contact <span className="text-[#25AAE1]">Us</span>
-        </h1>
-        <p className="text-[#ffffff66] font-normal text-[18px]  leading-[22px]">
-          If you have any inquires, please contact us via following email or telephone number. Also,
-          feel free to visit our lab!
-        </p>
+    <footer className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] font-regular">
+      <div className="flex flex-row justify-between items-center gap-[20px]">
+        <div className="flex flex-col items-start gap-[10px]">
+          <img src={Arrow} className="w-[66px] h-[66px]" />
+          <h1 className="text-[64px] leading-[72px] font-light text-text_white_primary font-special">
+            Contact <span className="text-primary_main">Us</span>
+          </h1>
+          <p className="text-text_white_tertiary text-[12px] font-normal">
+            If you have any inquires, please contact us via following email or telephone number. We
+            would also be thrilled to have you visit our lab!
+          </p>
+        </div>
       </div>
-
-      {/* LOGO */}
-      <div>
-        <img src={Logo} alt="Logo" className="" />
+      <div className="flex flex-col items-start gap-[10px] text-text_white_secondary">
+        <div className="flex items-center gap-[10px]">
+          <img src={Location} className="w-6 h-6" />
+          <p className="text-sm">
+            #904 Room, 104 Building, UNIST, 50-gil, Eonyang-eup, Ulju-gun, Ulsan, S.Korea
+          </p>
+        </div>
+        <div className="flex items-center gap-[10px]">
+          <img src={Phone} className="w-6 h-6" />
+          <p className="text-sm">+82-52-217-2714</p>
+        </div>
+        <div className="flex items-center gap-[10px] ">
+          <img src={Email} className="w-6 h-6" />
+          <p className="text-sm">kmyung@unist.ac.kr</p>
+        </div>
       </div>
-
-      {/* ADDRESS */}
-      <div className="flex flex-col"></div>
-
-      {/* ARROW */}
-      <div></div>
+      <img src={Logo} alt="" />
     </footer>
   );
 };
