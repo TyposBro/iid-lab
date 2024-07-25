@@ -1,6 +1,6 @@
 export const MenuButton = () => {
   return (
-    <div className="relative">
+    <>
       <input type="checkbox" name="navigation" id="nav-toggle" className="nav__checkbox" />
       <label htmlFor="nav-toggle" className="nav__btn">
         <span className="nav__icon"> &nbsp; </span>
@@ -37,7 +37,7 @@ export const MenuButton = () => {
           </li>
         </ul>
       </nav>
-    </div>
+    </>
   );
 };
 
