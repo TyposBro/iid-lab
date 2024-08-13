@@ -1,6 +1,6 @@
 export { default as Down_left_dark_arrow } from "./down_left_dark_arrow.svg?react";
 export { default as down_right_dark_arrow } from "./down_right_dark_arrow.svg?react";
-export { default as down_right_light_arrow } from "./down_right_light_arrow.svg?react";
+export { default as Down_right_light_arrow } from "./down_right_light_arrow.svg?react";
 export { default as down_straight_neutral_arrow } from "./down_straight_neutral_arrow.svg?react";
 export { default as footer_email } from "./footer_email.svg?react";
 export { default as footer_location } from "./footer_location.svg?react";

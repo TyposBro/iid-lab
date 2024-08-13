@@ -1,4 +1,4 @@
-import { Down_left_dark_arrow, Up_right_neutral_arrow, down_right_light_arrow } from "assets/";
+import { Down_left_dark_arrow, Up_right_neutral_arrow, Down_right_light_arrow } from "assets/";
 
 export const Home = () => {
   return (
@@ -47,20 +47,25 @@ const Intro = () => {
 };
 
 const Prof = () => {
+  const prof = {
+    img: "/img/people/director/prof.png",
+    name: "Professor KwanMyung Kim",
+    role: "Lab Director",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Urna porttitor rhoncus dolor purus non. Turpis massa sed elementum tempus egestas sed. Habitant morbi tristique senectus et netus et malesuada fames ac.",
+  };
+
   return (
     <div className="my-[30px] w-full flex flex-col gap-[30px]">
-      <div className="w-[240px] h-[300px] rounded-[30px] bg-border_dark"></div>
+      <div
+        className="w-[240px] h-[300px] rounded-[30px]"
+        style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
+      ></div>
       <div className="w-full flex flex-col gap-[5px]">
-        <h2 className="font-regular font-bold text-primary_main text-[20px]">Lab Director</h2>
+        <h2 className="font-regular font-bold text-primary_main text-[20px]">{prof.role}</h2>
         <h1 className="font-super_special text-text_black_primary text-[36px] leading-[36px] font-bold">
-          Professor KwanMyung Kim
+          {prof.name}
         </h1>
-        <h3 className="font-regular text-[12px] text-text_black_secondary">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Urna porttitor rhoncus dolor purus non. Turpis massa sed
-          elementum tempus egestas sed. Habitant morbi tristique senectus et netus et malesuada
-          fames ac.
-        </h3>
+        <h3 className="font-regular text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
       <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
         <button className="w-full h-[50px] border-primary_main bg-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-text_white_primary">
@@ -84,11 +89,7 @@ const Members = () => {
   return (
     <div className="w-full my-[30px] flex flex-col gap-[30px] ">
       <div className="flex flex-col gap-[10px]">
-        <img
-          src={down_right_light_arrow}
-          alt="down right light arrow icon"
-          className="w-[34px] h-[34px]"
-        />
+        <Down_right_light_arrow className="w-[34px] h-[34px]" alt="down right light arrow icon" />
         <h1 className="text-[42px] text-text_black_primary font-light font-super_special leading-[46px] ">
           Team Members
         </h1>
@@ -114,6 +115,29 @@ const Members = () => {
   );
 };
 const Projects = () => {
+  const projects = [
+    {
+      title: "Military Backpack",
+      desc: "Description goes here up to two lines max",
+      img: "/img/projects/military_backpack.png",
+    },
+    {
+      title: "LG Hower Gym",
+      desc: "Description goes here up to two lines max",
+      img: "/img/projects/lg_hower_gym.png",
+    },
+    {
+      title: "Military Sleeping Bag",
+      desc: "Description goes here up to two lines max",
+      img: "/img/projects/military_sleeping_bag.png",
+    },
+    {
+      title: "Lemmy - AI Based Robot",
+      desc: "Description goes here up to two lines max",
+      img: "/img/projects/lemmy_ai_based_robot.png",
+    },
+  ];
+
   return (
     <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-black ">
       <div className="flex flex-col gap-[10px]">
@@ -128,53 +152,56 @@ const Projects = () => {
       </div>
 
       <div className="flex flex-col gap-[10px] items-center">
-        <div className="w-full relative">
-          <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
-          <div className="absolute bottom-[20px] left-[20px] ">
-            <h2 className="text-text_white_primary font-bold text-[24px] font-special">
-              Military Backpack
-            </h2>
-            <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
-              Description goes here up to two lines max
-            </h3>
+        {projects[0] && (
+          <div className="w-full relative">
+            <div
+              className="bg-border_dark w-full h-[270px] rounded-[20px]"
+              style={{ backgroundImage: `url(${projects[0].img})`, backgroundSize: "cover" }}
+            ></div>
+            <div className="absolute bottom-[20px] left-[20px] ">
+              <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+                {projects[0].title}
+              </h2>
+              <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+                {projects[0].desc}
+              </h3>
+            </div>
           </div>
-        </div>
+        )}
         <div className="w-full flex gap-[15px] overflow-x-auto">
+          {projects.slice(1, -1).map((project) => (
+            <div key={project.title} className="w-full relative">
+              <div
+                className="bg-border_dark w-full h-[270px] rounded-[20px]"
+                style={{ backgroundImage: `url(${project.img})`, backgroundSize: "cover" }}
+              ></div>
+              <div className="absolute bottom-[20px] left-[20px] ">
+                <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+                  {project.title}
+                </h2>
+                <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+                  {project.desc}
+                </h3>
+              </div>
+            </div>
+          ))}
+        </div>
+        {projects.at(-1) && (
           <div className="w-full relative">
-            <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
+            <div
+              className="bg-border_dark w-full h-[270px] rounded-[20px]"
+              style={{ backgroundImage: `url(${projects.at(-1).img})`, backgroundSize: "cover" }}
+            ></div>
             <div className="absolute bottom-[20px] left-[20px] ">
               <h2 className="text-text_white_primary font-bold text-[24px] font-special">
-                LG Hower Gym
+                {projects.at(-1).title}
               </h2>
               <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
-                Description goes here up to two lines max
+                {projects.at(-1).desc}
               </h3>
             </div>
           </div>
-
-          <div className="w-full relative">
-            <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
-            <div className="absolute bottom-[20px] left-[20px] ">
-              <h2 className="text-text_white_primary font-bold text-[24px] font-special">
-                Military Sleeping Bag
-              </h2>
-              <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
-                Description goes here up to two lines max
-              </h3>
-            </div>
-          </div>
-        </div>
-        <div className="w-full relative">
-          <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
-          <div className="absolute bottom-[20px] left-[20px] ">
-            <h2 className="text-text_white_primary font-bold text-[24px] font-special">
-              Lemmy - AI Based Robot
-            </h2>
-            <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
-              Description goes here up to two lines max
-            </h3>
-          </div>
-        </div>
+        )}
       </div>
 
       <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] ">
