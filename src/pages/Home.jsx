@@ -1,5 +1,4 @@
-import { up_right_neutral_arrow } from "assets";
-import { down_right_light_arrow } from "assets";
+import { Down_left_dark_arrow, Up_right_neutral_arrow, down_right_light_arrow } from "assets/";
 
 export const Home = () => {
   return (
@@ -109,11 +108,264 @@ const Members = () => {
       </div>
       <button className="flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main ">
         <span>View Past Members</span>
-        <img src={up_right_neutral_arrow} alt="up right light arrow icon" />
+        <Up_right_neutral_arrow alt="up right light arrow icon" />
       </button>
     </div>
   );
 };
-const Projects = () => {};
-const Journal = () => {};
-const Conference = () => {};
+const Projects = () => {
+  return (
+    <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-black ">
+      <div className="flex flex-col gap-[10px]">
+        <h2 className="text-text_white_primary font-extralight text-[42px] leading-[48px] font-super_special">
+          Current Projects
+        </h2>
+        <h3 className="text-text_white_secondary font-regular font-light text-[12px]">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Non deserunt quibusdam ipsum
+          illum consequuntur autem, ratione error quidem esse velit nam, laborum nesciunt expedita
+          quos magni quae, cumque temporibus magnam!
+        </h3>
+      </div>
+
+      <div className="flex flex-col gap-[10px] items-center">
+        <div className="w-full relative">
+          <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
+          <div className="absolute bottom-[20px] left-[20px] ">
+            <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+              Military Backpack
+            </h2>
+            <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+              Description goes here up to two lines max
+            </h3>
+          </div>
+        </div>
+        <div className="w-full flex gap-[15px] overflow-x-auto">
+          <div className="w-full relative">
+            <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
+            <div className="absolute bottom-[20px] left-[20px] ">
+              <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+                LG Hower Gym
+              </h2>
+              <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+                Description goes here up to two lines max
+              </h3>
+            </div>
+          </div>
+
+          <div className="w-full relative">
+            <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
+            <div className="absolute bottom-[20px] left-[20px] ">
+              <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+                Military Sleeping Bag
+              </h2>
+              <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+                Description goes here up to two lines max
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div className="w-full relative">
+          <div className="bg-border_dark w-full h-[270px] rounded-[20px]"></div>
+          <div className="absolute bottom-[20px] left-[20px] ">
+            <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+              Lemmy - AI Based Robot
+            </h2>
+            <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+              Description goes here up to two lines max
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] ">
+        <span>Completed Projects</span>
+        <Up_right_neutral_arrow alt="up right light arrow icon" />
+      </button>
+    </div>
+  );
+};
+const Journal = () => {
+  const journalPapers = [
+    {
+      title:
+        "Comparison of three different types of exercises for selective contractions of supra- and infrahyoid muscles",
+      authors: ["M. Tufail", "HB Lee", "YG Moon H.", "Kim", "M. Kim"],
+      year: "2021",
+      conference: "IASDR",
+      color: "#08DBE9",
+    },
+    {
+      title:
+        "The Design of Rehabilitation Device for Upper Limb After Stroke Using an Integrated Design Process, December 2021 HongKong",
+      authors: ["Jaehan Park", "M. Tufail", "HB. Lee", "KM. Kim"],
+      year: "2021",
+      conference: "IASDR",
+      color: "#08DBE9",
+    },
+    {
+      title:
+        "Classification of Transformable Products based on Changes in Product Form and Function,Virtual Conference, Sweden",
+      authors: ["Haebin Lee", "M. Tufail", "KwanMyung Kim"],
+      year: "2021",
+      conference: "ICED",
+      color: "#476BE8",
+    },
+
+    {
+      title:
+        "Integrated Keyword Mapping Process: Bridging User Research to Style Concept Development ,Virtual Conference, USA",
+      authors: ["Sangjin Joo", "Dabin Lee", "Soyoon Park", "Hwang Kim", "KwanMyung Kim"],
+      year: "2020",
+      conference: "AHFE",
+      color: "#AF3BE7",
+    },
+    {
+      title:
+        "Rehabilitation Design Intervention for Older Adult Women through Community-based Co-Design Activities , Manchester, United Kingdom",
+      authors: ["M. Tufail", "YG. Moon", "KM. Kim"],
+      year: "2019",
+      conference: "IASDR",
+      color: "#2BC04C",
+    },
+    {
+      title:
+        "Discomfort with Low-back Pain Relief Exercise Training for Older Adult Women , Washington, USA",
+      authors: ["M. Tufail", "S. Park", "HB. Lee", "YG. Moon", "KM. Kim"],
+      year: "2019",
+      conference: "AHFE",
+      color: "#6E95E0",
+    },
+    {
+      title:
+        "A Critical Usability Problem-Solving Case of MazeCube Through Design Exploration Based on Scientific Experiments , Washington, USA",
+      authors: ["Jihyeon Yang", "Hwisu Jeon", "M. Tufail", "KM. Kim"],
+      year: "2019",
+      conference: "AHFE",
+      color: "#EA37CE",
+    },
+  ];
+
+  return (
+    <div className="w-dvw px-[25px] py-[30px] flex flex-col gap-[30px] bg-primary_main">
+      <div className="flex flex-col gap-[20px]">
+        <h2 className="text-5xl font-super_special text-text_white_primary leading-[48px] tracking-normal">
+          Journal Papers
+        </h2>
+        <div className="flex gap-[10px]">
+          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] bg-primary_main text-text_black_primary">
+            International
+          </button>
+          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] bg-primary_main text-text_black_primary">
+            Domestic
+          </button>
+        </div>
+      </div>
+      <div className="flex gap-[10px]">
+        {journalPapers.map((paper) => (
+          <div
+            key={paper.title}
+            className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-text_black_primary "
+          >
+            <h3 className="text-[18px] font-regular font-normal text-text_white_primary">
+              {paper.title}
+            </h3>
+            <div className="flex justify-between">
+              <div
+                className={`flex flex-col text-[14px] font-regular font-semibold`}
+                style={{ color: paper.color }}
+              >
+                {paper.authors.map((author) => (
+                  <span key={author}>{author}</span>
+                ))}
+              </div>
+              <div className="flex flex-col font-special text-[20px]">
+                <span className=" text-text_white_tertiary font-normal"> {paper.year} </span>
+                <span className="font-bold text-text_white_primary "> {paper.conference} </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] ">
+        <span>All Journal Papers</span>
+        <Up_right_neutral_arrow alt="up right light arrow icon" />
+      </button>
+    </div>
+  );
+};
+const Conference = () => {
+  const journalPapers = [
+    {
+      title: "Understanding Detail Phase using 3D CAD: A case study on Anybaro",
+      authors: ["M Gabbas", "KM. Kim"],
+      year: "2021",
+      conference: "IASDR",
+      color: "#10719A",
+    },
+    {
+      title:
+        "The Design of Rehabilitation Device for Upper Limb After Stroke Using an Integrated Design Process, December 2021 HongKong",
+      authors: ["Jaehan Park", "M. Tufail", "HB. Lee", "KM. Kim"],
+      year: "2021",
+      conference: "IASDR",
+      color: "#003152",
+    },
+    {
+      title:
+        "Classification of Transformable Products based on Changes in Product Form and Function,Virtual Conference, Sweden",
+      authors: ["Haebin Lee", "M. Tufail", "KwanMyung Kim"],
+      year: "2021",
+      conference: "ICED",
+      color: "#03ADBB",
+    },
+  ];
+
+  return (
+    <div className="w-dvw px-[25px] py-[30px] flex flex-col gap-[30px]">
+      <div className="flex flex-col gap-[20px]">
+        <h2 className="flex items-end text-5xl font-super_special text-text_black_primary leading-[48px] tracking-normal">
+          <span>Conference Papers</span>
+          <Down_left_dark_arrow className="size-[51px]" />
+        </h2>
+        <div className="flex gap-[10px]">
+          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] text-primary_main">
+            International
+          </button>
+          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] text-primary_main">
+            Domestic
+          </button>
+        </div>
+      </div>
+      <div className="flex gap-[10px]">
+        {journalPapers.map((paper) => (
+          <div
+            key={paper.title}
+            className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-[#C1EDFF] "
+          >
+            <h3 className="text-[18px] font-regular font-normal text-text_black_primary">
+              {paper.title}
+            </h3>
+            <div className="flex justify-between">
+              <div
+                className="flex flex-col text-[14px] font-regular font-semibold"
+                style={{ color: paper.color }}
+              >
+                {paper.authors.map((author) => (
+                  <span key={author}>{author}</span>
+                ))}
+              </div>
+              <div className="flex flex-col font-special text-[20px]">
+                <span className=" text-text_black_primary font-normal"> {paper.year} </span>
+                <span className="font-bold text-text_black_primary "> {paper.conference} </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] ">
+        <span>All Conference Papers</span>
+        <Up_right_neutral_arrow alt="up right light arrow icon" />
+      </button>
+    </div>
+  );
+};
