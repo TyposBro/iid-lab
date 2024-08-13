@@ -17,6 +17,8 @@ export default {
       primary_main: "#25AAE1",
       background_light: "#e6e6e6",
       border_dark: "#575757",
+      black: "#000000",
+      white: "#ffffff",
     },
   },
   plugins: [],
