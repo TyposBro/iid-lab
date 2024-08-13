@@ -1,3 +1,6 @@
+import { up_right_neutral_arrow } from "assets";
+import { down_right_light_arrow } from "assets";
+
 export const Home = () => {
   return (
     <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll p-[25px] pt-[95px]">
@@ -72,11 +75,42 @@ const Prof = () => {
   );
 };
 const Members = () => {
+  const members = [
+    { img: "", name: "Ulugbek", role: "PhD Candidate" },
+    { img: "", name: "Daehun Lee", role: "PhD Candidate" },
+    { img: "", name: "John Doe", role: "Masters" },
+    { img: "", name: "John Doe", role: "Masters" },
+  ];
+
   return (
-    <div className="w-full my-[30px]">
-      <div>
-        <h1>Team Members</h1>
+    <div className="w-full my-[30px] flex flex-col gap-[30px] ">
+      <div className="flex flex-col gap-[10px]">
+        <img
+          src={down_right_light_arrow}
+          alt="down right light arrow icon"
+          className="w-[34px] h-[34px]"
+        />
+        <h1 className="text-[42px] text-text_black_primary font-light font-super_special leading-[46px] ">
+          Team Members
+        </h1>
       </div>
+      <div className="w-full flex flex-row gap-[10px] overflow-x-scroll">
+        {members.map((member) => (
+          <div key={member.name} className="w-full flex flex-col gap-[14px]">
+            <div className="w-[170px] h-[270px] rounded-[20px] bg-border_dark shrink-0"></div>
+            <div className="flex flex-col gap-[4px] font-regular">
+              <h2 className="font-bold text-[18px] text-text_black_primary">{member.name}</h2>
+              <h3 className="font-regular font-normal text-[12px] text-text_black_primary">
+                {member.role}
+              </h3>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button className="flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main ">
+        <span>View Past Members</span>
+        <img src={up_right_neutral_arrow} alt="up right light arrow icon" />
+      </button>
     </div>
   );
 };
