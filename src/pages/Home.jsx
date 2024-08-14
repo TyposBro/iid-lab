@@ -53,8 +53,8 @@ const Intro = () => {
           </h3>
         </div>
         <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
-          <button className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid ">
-            Publications
+          <button className="w-full h-[50px] flex justify-center items-center gap-[10px] border-primary_main bg-primary_main rounded-[15px] border-2 border-solid text-text_white_primary">
+            Publications <Up_right_neutral_arrow />
           </button>
           <button className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid ">
             Achievements
@@ -102,7 +102,7 @@ const Members = () => {
     { img: "", name: "Ulugbek", role: "PhD Candidate" },
     { img: "", name: "Daehun Lee", role: "PhD Candidate" },
     { img: "", name: "John Doe", role: "Masters" },
-    { img: "", name: "John Doe", role: "Masters" },
+    { img: "", name: "John Boe", role: "Masters" },
   ];
 
   return (
