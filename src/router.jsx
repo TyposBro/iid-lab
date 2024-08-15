@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
-import { Contact, Home, News, Projects, Publications, Team } from "./pages/index";
-import { Navbar, Footer } from "./components/index";
+import { Home, About, Projects, Publications, Team } from "pages/";
+import { Navbar, Footer } from "components/";
 
 const router = createBrowserRouter([
   {
@@ -18,8 +18,7 @@ const router = createBrowserRouter([
       { path: "/projects", element: <Projects /> },
       { path: "/publications", element: <Publications /> },
       { path: "/team", element: <Team /> },
-      { path: "/news", element: <News /> },
-      { path: "/contact", element: <Contact /> },
+      { path: "/about", element: <About /> },
     ],
   },
 ]);
