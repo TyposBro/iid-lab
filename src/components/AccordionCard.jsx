@@ -8,7 +8,7 @@ const AccordionCard = ({ title, subtitle, desc, bg }) => {
   return (
     <div key={title} className="w-full relative " onClick={() => setExpanded((prev) => !prev)}>
       <div
-        className="bg-border_dark w-full h-[270px] rounded-[20px] z-10 relative "
+        className="bg-border_dark w-full h-[200px] rounded-[20px] relative "
         style={{ backgroundImage: `url(${bg})`, backgroundSize: "cover" }}
       >
         {/* Dark Overlay */}
@@ -30,8 +30,8 @@ const AccordionCard = ({ title, subtitle, desc, bg }) => {
       </div>
 
       <div
-        className={`grid px-[10px] py-[15px] transition-all duration-700 ease-in-out ${
-          expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        className={`grid px-[10px] transition-all duration-700 ease-in-out ${
+          expanded ? "grid-rows-[1fr] py-[15px] opacity-100" : "grid-rows-[0fr]  opacity-0"
         }`}
       >
         <div className="overflow-hidden">{desc}</div>

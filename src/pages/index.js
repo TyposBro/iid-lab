@@ -1,6 +1,6 @@
-export { Contact } from "./Contact";
-export { Home } from "./Home";
-export { News } from "./News";
-export { Projects } from "./Projects";
-export { Publications } from "./Publications";
-export { Team } from "./Team";
+export { default as Contact } from "./Contact";
+export { default as Home } from "./Home";
+export { default as News } from "./News";
+export { default as Projects } from "./Projects";
+export { default as Publications } from "./Publications";
+export { default as Team } from "./Team";

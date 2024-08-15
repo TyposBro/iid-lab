@@ -1,5 +1,5 @@
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
-import { AccordionCard } from "components";
+import { AccordionCard } from "components/";
 
 export const Team = () => {
   return (
@@ -7,6 +7,7 @@ export const Team = () => {
       {/* <Intro /> */}
       <Prof />
       <CurrentTeam />
+      <Alumni />
     </div>
   );
 };
@@ -90,10 +91,10 @@ const CurrentTeam = () => {
     <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] ">
       <div className="flex flex-col gap-[10px]">
         <div className="flex items-center">
-          <h2 className="text-text_black_primary font-extralight text-[42px] leading-[48px] font-super_special">
+          <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] font-special">
             Current Team
           </h2>
-          <Down_left_dark_arrow />
+          <Down_left_dark_arrow className="size-[58px]" />
         </div>
         <h3 className="text-text_black_secondary font-regular font-light text-[12px]">
           Our lab is a vibrant hub of international and Korean researchers from diverse backgrounds,
@@ -124,6 +125,67 @@ const CurrentTeam = () => {
           />
         ))}
       </div>
+    </div>
+  );
+};
+
+const Alumni = () => {
+  const members = [
+    {
+      img: "/img/projects/lemmy_ai_based_robot.png",
+      name: "JungSu",
+      role: "Masters",
+      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+    },
+    {
+      img: "/img/projects/lemmy_ai_based_robot.png",
+      name: "Tufail",
+      role: "Masters",
+      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+    },
+    {
+      img: "/img/projects/lemmy_ai_based_robot.png",
+      name: "Donierbek",
+      role: "Undergraduate",
+      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+    },
+  ];
+
+  return (
+    <div className="w-dvw flex flex-col gap-[30px] pt-[30px] px-[25px] ">
+      <div className="flex justify-between items-center ">
+        <h2 className="text-text_black_primary font-extralight text-[48px] leading-[48px] font-special">
+          Alumni
+        </h2>
+        <Down_left_dark_arrow className="size-[46px]" />
+      </div>
+      <div className="flex gap-[10px]">
+        <button className="w-full h-[30px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
+          PhD
+        </button>
+        <button className="w-full h-[30px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
+          Masters
+        </button>
+        <button className="w-full h-[30px] border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary">
+          Interns
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-[10px] items-center">
+        {members.map((member) => (
+          <AccordionCard
+            key={member.name}
+            title={member.name}
+            subtitle={member.role}
+            bg={member.img}
+            desc={member.bio}
+          />
+        ))}
+      </div>
+
+      <button className="flex items-center gap-[10px] mx-auto text-primary_main font-semibold text-[18px] rounded-[18px] active:bg-primary_main active:text-white py-[8px] px-[24px]">
+        View All Alumni <Up_right_neutral_arrow />
+      </button>
     </div>
   );
 };
