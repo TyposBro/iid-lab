@@ -3,7 +3,7 @@ import { AccordionCard } from "components/";
 
 export const Team = () => {
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll p-[25px] pt-[95px]">
+    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
       {/* <Intro /> */}
       <Prof />
       <CurrentTeam />

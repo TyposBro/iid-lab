@@ -4,7 +4,16 @@ import { Card } from "components/";
 
 export const Projects = () => {
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll p-[25px] pt-[95px]">
+    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
+      <div className="flex flex-col gap-[10px]">
+        <h2 className="text-black font-bold text-[48px] leading-[48px] font-special">Projects</h2>
+        <div className="border-text_black_secondary  text-[12px] font-normal font-regular">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate laborum minus
+          laboriosam! Optio eaque nemo sit corrupti excepturi quisquam consequatur ab maiores! Sit
+          atque, dolor minus sed aspernatur dolorem alias.
+        </div>
+      </div>
+
       <Current />
       <Awards />
       <Completed />

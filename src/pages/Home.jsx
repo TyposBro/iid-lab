@@ -7,7 +7,7 @@ export const Home = () => {
   const ref = useRef(null);
 
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll p-[25px] pt-[95px]">
+    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
       <Intro />
       <div className="w-full my-[30px]">
         <LiteYouTubeEmbed
