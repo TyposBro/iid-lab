@@ -1,8 +1,7 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-export const MenuButton = () => {
-  const navigate = useNavigate();
+export const MenuButton = ({ navigate }) => {
   const ref = useRef(null);
 
   const handleNavigation = (path) => {
@@ -59,3 +58,7 @@ export const MenuButton = () => {
 };
 
 export default MenuButton;
+
+MenuButton.propTypes = {
+  navigate: PropTypes.func.isRequired,
+};
