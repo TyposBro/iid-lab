@@ -16,7 +16,7 @@ export const Publications = () => {
       </div>
 
       <PublicationList
-        bg="bg-[transparent]"
+        bg="bg-transparent"
         buttonColor="text-primary_main"
         iconColor="text-primary_main"
         buttonBorder="border-primary_main"
@@ -79,7 +79,7 @@ const PublicationList = ({ bg, buttonColor, iconColor, buttonBorder }) => {
       <div className="flex flex-col gap-[25px]">
         <div className="flex justify-between items-center">
           <h2 className="text-black font-extralight text-[42px] leading-[48px] font-super_special">
-            Completed Projects
+            Journals
           </h2>
           <Down_straight_neutral_arrow className={`size-[56px] rotate-45 ${iconColor}`} />
         </div>

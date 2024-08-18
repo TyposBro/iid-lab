@@ -1,5 +1,5 @@
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
-import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
+import { Down_left_dark_arrow } from "assets/";
 
 export const About = () => {
   return (
