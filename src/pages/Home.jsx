@@ -148,7 +148,7 @@ const Projects = () => {
     {
       title: "Military Sleeping Bag",
       desc: "Description goes here up to two lines max",
-      img: "/img/projects/military_sleeping_bag.png",
+      img: "/img/projects/military_sleeping_bag1.png",
     },
     {
       title: "Lemmy - AI Based Robot",
