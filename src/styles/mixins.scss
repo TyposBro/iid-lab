@@ -1,0 +1,62 @@
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin centerDiv {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*
+  ? @media queries
+  ! 0-600px: Phone
+  ! 600~900px: Tablet Portrait
+  ! 900~1200px: Tablet Landscape
+  ! 1200~1800px: Desktop (MAIN)
+  ! 1800px+: Big Screen
+  
+   *rems in html are NOT inherited
+  TODO: use em = 16px instead 
+  !always
+  */
+/*
+  
+  todo: Order: Base > Typography > Gen Layout + Grid > Page Layout > Components
+  
+  */
+@mixin responsive($breakpoint) {
+  // * 600px/16px = 37.5em
+
+  @if $breakpoint == phone {
+    // * 600px
+    @media only screen and (max-width: 37.5em) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == tab-port {
+    // * 900px
+    @media only screen and (max-width: 56.25em) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == tab-land {
+    // * 1200px
+    @media only screen and (max-width: 75em) {
+      @content;
+    }
+  }
+  @if $breakpoint == big-screen {
+    // * 1800px+
+    @media only screen and (min-width: 112.5em) {
+      @content;
+    }
+  }
+}
