@@ -27,10 +27,11 @@
     position: fixed;
     top: 25px;
     right: 30px;
-    background-image: radial-gradient(
-      variables.$color-primary-light,
-      variables.$color-primary-dark
-    );
+    // background-image: radial-gradient(
+    //   variables.$color-primary-light,
+    //   variables.$color-primary-dark
+    // );
+    background-color: #ffffff;
     z-index: 1000;
 
     transition: 400ms ease-in-out;
@@ -63,18 +64,21 @@
     &:link,
     &:visited {
       display: inline-block;
-      font-size: 3rem;
+      font-size: 30px;
       font-weight: 300;
-      padding: 1rem 2rem;
-      color: variables.$color-white;
+      padding: 8px 24px;
+      color: #25aae1;
       text-transform: uppercase;
       text-decoration: none;
-      background-image: linear-gradient(
-        120deg,
-        transparent 0%,
-        transparent 50%,
-        variables.$color-white 50%
-      );
+      border: #25aae1 solid 1px;
+      border-radius: 20px;
+      // background-image: linear-gradient(
+      //   120deg,
+      //   transparent 0%,
+      //   transparent 50%,
+      //   variables.$color-white 50%
+      // );
+
       background-size: 220%;
       transition-property: transform, background-position, color;
       transition: 400ms ease-in-out;
@@ -86,6 +90,8 @@
       background-position: 100%;
       color: variables.$color-primary-dark;
       transform: translateX(1rem);
+      background-color: #25aae1;
+      color: white;
     }
 
     span {
