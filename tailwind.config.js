@@ -19,6 +19,7 @@ export default {
       border_dark: "#575757",
       black: "#000000",
       white: "#ffffff",
+      transparent: "transparent",
     },
   },
   plugins: [],
