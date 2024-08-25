@@ -6,7 +6,7 @@ import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 
 import PropTypes from "prop-types";
 
-import { Down_left_dark_arrow, Up_right_neutral_arrow, Down_right_light_arrow } from "assets/";
+import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
 
 export const Home = () => {
   const ref = useRef(null);
@@ -178,10 +178,14 @@ const Members = () => {
           </div>
         ))}
       </div>
-      <button className="flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main ">
+      <a
+        className="flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main  no-underline"
+        href="/team#alumni"
+        target="_blank"
+      >
         <span>View Past Members</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      </a>
     </div>
   );
 };
@@ -189,7 +193,7 @@ const Projects = () => {
   const projects = [
     {
       title: "Military Backpack",
-      desc: "Description goes here up to two lines max",
+      desc: "Military Backpack and Frame Design for effective Weight Distribution System",
       img: "/img/projects/military_backpack.png",
     },
     {
@@ -199,12 +203,12 @@ const Projects = () => {
     },
     {
       title: "Military Sleeping Bag",
-      desc: "Description goes here up to two lines max",
+      desc: "Winter sleeping bag for Special Forces",
       img: "/img/projects/military_sleeping_bag1.png",
     },
     {
       title: "Lemmy - AI Based Robot",
-      desc: "Description goes here up to two lines max",
+      desc: "Elderly care robot-service system",
       img: "/img/projects/lemmy_ai_based_robot.png",
     },
   ];
@@ -216,9 +220,10 @@ const Projects = () => {
           Current Projects
         </h2>
         <h3 className="text-text_white_secondary font-regular font-light text-[12px]">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Non deserunt quibusdam ipsum
-          illum consequuntur autem, ratione error quidem esse velit nam, laborum nesciunt expedita
-          quos magni quae, cumque temporibus magnam!
+          We create innovative design concepts through systematic, human-centered methods,
+          developing them into products and services using engineering design. Our focus is on
+          elderly care, rehabilitation, healthcare, and safety, and we collaborate closely with
+          experts in medicine, geriatrics, physical therapy, materials, and production.
         </h3>
       </div>
 
@@ -226,9 +231,13 @@ const Projects = () => {
         {projects[0] && (
           <div className="w-full relative">
             <div
-              className="bg-border_dark w-full h-[270px] rounded-[20px]"
+              className="bg-border_dark w-full h-[270px] rounded-[20px] relative"
               style={{ backgroundImage: `url(${projects[0].img})`, backgroundSize: "cover" }}
-            ></div>
+            >
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+              {/* Dark Overlay */}
+            </div>
             <div className="absolute bottom-[20px] left-[20px] ">
               <h2 className="text-text_white_primary font-bold text-[24px] font-special">
                 {projects[0].title}
@@ -239,13 +248,17 @@ const Projects = () => {
             </div>
           </div>
         )}
-        <div className="w-full flex gap-[15px] overflow-x-auto">
+        <div className="w-full flex gap-[15px] overflow-x-auto relative">
           {projects.slice(1, -1).map((project) => (
             <div key={project.title} className="w-full relative">
               <div
                 className="bg-border_dark w-full h-[270px] rounded-[20px]"
                 style={{ backgroundImage: `url(${project.img})`, backgroundSize: "cover" }}
-              ></div>
+              >
+                {/* Dark Overlay */}
+                <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+                {/* Dark Overlay */}
+              </div>
               <div className="absolute bottom-[20px] left-[20px] ">
                 <h2 className="text-text_white_primary font-bold text-[24px] font-special">
                   {project.title}
@@ -262,7 +275,11 @@ const Projects = () => {
             <div
               className="bg-border_dark w-full h-[270px] rounded-[20px]"
               style={{ backgroundImage: `url(${projects.at(-1).img})`, backgroundSize: "cover" }}
-            ></div>
+            >
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+              {/* Dark Overlay */}
+            </div>
             <div className="absolute bottom-[20px] left-[20px] ">
               <h2 className="text-text_white_primary font-bold text-[24px] font-special">
                 {projects.at(-1).title}
@@ -275,10 +292,14 @@ const Projects = () => {
         )}
       </div>
 
-      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] ">
+      <a
+        className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] "
+        href="/projects#completed"
+        target="_blank"
+      >
         <span>Completed Projects</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      </a>
     </div>
   );
 };

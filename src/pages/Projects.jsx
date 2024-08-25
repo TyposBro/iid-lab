@@ -177,7 +177,10 @@ const Completed = () => {
   ];
 
   return (
-    <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-primary_main ">
+    <div
+      className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-primary_main "
+      id="completed"
+    >
       <div className="flex flex-col gap-[25px]">
         <div className="flex justify-between items-center">
           <h2 className="text-black font-extralight text-[42px] leading-[48px] font-super_special">

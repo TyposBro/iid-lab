@@ -152,7 +152,7 @@ const Alumni = () => {
   ];
 
   return (
-    <div className="w-dvw flex flex-col gap-[30px] pt-[30px] px-[25px] ">
+    <div className="w-dvw flex flex-col gap-[30px] pt-[30px] px-[25px] " id="alumni">
       <div className="flex justify-between items-center ">
         <h2 className="text-text_black_primary font-extralight text-[48px] leading-[48px] font-special">
           Alumni
