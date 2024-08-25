@@ -8,7 +8,10 @@ import {
 
 export const Footer = () => {
   return (
-    <footer className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] font-regular">
+    <footer
+      id="contact"
+      className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] font-regular"
+    >
       <div className="flex flex-row justify-between items-center gap-[20px]">
         <div className="flex flex-col items-start gap-[10px]">
           <Down_right_dark_arrow className="w-[66px] h-[66px]" />
