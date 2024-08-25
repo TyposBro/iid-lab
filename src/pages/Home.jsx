@@ -13,7 +13,7 @@ export const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
+    <div className="w-full h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px] no-scrollbar">
       <Intro navigate={navigate} />
       <div className="w-full my-[30px]">
         <LiteYouTubeEmbed
@@ -126,24 +126,49 @@ const Prof = () => {
 
 const Members = () => {
   const members = [
-    { img: "", name: "Ulugbek", role: "PhD Candidate" },
-    { img: "", name: "Daehun Lee", role: "PhD Candidate" },
-    { img: "", name: "John Doe", role: "Masters" },
-    { img: "", name: "John Boe", role: "Masters" },
+    {
+      img: "/img/people/current/ulugbek_ismatullaev.png",
+      name: "Ulugbek Ismatullaev",
+      role: "PhD Candidate",
+    },
+    { img: "/img/people/current/daehun_lee_home.png", name: "Daehun Lee", role: "PhD Candidate" },
+    { img: "/img/people/current/haebin_lee.png", name: "Haebin Lee", role: "PhD Candidate" },
+    {
+      img: "/img/people/current/danyal_sarfraz.png",
+      name: "Danyal Sarfraz",
+      role: "Masters Researcher",
+    },
+    {
+      img: "/img/people/current/jonghyun_kim.png",
+      name: "Jonghyun Kim",
+      role: "Masters Researcher",
+    },
+    {
+      img: "/img/people/current/donierbek_abdurakhimov.png",
+      name: "Donierbek Abdurakhimov",
+      role: "Intern",
+    },
   ];
 
   return (
-    <div className="w-full my-[30px] flex flex-col gap-[30px] ">
-      <div className="flex flex-col gap-[10px]">
-        <Down_right_light_arrow className="w-[34px] h-[34px]" alt="down right light arrow icon" />
+    <div className="w-dvw my-[30px] shrink-0 flex flex-col gap-[30px] ">
+      <div className="flex flex-col gap-[10px] px-[25px]">
         <h1 className="text-[42px] text-text_black_primary font-light font-super_special leading-[46px] ">
           Team Members
         </h1>
       </div>
-      <div className="w-full flex flex-row gap-[10px] overflow-x-scroll">
+      <div className="w-full flex flex-row gap-[10px] overflow-x-scroll px-[25px]">
         {members.map((member) => (
           <div key={member.name} className="w-full flex flex-col gap-[14px]">
-            <div className="w-[170px] h-[270px] rounded-[20px] bg-border_dark shrink-0"></div>
+            <div
+              className="w-[170px] h-[270px] rounded-[20px] bg-border_dark shrink-0"
+              style={{
+                backgroundImage: `url(${member.img})`,
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }}
+            ></div>
             <div className="flex flex-col gap-[4px] font-regular">
               <h2 className="font-bold text-[18px] text-text_black_primary">{member.name}</h2>
               <h3 className="font-regular font-normal text-[12px] text-text_black_primary">
@@ -319,8 +344,8 @@ const Journal = () => {
   ];
 
   return (
-    <div className="w-dvw px-[25px] py-[30px] flex flex-col gap-[30px] bg-primary_main">
-      <div className="flex flex-col gap-[20px]">
+    <div className="w-dvw py-[30px] flex flex-col gap-[30px] bg-primary_main">
+      <div className="flex flex-col gap-[20px] px-[25px]">
         <h2 className="text-5xl font-super_special text-text_white_primary leading-[48px] tracking-normal">
           Journal Papers
         </h2>
@@ -333,7 +358,7 @@ const Journal = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-[10px]">
+      <div className="px-[25px] flex gap-[10px] overflow-x-scroll">
         {journalPapers.map((paper) => (
           <div
             key={paper.title}
@@ -359,10 +384,12 @@ const Journal = () => {
           </div>
         ))}
       </div>
-      <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] ">
-        <span>All Journal Papers</span>
-        <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      <div className="w-full px-[25px]">
+        <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] ">
+          <span>All Journal Papers</span>
+          <Up_right_neutral_arrow alt="up right light arrow icon" />
+        </button>
+      </div>
     </div>
   );
 };
@@ -394,8 +421,8 @@ const Conference = () => {
   ];
 
   return (
-    <div className="w-dvw px-[25px] py-[30px] flex flex-col gap-[30px]">
-      <div className="flex flex-col gap-[20px]">
+    <div className="w-dvw py-[30px] flex flex-col gap-[30px]">
+      <div className="flex flex-col gap-[20px] px-[25px]">
         <h2 className="flex items-end text-5xl font-super_special text-text_black_primary leading-[48px] tracking-normal">
           <span>Conference Papers</span>
           <Down_left_dark_arrow className="size-[51px]" />
@@ -409,7 +436,7 @@ const Conference = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-[10px]">
+      <div className="px-[25px] flex gap-[10px] overflow-x-scroll">
         {journalPapers.map((paper) => (
           <div
             key={paper.title}
@@ -435,10 +462,12 @@ const Conference = () => {
           </div>
         ))}
       </div>
-      <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] ">
-        <span>All Conference Papers</span>
-        <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      <div className="w-full px-[25px]">
+        <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] ">
+          <span>All Conference Papers</span>
+          <Up_right_neutral_arrow alt="up right light arrow icon" />
+        </button>
+      </div>
     </div>
   );
 };
