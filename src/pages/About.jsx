@@ -76,7 +76,7 @@ const Details = () => {
       <div
         className="w-full h-[200px] bg-border_dark rounded-[20px]"
         style={{
-          backgroundImage: "url(/img/projects/military_backpack.png)",
+          backgroundImage: "url(/img/projects/current/military_backpack.png)",
           backgroundSize: "100% 200px",
           backgroundPosition: "center",
         }}
@@ -94,7 +94,7 @@ const Details = () => {
       <div
         className="w-full h-[200px] bg-border_dark rounded-[20px]"
         style={{
-          backgroundImage: "url(/img/projects/military_sleeping_bag.png)",
+          backgroundImage: "url(/img/projects/awards/wave_hat.png)",
           backgroundSize: "100% 200px",
           backgroundPosition: "center",
         }}
@@ -110,7 +110,7 @@ const Details = () => {
       <div
         className="w-full h-[200px] bg-border_dark rounded-[20px]"
         style={{
-          backgroundImage: "url(/img/projects/lemmy_ai_based_robot.png)",
+          backgroundImage: "url(/img/projects/current/lemmy_ai_based_robot.png)",
           backgroundSize: "100% 200px",
           backgroundPosition: "center",
         }}
