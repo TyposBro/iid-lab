@@ -194,12 +194,12 @@ const Projects = () => {
     {
       title: "Military Backpack",
       desc: "Military Backpack and Frame Design for effective Weight Distribution System",
-      img: "/img/projects/military_backpack.png",
+      img: "/img/projects/current/military_backpack.png",
     },
     {
       title: "LG Hower Gym",
       desc: "Description goes here up to two lines max",
-      img: "/img/projects/lg_hower_gym.png",
+      img: "/img/projects/current/lg_hower_gym.png",
     },
     {
       title: "Military Sleeping Bag",
@@ -209,7 +209,7 @@ const Projects = () => {
     {
       title: "Lemmy - AI Based Robot",
       desc: "Elderly care robot-service system",
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      img: "/img/projects/current/lemmy_ai_based_robot.png",
     },
   ];
 
@@ -274,7 +274,12 @@ const Projects = () => {
           <div className="w-full relative">
             <div
               className="bg-border_dark w-full h-[270px] rounded-[20px]"
-              style={{ backgroundImage: `url(${projects.at(-1).img})`, backgroundSize: "cover" }}
+              style={{
+                backgroundImage: `url(${projects.at(-1).img})`,
+                backgroundSize: "100% 270px",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
             >
               {/* Dark Overlay */}
               <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
