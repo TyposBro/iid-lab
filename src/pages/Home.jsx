@@ -1,14 +1,20 @@
+import { useRef } from "react";
+import { useNavigate } from "react-router";
+
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
+
+import PropTypes from "prop-types";
+
 import { Down_left_dark_arrow, Up_right_neutral_arrow, Down_right_light_arrow } from "assets/";
-import { useRef } from "react";
 
 export const Home = () => {
   const ref = useRef(null);
+  const navigate = useNavigate();
 
   return (
     <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
-      <Intro />
+      <Intro navigate={navigate} />
       <div className="w-full my-[30px]">
         <LiteYouTubeEmbed
           id="s5vJO6vUeaM" // Default none, id of the video or playlist
@@ -37,10 +43,13 @@ export const Home = () => {
 
 export default Home;
 
-const Intro = () => {
+const Intro = ({ navigate }) => {
   return (
     <div className="w-full flex flex-col">
-      <div className="w-full h-[465px] bg-border_dark rounded-[30px]"></div>
+      <div
+        className="w-full h-[210px] bg-border_dark rounded-[30px]"
+        style={{ backgroundImage: `url(/img/home/home_intro.png)`, backgroundSize: "100% 210px" }}
+      ></div>
       <div className="w-full flex flex-col gap-[30px]">
         <div className="flex flex-col gap-[8px]">
           <h1 className="font-special text-text_black_primary text-[48px] font-bold">
@@ -53,11 +62,17 @@ const Intro = () => {
           </h3>
         </div>
         <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
-          <button className="w-full h-[50px] flex justify-center items-center gap-[10px] border-primary_main bg-primary_main rounded-[15px] border-2 border-solid text-text_white_primary">
-            Publications <Up_right_neutral_arrow />
+          <button
+            className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid active:bg-primary_main active:text-white active:border-primary_main"
+            onClick={() => navigate("/projects")}
+          >
+            Projects
           </button>
-          <button className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid ">
-            Achievements
+          <button
+            className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid active:bg-primary_main active:text-white active:border-primary_main"
+            onClick={() => navigate("/publications")}
+          >
+            Publications
           </button>
         </div>
       </div>
@@ -65,18 +80,22 @@ const Intro = () => {
   );
 };
 
+Intro.propTypes = {
+  navigate: PropTypes.func.isRequired,
+};
+
 const Prof = () => {
   const prof = {
     img: "/img/people/director/prof.png",
     name: "Professor KwanMyung Kim",
     role: "Lab Director",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Urna porttitor rhoncus dolor purus non. Turpis massa sed elementum tempus egestas sed. Habitant morbi tristique senectus et netus et malesuada fames ac.",
+    desc: "Dr. KwanMyung Kim, a full professor and director of IIDL, has 14 years of industry experience. He integrates design and engineering, focusing on elderly care, rehabilitation, and healthcare. He's also the CEO of ID SPACE Corp. and has held key academic roles, including Dean and journal editor.",
   };
 
   return (
     <div className="my-[30px] w-full flex flex-col gap-[30px]">
       <div
-        className="w-[240px] h-[300px] rounded-[30px]"
+        className="w-[240px] h-[300px] rounded-[30px] mx-auto"
         style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
       ></div>
       <div className="w-full flex flex-col gap-[5px]">
@@ -87,16 +106,24 @@ const Prof = () => {
         <h3 className="font-regular text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
       <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
-        <button className="w-full h-[50px] border-primary_main bg-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-text_white_primary">
-          Publications
-        </button>
-        <button className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main ">
-          Achievements
-        </button>
+        <a
+          href="https://iidl.unist.ac.kr/Profiles/index.html"
+          target="_blank"
+          className="w-full h-[50px] border-primary_main bg-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-text_white_primary no-underline"
+        >
+          CV
+        </a>
+        <a
+          className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main  no-underline"
+          href="#contact"
+        >
+          Contact
+        </a>
       </div>
     </div>
   );
 };
+
 const Members = () => {
   const members = [
     { img: "", name: "Ulugbek", role: "PhD Candidate" },
