@@ -307,60 +307,49 @@ const Journal = () => {
   const journalPapers = [
     {
       title:
+        "Interdisciplinary Co-Design Research Practice in the Rehabilitation of Elderly Individuals with Chronic Low Back Pain from a Senior Care Center in South Korea",
+      authors: ["M. Tufail", "HB Lee", "YG Moon", "H. Kim", "KM. Kim"],
+      year: "2022",
+      conference: "Applied Sciences",
+      link: "https://www.mdpi.com/2076-3417/12/9/4687",
+      color: "#08DBE9",
+    },
+    {
+      title:
+        "How do visitors perceive the significance of tangible cultural heritage through a 3D reconstructed immersive visual experience at the Seokguram Grotto, South Korea?",
+      authors: ["M. Tufail", "J. Park", "H. Kim", "S. Kim", "KM. Kim"],
+      year: "2022",
+      conference: "Journal of Heritage Tourism",
+      link: "https://www.tandfonline.com/doi/full/10.1080/1743873X.2022.2039672",
+      color: "#6E95E0",
+    },
+    {
+      title:
         "Comparison of three different types of exercises for selective contractions of supra- and infrahyoid muscles",
-      authors: ["M. Tufail", "HB Lee", "YG Moon H.", "Kim", "M. Kim"],
+      authors: ["MC. Chang", "S. Park", "JY. Cho", "BJ. Lee", "JM. Hwang", "KM. Kim", "D. Park"],
       year: "2021",
-      conference: "IASDR",
-      color: "#08DBE9",
-    },
-    {
-      title:
-        "The Design of Rehabilitation Device for Upper Limb After Stroke Using an Integrated Design Process, December 2021 HongKong",
-      authors: ["Jaehan Park", "M. Tufail", "HB. Lee", "KM. Kim"],
-      year: "2021",
-      conference: "IASDR",
-      color: "#08DBE9",
-    },
-    {
-      title:
-        "Classification of Transformable Products based on Changes in Product Form and Function,Virtual Conference, Sweden",
-      authors: ["Haebin Lee", "M. Tufail", "KwanMyung Kim"],
-      year: "2021",
-      conference: "ICED",
+      conference: "Science Reports",
+      link: "https://www.nature.com/articles/s41598-021-86502-w",
       color: "#476BE8",
     },
 
     {
       title:
-        "Integrated Keyword Mapping Process: Bridging User Research to Style Concept Development ,Virtual Conference, USA",
-      authors: ["Sangjin Joo", "Dabin Lee", "Soyoon Park", "Hwang Kim", "KwanMyung Kim"],
-      year: "2020",
-      conference: "AHFE",
+        "The Effect of Lumbar Erector Spinae Muscle Endurance Exercise on Perceived Low-back Pain in Older Adults",
+      authors: ["M. Tufail", "HB. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
+      year: "2021",
+      conference: "Physical Activity Review",
+      link: "https://www.physactiv.eu/wp-content/uploads/2021/05/2021_929.pdf",
       color: "#AF3BE7",
     },
     {
       title:
-        "Rehabilitation Design Intervention for Older Adult Women through Community-based Co-Design Activities , Manchester, United Kingdom",
-      authors: ["M. Tufail", "YG. Moon", "KM. Kim"],
-      year: "2019",
-      conference: "IASDR",
+        "Effects of standing exercise tasks with a sloped surface intervention on trunk muscle activation and low-back pain intensity in women aged ≥ 70 years",
+      authors: ["M. Tufail", "HB. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
+      year: "2021",
+      conference: "HFE",
+      link: "https://www.inderscience.com/offers.php?id=118217",
       color: "#2BC04C",
-    },
-    {
-      title:
-        "Discomfort with Low-back Pain Relief Exercise Training for Older Adult Women , Washington, USA",
-      authors: ["M. Tufail", "S. Park", "HB. Lee", "YG. Moon", "KM. Kim"],
-      year: "2019",
-      conference: "AHFE",
-      color: "#6E95E0",
-    },
-    {
-      title:
-        "A Critical Usability Problem-Solving Case of MazeCube Through Design Exploration Based on Scientific Experiments , Washington, USA",
-      authors: ["Jihyeon Yang", "Hwisu Jeon", "M. Tufail", "KM. Kim"],
-      year: "2019",
-      conference: "AHFE",
-      color: "#EA37CE",
     },
   ];
 
@@ -385,21 +374,28 @@ const Journal = () => {
             key={paper.title}
             className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-text_black_primary "
           >
-            <h3 className="text-[18px] font-regular font-normal text-text_white_primary">
+            <a
+              className="text-[16px] font-regular font-normal text-text_white_primary underline break-words"
+              href={paper.link}
+              target="_blank"
+              rel="noreferrer"
+            >
               {paper.title}
-            </h3>
-            <div className="flex justify-between">
+            </a>
+            <div className="flex justify-between items-end">
               <div
-                className={`flex flex-col text-[14px] font-regular font-semibold`}
+                className="flex flex-col text-[14px] font-regular font-semibold grow shrink-0"
                 style={{ color: paper.color }}
               >
                 {paper.authors.map((author) => (
-                  <span key={author}>{author}</span>
+                  <div key={author}>{author}</div>
                 ))}
               </div>
-              <div className="flex flex-col font-special text-[20px]">
-                <span className=" text-text_white_tertiary font-normal"> {paper.year} </span>
-                <span className="font-bold text-text_white_primary "> {paper.conference} </span>
+              <div className="flex flex-col justify-end font-special text-[20px]">
+                <div className="text-text_white_tertiary font-normal text-right">{paper.year}</div>
+                <div className="font-bold text-text_white_primary break-words text-right">
+                  {paper.conference}
+                </div>
               </div>
             </div>
           </div>
