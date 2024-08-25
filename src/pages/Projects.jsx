@@ -8,9 +8,10 @@ export const Projects = () => {
       <div className="flex flex-col gap-[10px]">
         <h2 className="text-black font-bold text-[48px] leading-[48px] font-special">Projects</h2>
         <div className="border-text_black_secondary  text-[12px] font-normal font-regular">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate laborum minus
-          laboriosam! Optio eaque nemo sit corrupti excepturi quisquam consequatur ab maiores! Sit
-          atque, dolor minus sed aspernatur dolorem alias.
+          We create innovative design concepts using systematic, human-centered methods and develop
+          them into products and services through engineering design. Our focus is on elderly care,
+          rehabilitation, healthcare, and safety, collaborating with experts in medicine,
+          geriatrics, physical therapy, materials, and production.
         </div>
       </div>
 
@@ -30,24 +31,24 @@ export default Projects;
 const Current = () => {
   const projects = [
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      img: "/img/projects/current/lemmy_ai_based_robot.png",
       title: "Lemmy - AI Based Robot",
-      subtitle: "Description goes here upto two lines max",
+      subtitle: "Elderly care robot-service system",
     },
     {
-      img: "/img/projects/lg_hower_gym.png",
+      img: "/img/projects/current/lg_hower_gym.png",
       title: "LG Hover Gym",
-      subtitle: "Description goes here upto two lines max",
+      subtitle: "Designing accessories for LG Hower Gym",
     },
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      img: "/img/projects/current/military_sleeping_bag.png",
       title: "Military Sleeping Bag",
-      subtitle: "Description goes here upto two lines max",
+      subtitle: "Military Backpack and Frame Design for effective Weight Distribution System ",
     },
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      img: "/img/projects/current/military_backpack.png",
       title: "Military backpack",
-      subtitle: "Description goes here upto two lines max",
+      subtitle: "Winter sleeping bag for Special Forces",
     },
   ];
 
@@ -77,24 +78,34 @@ const Current = () => {
 const Awards = () => {
   const awards = [
     {
-      title: "iF Design Award - XYZ Project",
-      year: 2023,
-      img: "/img/projects/military_backpack.png",
+      title: "iF Design Award - UMAY",
+      year: 2022,
+      img: "/img/projects/awards/umay.png",
+      authors: "M. Gabbas, Y. Ismailov, KM Kim",
     },
     {
-      title: "iF Design Award - XYZ Project",
+      title: "Best of the Best, RedDot - GOOPI",
       year: 2021,
-      img: "/img/projects/lg_hower_gym.png",
+      img: "/img/projects/awards/goopi.png",
+      authors: "JH Park, M. Gabbas, YD Ryu, KM Kim",
     },
     {
-      title: "iF Design Award - XYZ Project",
+      title: "iF Design Award - Wave Hat",
       year: 2021,
-      img: "/img/projects/military_sleeping_bag.png",
+      img: "/img/projects/awards/wave_hat.png",
+      authors: "SJ Joo, DB Lee, JY Lee, HM Choi, HJ Jin, SY Park, H KIM, KM Kim",
     },
     {
-      title: "iF Design Award - XYZ Project",
+      title: "iF Design Award - Wave App",
       year: 2021,
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      img: "/img/projects/awards/wave_app.png",
+      authors: "SJ Joo, DB Lee, JY Lee, HM Choi, HJ Jin, SY Park, H KIM, KM Kim",
+    },
+    {
+      title: "Good Design - Anybaro",
+      year: 2019,
+      img: "/img/projects/awards/anybaro.png",
+      authors: "JH Yang, KM Kim",
     },
   ];
 
@@ -121,13 +132,22 @@ const Awards = () => {
             className="w-[300px] flex flex-col gap-[12px] shrink-0 bg-white rounded-[20px] "
           >
             <div
-              className="bg-border_dark w-full h-[570px] rounded-[20px]"
-              style={{ backgroundImage: `url(${award.img})`, backgroundSize: "300px 570px" }}
+              className="bg-border_dark w-full h-[570px] rounded-[20px] relative"
+              style={{
+                backgroundImage: `url(${award.img})`,
+                backgroundSize: "300px 570px",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
             />
+
             <div className="flex flex-col gap-[15px] px-[15px] pb-[5px] ">
               <h2 className="text-text_black_primary font-bold text-[24px] font-special">
                 {award.title}
               </h2>
+              <h3 className="text-border_dark font-regular text-[12px] font-bold">
+                {award.authors}
+              </h3>
               <h3 className="text-border_dark font-regular text-[12px] font-bold">{award.year}</h3>
             </div>
           </div>
@@ -145,34 +165,16 @@ const Awards = () => {
 const Completed = () => {
   const projects = [
     {
-      title: "Project Name",
-      desc: "Description goes here upto two lines max",
-      year: 2023,
-      img: "/img/projects/military_backpack.png",
+      title: "Food Waste Disposer Accessibility Kit",
+      desc: "Development of a kit to improve accessibility for installing food waste disposers and to check installation feasibility",
+      year: "09/2023-03/2024",
+      img: "/img/projects/completed/food_waste_disposer_accesibility_kit.png",
     },
     {
-      title: "Project Name",
-      desc: "Description goes here upto two lines max",
-      year: 2023,
-      img: "/img/projects/military_backpack.png",
-    },
-    {
-      title: "Project Name",
-      desc: "Description goes here upto two lines max",
-      year: 2023,
-      img: "/img/projects/military_backpack.png",
-    },
-    {
-      title: "Project Name",
-      desc: "Description goes here upto two lines max",
-      year: 2023,
-      img: "/img/projects/military_backpack.png",
-    },
-    {
-      title: "Project Name",
-      desc: "Description goes here upto two lines max",
-      year: 2023,
-      img: "/img/projects/military_backpack.png",
+      title: "UMAY",
+      desc: "Data-base Dysphagia rehabilitation training device and Gamified UI Design",
+      year: "2020-2023",
+      img: "/img/projects/completed/umay.png",
     },
   ];
 
@@ -209,7 +211,10 @@ const Completed = () => {
               }}
             >
               {/* Dark Overlay */}
-              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+              <div
+                className="absolute inset-0 bg-black rounded-[20px]"
+                style={{ background: "linear-gradient(180deg, #32323200 0%, #323232FF 100%)" }}
+              ></div>
               {/* Dark Overlay */}
               <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
                 <div>

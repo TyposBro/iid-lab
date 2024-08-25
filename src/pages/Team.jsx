@@ -135,22 +135,22 @@ const CurrentTeam = () => {
 const Alumni = () => {
   const members = [
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
-      name: "JungSu",
+      img: "/img/people/alumni/joongsoo_kim.png",
+      name: "Joongsoo Kim",
       role: "Masters",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      bio: "Joongsoo Kim is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
-      name: "Tufail",
+      img: "/img/people/alumni/alisher_saduakas.png",
+      name: "Alisher Saduakas",
       role: "Masters",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      bio: "Alisher Saduakas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
-      name: "Donierbek",
-      role: "Undergraduate",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      img: "/img/people/alumni/muhammad_tufail.png",
+      name: "Muhammad Tufail",
+      role: "PhD",
+      bio: "Muhammad Tufail is a PhD student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
   ];
 
