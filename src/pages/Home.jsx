@@ -1,14 +1,20 @@
+import { useRef } from "react";
+import { useNavigate } from "react-router";
+
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
-import { Down_left_dark_arrow, Up_right_neutral_arrow, Down_right_light_arrow } from "assets/";
-import { useRef } from "react";
+
+import PropTypes from "prop-types";
+
+import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
 
 export const Home = () => {
   const ref = useRef(null);
+  const navigate = useNavigate();
 
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
-      <Intro />
+    <div className="w-full h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px] no-scrollbar">
+      <Intro navigate={navigate} />
       <div className="w-full my-[30px]">
         <LiteYouTubeEmbed
           id="s5vJO6vUeaM" // Default none, id of the video or playlist
@@ -37,10 +43,13 @@ export const Home = () => {
 
 export default Home;
 
-const Intro = () => {
+const Intro = ({ navigate }) => {
   return (
     <div className="w-full flex flex-col">
-      <div className="w-full h-[465px] bg-border_dark rounded-[30px]"></div>
+      <div
+        className="w-full h-[210px] bg-border_dark rounded-[30px]"
+        style={{ backgroundImage: `url(/img/home/home_intro.png)`, backgroundSize: "100% 210px" }}
+      ></div>
       <div className="w-full flex flex-col gap-[30px]">
         <div className="flex flex-col gap-[8px]">
           <h1 className="font-special text-text_black_primary text-[48px] font-bold">
@@ -53,11 +62,17 @@ const Intro = () => {
           </h3>
         </div>
         <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
-          <button className="w-full h-[50px] flex justify-center items-center gap-[10px] border-primary_main bg-primary_main rounded-[15px] border-2 border-solid text-text_white_primary">
-            Publications <Up_right_neutral_arrow />
+          <button
+            className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid active:bg-primary_main active:text-white active:border-primary_main"
+            onClick={() => navigate("/projects")}
+          >
+            Projects
           </button>
-          <button className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid ">
-            Achievements
+          <button
+            className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid active:bg-primary_main active:text-white active:border-primary_main"
+            onClick={() => navigate("/publications")}
+          >
+            Publications
           </button>
         </div>
       </div>
@@ -65,18 +80,22 @@ const Intro = () => {
   );
 };
 
+Intro.propTypes = {
+  navigate: PropTypes.func.isRequired,
+};
+
 const Prof = () => {
   const prof = {
     img: "/img/people/director/prof.png",
     name: "Professor KwanMyung Kim",
     role: "Lab Director",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Urna porttitor rhoncus dolor purus non. Turpis massa sed elementum tempus egestas sed. Habitant morbi tristique senectus et netus et malesuada fames ac.",
+    desc: "Dr. KwanMyung Kim, a full professor and director of IIDL, has 14 years of industry experience. He integrates design and engineering, focusing on elderly care, rehabilitation, and healthcare. He's also the CEO of ID SPACE Corp. and has held key academic roles, including Dean and journal editor.",
   };
 
   return (
     <div className="my-[30px] w-full flex flex-col gap-[30px]">
       <div
-        className="w-[240px] h-[300px] rounded-[30px]"
+        className="w-[240px] h-[300px] rounded-[30px] mx-auto"
         style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
       ></div>
       <div className="w-full flex flex-col gap-[5px]">
@@ -87,36 +106,69 @@ const Prof = () => {
         <h3 className="font-regular text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
       <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
-        <button className="w-full h-[50px] border-primary_main bg-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-text_white_primary">
-          Publications
-        </button>
-        <button className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main ">
-          Achievements
-        </button>
+        <a
+          href="https://iidl.unist.ac.kr/Profiles/index.html"
+          target="_blank"
+          className="w-full h-[50px] border-primary_main bg-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-text_white_primary no-underline"
+        >
+          CV
+        </a>
+        <a
+          className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main  no-underline"
+          href="#contact"
+        >
+          Contact
+        </a>
       </div>
     </div>
   );
 };
+
 const Members = () => {
   const members = [
-    { img: "", name: "Ulugbek", role: "PhD Candidate" },
-    { img: "", name: "Daehun Lee", role: "PhD Candidate" },
-    { img: "", name: "John Doe", role: "Masters" },
-    { img: "", name: "John Boe", role: "Masters" },
+    {
+      img: "/img/people/current/ulugbek_ismatullaev.png",
+      name: "Ulugbek Ismatullaev",
+      role: "PhD Candidate",
+    },
+    { img: "/img/people/current/daehun_lee_home.png", name: "Daehun Lee", role: "PhD Candidate" },
+    { img: "/img/people/current/haebin_lee.png", name: "Haebin Lee", role: "PhD Candidate" },
+    {
+      img: "/img/people/current/danyal_sarfraz.png",
+      name: "Danyal Sarfraz",
+      role: "Masters Researcher",
+    },
+    {
+      img: "/img/people/current/jonghyun_kim.png",
+      name: "Jonghyun Kim",
+      role: "Masters Researcher",
+    },
+    {
+      img: "/img/people/current/donierbek_abdurakhimov.png",
+      name: "Donierbek Abdurakhimov",
+      role: "Intern",
+    },
   ];
 
   return (
-    <div className="w-full my-[30px] flex flex-col gap-[30px] ">
-      <div className="flex flex-col gap-[10px]">
-        <Down_right_light_arrow className="w-[34px] h-[34px]" alt="down right light arrow icon" />
+    <div className="w-dvw my-[30px] shrink-0 flex flex-col gap-[30px] ">
+      <div className="flex flex-col gap-[10px] px-[25px]">
         <h1 className="text-[42px] text-text_black_primary font-light font-super_special leading-[46px] ">
           Team Members
         </h1>
       </div>
-      <div className="w-full flex flex-row gap-[10px] overflow-x-scroll">
+      <div className="w-full flex flex-row gap-[10px] overflow-x-scroll px-[25px]">
         {members.map((member) => (
           <div key={member.name} className="w-full flex flex-col gap-[14px]">
-            <div className="w-[170px] h-[270px] rounded-[20px] bg-border_dark shrink-0"></div>
+            <div
+              className="w-[170px] h-[270px] rounded-[20px] bg-border_dark shrink-0"
+              style={{
+                backgroundImage: `url(${member.img})`,
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }}
+            ></div>
             <div className="flex flex-col gap-[4px] font-regular">
               <h2 className="font-bold text-[18px] text-text_black_primary">{member.name}</h2>
               <h3 className="font-regular font-normal text-[12px] text-text_black_primary">
@@ -126,10 +178,14 @@ const Members = () => {
           </div>
         ))}
       </div>
-      <button className="flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main ">
+      <a
+        className="flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main  no-underline"
+        href="/team#alumni"
+        target="_blank"
+      >
         <span>View Past Members</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      </a>
     </div>
   );
 };
@@ -137,23 +193,23 @@ const Projects = () => {
   const projects = [
     {
       title: "Military Backpack",
-      desc: "Description goes here up to two lines max",
-      img: "/img/projects/military_backpack.png",
+      desc: "Military Backpack and Frame Design for effective Weight Distribution System",
+      img: "/img/projects/current/military_backpack.png",
     },
     {
       title: "LG Hower Gym",
       desc: "Description goes here up to two lines max",
-      img: "/img/projects/lg_hower_gym.png",
+      img: "/img/projects/current/lg_hower_gym.png",
     },
     {
       title: "Military Sleeping Bag",
-      desc: "Description goes here up to two lines max",
+      desc: "Winter sleeping bag for Special Forces",
       img: "/img/projects/military_sleeping_bag1.png",
     },
     {
       title: "Lemmy - AI Based Robot",
-      desc: "Description goes here up to two lines max",
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      desc: "Elderly care robot-service system",
+      img: "/img/projects/current/lemmy_ai_based_robot.png",
     },
   ];
 
@@ -164,9 +220,10 @@ const Projects = () => {
           Current Projects
         </h2>
         <h3 className="text-text_white_secondary font-regular font-light text-[12px]">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Non deserunt quibusdam ipsum
-          illum consequuntur autem, ratione error quidem esse velit nam, laborum nesciunt expedita
-          quos magni quae, cumque temporibus magnam!
+          We create innovative design concepts through systematic, human-centered methods,
+          developing them into products and services using engineering design. Our focus is on
+          elderly care, rehabilitation, healthcare, and safety, and we collaborate closely with
+          experts in medicine, geriatrics, physical therapy, materials, and production.
         </h3>
       </div>
 
@@ -174,9 +231,13 @@ const Projects = () => {
         {projects[0] && (
           <div className="w-full relative">
             <div
-              className="bg-border_dark w-full h-[270px] rounded-[20px]"
+              className="bg-border_dark w-full h-[270px] rounded-[20px] relative"
               style={{ backgroundImage: `url(${projects[0].img})`, backgroundSize: "cover" }}
-            ></div>
+            >
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+              {/* Dark Overlay */}
+            </div>
             <div className="absolute bottom-[20px] left-[20px] ">
               <h2 className="text-text_white_primary font-bold text-[24px] font-special">
                 {projects[0].title}
@@ -187,13 +248,17 @@ const Projects = () => {
             </div>
           </div>
         )}
-        <div className="w-full flex gap-[15px] overflow-x-auto">
+        <div className="w-full flex gap-[15px] overflow-x-auto relative">
           {projects.slice(1, -1).map((project) => (
             <div key={project.title} className="w-full relative">
               <div
                 className="bg-border_dark w-full h-[270px] rounded-[20px]"
                 style={{ backgroundImage: `url(${project.img})`, backgroundSize: "cover" }}
-              ></div>
+              >
+                {/* Dark Overlay */}
+                <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+                {/* Dark Overlay */}
+              </div>
               <div className="absolute bottom-[20px] left-[20px] ">
                 <h2 className="text-text_white_primary font-bold text-[24px] font-special">
                   {project.title}
@@ -209,8 +274,17 @@ const Projects = () => {
           <div className="w-full relative">
             <div
               className="bg-border_dark w-full h-[270px] rounded-[20px]"
-              style={{ backgroundImage: `url(${projects.at(-1).img})`, backgroundSize: "cover" }}
-            ></div>
+              style={{
+                backgroundImage: `url(${projects.at(-1).img})`,
+                backgroundSize: "100% 270px",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+              {/* Dark Overlay */}
+            </div>
             <div className="absolute bottom-[20px] left-[20px] ">
               <h2 className="text-text_white_primary font-bold text-[24px] font-special">
                 {projects.at(-1).title}
@@ -223,10 +297,14 @@ const Projects = () => {
         )}
       </div>
 
-      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] ">
+      <a
+        className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] "
+        href="/projects#completed"
+        target="_blank"
+      >
         <span>Completed Projects</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      </a>
     </div>
   );
 };
@@ -234,66 +312,55 @@ const Journal = () => {
   const journalPapers = [
     {
       title:
+        "Interdisciplinary Co-Design Research Practice in the Rehabilitation of Elderly Individuals with Chronic Low Back Pain from a Senior Care Center in South Korea",
+      authors: ["M. Tufail", "HB Lee", "YG Moon", "H. Kim", "KM. Kim"],
+      year: "2022",
+      conference: "Applied Sciences",
+      link: "https://www.mdpi.com/2076-3417/12/9/4687",
+      color: "#08DBE9",
+    },
+    {
+      title:
+        "How do visitors perceive the significance of tangible cultural heritage through a 3D reconstructed immersive visual experience at the Seokguram Grotto, South Korea?",
+      authors: ["M. Tufail", "J. Park", "H. Kim", "S. Kim", "KM. Kim"],
+      year: "2022",
+      conference: "Journal of Heritage Tourism",
+      link: "https://www.tandfonline.com/doi/full/10.1080/1743873X.2022.2039672",
+      color: "#6E95E0",
+    },
+    {
+      title:
         "Comparison of three different types of exercises for selective contractions of supra- and infrahyoid muscles",
-      authors: ["M. Tufail", "HB Lee", "YG Moon H.", "Kim", "M. Kim"],
+      authors: ["MC. Chang", "S. Park", "JY. Cho", "BJ. Lee", "JM. Hwang", "KM. Kim", "D. Park"],
       year: "2021",
-      conference: "IASDR",
-      color: "#08DBE9",
-    },
-    {
-      title:
-        "The Design of Rehabilitation Device for Upper Limb After Stroke Using an Integrated Design Process, December 2021 HongKong",
-      authors: ["Jaehan Park", "M. Tufail", "HB. Lee", "KM. Kim"],
-      year: "2021",
-      conference: "IASDR",
-      color: "#08DBE9",
-    },
-    {
-      title:
-        "Classification of Transformable Products based on Changes in Product Form and Function,Virtual Conference, Sweden",
-      authors: ["Haebin Lee", "M. Tufail", "KwanMyung Kim"],
-      year: "2021",
-      conference: "ICED",
+      conference: "Science Reports",
+      link: "https://www.nature.com/articles/s41598-021-86502-w",
       color: "#476BE8",
     },
 
     {
       title:
-        "Integrated Keyword Mapping Process: Bridging User Research to Style Concept Development ,Virtual Conference, USA",
-      authors: ["Sangjin Joo", "Dabin Lee", "Soyoon Park", "Hwang Kim", "KwanMyung Kim"],
-      year: "2020",
-      conference: "AHFE",
+        "The Effect of Lumbar Erector Spinae Muscle Endurance Exercise on Perceived Low-back Pain in Older Adults",
+      authors: ["M. Tufail", "HB. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
+      year: "2021",
+      conference: "Physical Activity Review",
+      link: "https://www.physactiv.eu/wp-content/uploads/2021/05/2021_929.pdf",
       color: "#AF3BE7",
     },
     {
       title:
-        "Rehabilitation Design Intervention for Older Adult Women through Community-based Co-Design Activities , Manchester, United Kingdom",
-      authors: ["M. Tufail", "YG. Moon", "KM. Kim"],
-      year: "2019",
-      conference: "IASDR",
+        "Effects of standing exercise tasks with a sloped surface intervention on trunk muscle activation and low-back pain intensity in women aged ≥ 70 years",
+      authors: ["M. Tufail", "HB. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
+      year: "2021",
+      conference: "HFE",
+      link: "https://www.inderscience.com/offers.php?id=118217",
       color: "#2BC04C",
-    },
-    {
-      title:
-        "Discomfort with Low-back Pain Relief Exercise Training for Older Adult Women , Washington, USA",
-      authors: ["M. Tufail", "S. Park", "HB. Lee", "YG. Moon", "KM. Kim"],
-      year: "2019",
-      conference: "AHFE",
-      color: "#6E95E0",
-    },
-    {
-      title:
-        "A Critical Usability Problem-Solving Case of MazeCube Through Design Exploration Based on Scientific Experiments , Washington, USA",
-      authors: ["Jihyeon Yang", "Hwisu Jeon", "M. Tufail", "KM. Kim"],
-      year: "2019",
-      conference: "AHFE",
-      color: "#EA37CE",
     },
   ];
 
   return (
-    <div className="w-dvw px-[25px] py-[30px] flex flex-col gap-[30px] bg-primary_main">
-      <div className="flex flex-col gap-[20px]">
+    <div className="w-dvw py-[30px] flex flex-col gap-[30px] bg-primary_main">
+      <div className="flex flex-col gap-[20px] px-[25px]">
         <h2 className="text-5xl font-super_special text-text_white_primary leading-[48px] tracking-normal">
           Journal Papers
         </h2>
@@ -306,69 +373,107 @@ const Journal = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-[10px]">
+      <div className="px-[25px] flex gap-[10px] overflow-x-scroll">
         {journalPapers.map((paper) => (
           <div
             key={paper.title}
             className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-text_black_primary "
           >
-            <h3 className="text-[18px] font-regular font-normal text-text_white_primary">
+            <a
+              className="text-[16px] font-regular font-normal text-text_white_primary underline break-words"
+              href={paper.link}
+              target="_blank"
+              rel="noreferrer"
+            >
               {paper.title}
-            </h3>
-            <div className="flex justify-between">
+            </a>
+            <div className="flex justify-between items-end">
               <div
-                className={`flex flex-col text-[14px] font-regular font-semibold`}
+                className="flex flex-col text-[14px] font-regular font-semibold grow shrink-0"
                 style={{ color: paper.color }}
               >
                 {paper.authors.map((author) => (
-                  <span key={author}>{author}</span>
+                  <div key={author}>{author}</div>
                 ))}
               </div>
-              <div className="flex flex-col font-special text-[20px]">
-                <span className=" text-text_white_tertiary font-normal"> {paper.year} </span>
-                <span className="font-bold text-text_white_primary "> {paper.conference} </span>
+              <div className="flex flex-col justify-end font-special text-[20px]">
+                <div className="text-text_white_tertiary font-normal text-right">{paper.year}</div>
+                <div className="font-bold text-text_white_primary break-words text-right">
+                  {paper.conference}
+                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] ">
-        <span>All Journal Papers</span>
-        <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      <div className="w-full px-[25px]">
+        <a
+          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] "
+          href="/publications#journal"
+        >
+          <span>All Journal Papers</span>
+          <Up_right_neutral_arrow alt="up right light arrow icon" />
+        </a>
+      </div>
     </div>
   );
 };
 const Conference = () => {
-  const journalPapers = [
+  const conferencePapers = [
     {
-      title: "Understanding Detail Phase using 3D CAD: A case study on Anybaro",
-      authors: ["M Gabbas", "KM. Kim"],
-      year: "2021",
-      conference: "IASDR",
+      title:
+        "Introducing a framework to translate user scenarios into engineering specifications with “action steps”",
+      authors: ["Ulugbek Ismatullaev", "KM. Kim"],
+      year: "2024",
+      conference: "DESIGN CONFERENCE",
+      location: "Dubrovnik, Croatia",
       color: "#10719A",
+      link: "https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/introducing-a-framework-to-translate-user-scenarios-into-engineering-specifications-with-action-steps/21306D946ED8FF4C56AEC995CAE50768",
     },
     {
       title:
-        "The Design of Rehabilitation Device for Upper Limb After Stroke Using an Integrated Design Process, December 2021 HongKong",
-      authors: ["Jaehan Park", "M. Tufail", "HB. Lee", "KM. Kim"],
-      year: "2021",
+        "Exercise Characteristics of Older Adults and Considerations for Exercise Equipment Design for them",
+      authors: ["J. Kim", "A. Saduakas", "U. Ismatullaev", "D. Lee", "BB. Garza", "KM. Kim"],
+      year: "2023",
       conference: "IASDR",
+      location: "Milan, Italy",
       color: "#003152",
+      link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/223/",
+    },
+    {
+      title: "Dynamic personalities for elderly care robots: user-based recommendations",
+      authors: ["D. Lee", "A. Saduakas", "U. Ismatullaev", "BB. Garza", "J. Kim", "KM. Kim"],
+      year: "2023",
+      conference: "IASDR",
+      location: "Milan, Italy",
+      color: "#03ADBB",
+      link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/210/",
+    },
+
+    {
+      title: "Human Factors Considerations in Design for the Elderly",
+      authors: ["U. Ismatullaev", "A. Saduakas", "KM. Kim"],
+      year: "2022",
+      conference: "AHFE",
+      location: "New York, USA",
+      color: "#03ADBB",
+      link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
     },
     {
       title:
-        "Classification of Transformable Products based on Changes in Product Form and Function,Virtual Conference, Sweden",
-      authors: ["Haebin Lee", "M. Tufail", "KwanMyung Kim"],
-      year: "2021",
-      conference: "ICED",
+        "Addressing the Gaps in Elderly Falling Prevention from the Perspective of a Human-Centered Design.",
+      authors: ["A. Saduakas", "U. Ismatullaev", "KM. Kim"],
+      year: "2022",
+      conference: "AHFE",
+      location: "New York, USA",
       color: "#03ADBB",
+      link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
     },
   ];
 
   return (
-    <div className="w-dvw px-[25px] py-[30px] flex flex-col gap-[30px]">
-      <div className="flex flex-col gap-[20px]">
+    <div className="w-dvw py-[30px] flex flex-col gap-[30px]">
+      <div className="flex flex-col gap-[20px] px-[25px]">
         <h2 className="flex items-end text-5xl font-super_special text-text_black_primary leading-[48px] tracking-normal">
           <span>Conference Papers</span>
           <Down_left_dark_arrow className="size-[51px]" />
@@ -382,16 +487,21 @@ const Conference = () => {
           </button>
         </div>
       </div>
-      <div className="flex gap-[10px]">
-        {journalPapers.map((paper) => (
+      <div className="px-[25px] flex gap-[10px] overflow-x-scroll">
+        {conferencePapers.map((paper) => (
           <div
             key={paper.title}
             className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-[#C1EDFF] "
           >
-            <h3 className="text-[18px] font-regular font-normal text-text_black_primary">
+            <a
+              className="text-[18px] font-regular font-normal text-text_black_primary underline break-words"
+              href={paper.link}
+              target="_blank"
+              rel="noreferrer"
+            >
               {paper.title}
-            </h3>
-            <div className="flex justify-between">
+            </a>
+            <div className="flex justify-between items-end">
               <div
                 className="flex flex-col text-[14px] font-regular font-semibold"
                 style={{ color: paper.color }}
@@ -400,18 +510,24 @@ const Conference = () => {
                   <span key={author}>{author}</span>
                 ))}
               </div>
-              <div className="flex flex-col font-special text-[20px]">
+              <div className="flex flex-col font-special text-[20px] text-right">
                 <span className=" text-text_black_primary font-normal"> {paper.year} </span>
                 <span className="font-bold text-text_black_primary "> {paper.conference} </span>
+                <span className="text-text_black_primary font-normal"> {paper.location} </span>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] ">
-        <span>All Conference Papers</span>
-        <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </button>
+      <div className="w-full px-[25px]">
+        <a
+          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] "
+          href="/publications#conference"
+        >
+          <span>All Conference Papers</span>
+          <Up_right_neutral_arrow alt="up right light arrow icon" />
+        </a>
+      </div>
     </div>
   );
 };

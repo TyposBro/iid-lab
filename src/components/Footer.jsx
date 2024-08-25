@@ -8,7 +8,10 @@ import {
 
 export const Footer = () => {
   return (
-    <footer className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] font-regular">
+    <footer
+      id="contact"
+      className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] font-regular"
+    >
       <div className="flex flex-row justify-between items-center gap-[20px]">
         <div className="flex flex-col items-start gap-[10px]">
           <Down_right_dark_arrow className="w-[66px] h-[66px]" />
@@ -22,19 +25,28 @@ export const Footer = () => {
         </div>
       </div>
       <div className="flex flex-col items-start gap-[10px] text-text_white_secondary">
-        <div className="flex items-center gap-[10px]">
+        <a
+          className="flex items-center gap-[10px]"
+          href="https://map.naver.com/p/search/UNIST/place/16601096?c=18.34,0,0,0,dh"
+          target="_blank"
+          rel="noreferrer"
+        >
           <Footer_location className="w-6 h-6" />
           <p className="text-sm">
             #904 Room, 104 Building, UNIST, 50-gil, Eonyang-eup, Ulju-gun, Ulsan, S.Korea
           </p>
-        </div>
+        </a>
         <div className="flex items-center gap-[10px]">
           <Footer_phone className="w-6 h-6" />
-          <p className="text-sm">+82-52-217-2714</p>
+          <a className="text-sm" href="tel:+82-52-217-2714">
+            +82-52-217-2714
+          </a>
         </div>
         <div className="flex items-center gap-[10px] ">
           <Footer_email className="w-6 h-6" />
-          <p className="text-sm">kmyung@unist.ac.kr</p>
+          <a className="text-sm" href="mailto:kmyung@unist.ac.kr">
+            kmyung@unist.ac.kr
+          </a>
         </div>
       </div>
       <Footer_logo alt="" />

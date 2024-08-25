@@ -8,10 +8,15 @@ const Card = ({ title, subtitle, bg }) => {
         style={{
           background: `url(${bg})`,
           backgroundSize: "100% 200px",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
+        <div
+          className="absolute inset-0 bg-black rounded-[20px]"
+          style={{ background: "linear-gradient(180deg, #32323200 0%, #323232FF 100%)" }}
+        ></div>
         {/* Dark Overlay */}
         <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
           <div>

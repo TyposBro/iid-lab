@@ -9,7 +9,12 @@ const AccordionCard = ({ title, subtitle, desc, bg }) => {
     <div key={title} className="w-full relative " onClick={() => setExpanded((prev) => !prev)}>
       <div
         className="bg-border_dark w-full h-[200px] rounded-[20px] relative "
-        style={{ backgroundImage: `url(${bg})`, backgroundSize: "cover" }}
+        style={{
+          backgroundImage: `url(${bg})`,
+          backgroundSize: "100% 200px",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-10 rounded-[20px]"></div>
@@ -22,7 +27,7 @@ const AccordionCard = ({ title, subtitle, desc, bg }) => {
             </h3>
           </div>
           <Down_straight_neutral_arrow
-            className={`size-[27px] transform origin-center transition duration-500 ease-out ${
+            className={`size-[27px] transform origin-center transition duration-500 ease-out text-primary_main ${
               expanded ? "rotate-180" : ""
             }`}
           />
