@@ -19,7 +19,7 @@ const Prof = () => {
     img: "/img/people/director/prof_team.png",
     name: "Professor KwanMyung Kim",
     role: "Lab Director",
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Urna porttitor rhoncus dolor purus non. Turpis massa sed elementum tempus egestas sed. Habitant morbi tristique senectus et netus et malesuada fames ac.",
+    desc: "Dr. KwanMyung Kim is a full professor in Department of Design and the director of Integration and Innovation Design Lab (IIDL). He was a Dean of Graduate School of Creative Design Engineering during 2016-2020. He serves as an editor for Archives of Design Research and ICONARP International Journal of Architecture and Planning. He is also a CEO of ID SPACE Corp., a start-up company that commercializes academic research outcomes. Before joining UNIST, he worked in industry for 14 years as a product designer/engineer. With his strong practical knowdge and experience he persues to integrate design and engineering, and industry and academic knowledge in the major IIDL’s research domains including Design for Elderly, Rehabilitation and Health Care.",
   };
 
   return (
@@ -36,12 +36,20 @@ const Prof = () => {
         <h3 className="font-regular text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
       <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
-        <button className="w-full h-[50px] flex justify-center items-center gap-[10px] border-primary_main bg-primary_main rounded-[15px] border-2 border-solid text-text_white_primary">
+        <a
+          className="w-full h-[50px] flex justify-center items-center gap-[10px] border-primary_main bg-primary_main rounded-[15px] border-2 border-solid text-text_white_primary"
+          href="https://iidl.unist.ac.kr/Profiles/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           CV <Up_right_neutral_arrow />
-        </button>
-        <button className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main ">
-          Achievements
-        </button>
+        </a>
+        <a
+          className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main "
+          href="mailto:kmyung@unist.ac.kr"
+        >
+          Contact
+        </a>
       </div>
     </div>
   );
@@ -50,40 +58,35 @@ const Prof = () => {
 const CurrentTeam = () => {
   const members = [
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      img: "/img/people/current/haebin_lee.png",
       name: "Haebin Lee",
       role: "PhD Candidate",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      bio: "Haebin Lee is a PhD Candidate in the Design Department at UNIST. He has done Master of Science in Industrial Design from Department of Industrial Design at Ulsan National Institute of Science & Technology (UNIST), Ulsan, South Korea. His main research interest is combining Design and Engineerig for new product design. Currently, he is pursuing his PhD research in Transformable Design using Design and Mechanical Engineering.",
     },
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
+      img: "/img/people/current/ulugbek_ismatullaev.png",
       name: "Ulugbek Ismatullaev",
       role: "PhD Candidate",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      bio: "Ulugbek Ismatullaev is a PhD Candidate in the Design Department at UNIST. He completed his Master's degree in Industrial Engineering at the Kumoh National Institute of Technology (KIT) in Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. His current research focuses on developing design methods and tools to translate user scenarios into engineering specifications.",
     },
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
-      name: "Daehun Lee",
-      role: "PhD Candidate",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
-    },
-    {
-      img: "/img/projects/lemmy_ai_based_robot.png",
-      name: "Danyal Sarfraz",
+      img: "/img/people/current/danyal_sarfraz.png",
+      name: "Danial Sarfraz",
       role: "Masters",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      bio: "Danyal Sarfraz is a Masters student from Pakistan specializing in implementation of 3D and VR/XR technology in industrial design. He received his BS in Industrial Design from Pakistan’s most prestigious university, NUST.",
     },
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
-      name: "Jounghyun Kim",
+      img: "/img/people/current/jonghyun_kim.png",
+      name: "JoungHyun Kim",
       role: "Masters",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      bio: "JoungHyun Kim is a combined Master's-PhD student in the Design Department at UNIST. She is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
+
     {
-      img: "/img/projects/lemmy_ai_based_robot.png",
-      name: "Donierbek",
-      role: "Masters",
-      bio: "Ulugbek Ismatullaev has completed his Master's degree in Industrial Engineering from Kumoh National Institute of Technology (KIT), Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. He aims to improve Human-AI collaboration through considering Human Factors and Ergonomics challenges.",
+      img: "/img/people/current/donierbek_abdurakhimov.png",
+      name: "Donierbek Abdurakhimov",
+      role: "Undergraduate Intern",
+      bio: "Donierbek is doing Bachelor of Science in Industrial design in UNIST. His main interest is designing products that are both comfortable to use and have a unique appearance design.",
     },
   ];
 
