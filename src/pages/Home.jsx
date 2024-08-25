@@ -402,38 +402,67 @@ const Journal = () => {
         ))}
       </div>
       <div className="w-full px-[25px]">
-        <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] ">
+        <a
+          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] "
+          href="/publications#journal"
+        >
           <span>All Journal Papers</span>
           <Up_right_neutral_arrow alt="up right light arrow icon" />
-        </button>
+        </a>
       </div>
     </div>
   );
 };
 const Conference = () => {
-  const journalPapers = [
+  const conferencePapers = [
     {
-      title: "Understanding Detail Phase using 3D CAD: A case study on Anybaro",
-      authors: ["M Gabbas", "KM. Kim"],
-      year: "2021",
-      conference: "IASDR",
+      title:
+        "Introducing a framework to translate user scenarios into engineering specifications with “action steps”",
+      authors: ["Ulugbek Ismatullaev", "KM. Kim"],
+      year: "2024",
+      conference: "DESIGN CONFERENCE",
+      location: "Dubrovnik, Croatia",
       color: "#10719A",
+      link: "https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/introducing-a-framework-to-translate-user-scenarios-into-engineering-specifications-with-action-steps/21306D946ED8FF4C56AEC995CAE50768",
     },
     {
       title:
-        "The Design of Rehabilitation Device for Upper Limb After Stroke Using an Integrated Design Process, December 2021 HongKong",
-      authors: ["Jaehan Park", "M. Tufail", "HB. Lee", "KM. Kim"],
-      year: "2021",
+        "Exercise Characteristics of Older Adults and Considerations for Exercise Equipment Design for them",
+      authors: ["J. Kim", "A. Saduakas", "U. Ismatullaev", "D. Lee", "BB. Garza", "KM. Kim"],
+      year: "2023",
       conference: "IASDR",
+      location: "Milan, Italy",
       color: "#003152",
+      link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/223/",
+    },
+    {
+      title: "Dynamic personalities for elderly care robots: user-based recommendations",
+      authors: ["D. Lee", "A. Saduakas", "U. Ismatullaev", "BB. Garza", "J. Kim", "KM. Kim"],
+      year: "2023",
+      conference: "IASDR",
+      location: "Milan, Italy",
+      color: "#03ADBB",
+      link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/210/",
+    },
+
+    {
+      title: "Human Factors Considerations in Design for the Elderly",
+      authors: ["U. Ismatullaev", "A. Saduakas", "KM. Kim"],
+      year: "2022",
+      conference: "AHFE",
+      location: "New York, USA",
+      color: "#03ADBB",
+      link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
     },
     {
       title:
-        "Classification of Transformable Products based on Changes in Product Form and Function,Virtual Conference, Sweden",
-      authors: ["Haebin Lee", "M. Tufail", "KwanMyung Kim"],
-      year: "2021",
-      conference: "ICED",
+        "Addressing the Gaps in Elderly Falling Prevention from the Perspective of a Human-Centered Design.",
+      authors: ["A. Saduakas", "U. Ismatullaev", "KM. Kim"],
+      year: "2022",
+      conference: "AHFE",
+      location: "New York, USA",
       color: "#03ADBB",
+      link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
     },
   ];
 
@@ -454,15 +483,20 @@ const Conference = () => {
         </div>
       </div>
       <div className="px-[25px] flex gap-[10px] overflow-x-scroll">
-        {journalPapers.map((paper) => (
+        {conferencePapers.map((paper) => (
           <div
             key={paper.title}
             className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-[#C1EDFF] "
           >
-            <h3 className="text-[18px] font-regular font-normal text-text_black_primary">
+            <a
+              className="text-[18px] font-regular font-normal text-text_black_primary underline break-words"
+              href={paper.link}
+              target="_blank"
+              rel="noreferrer"
+            >
               {paper.title}
-            </h3>
-            <div className="flex justify-between">
+            </a>
+            <div className="flex justify-between items-end">
               <div
                 className="flex flex-col text-[14px] font-regular font-semibold"
                 style={{ color: paper.color }}
@@ -471,19 +505,23 @@ const Conference = () => {
                   <span key={author}>{author}</span>
                 ))}
               </div>
-              <div className="flex flex-col font-special text-[20px]">
+              <div className="flex flex-col font-special text-[20px] text-right">
                 <span className=" text-text_black_primary font-normal"> {paper.year} </span>
                 <span className="font-bold text-text_black_primary "> {paper.conference} </span>
+                <span className="text-text_black_primary font-normal"> {paper.location} </span>
               </div>
             </div>
           </div>
         ))}
       </div>
       <div className="w-full px-[25px]">
-        <button className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] ">
+        <a
+          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] "
+          href="/publications#conference"
+        >
           <span>All Conference Papers</span>
           <Up_right_neutral_arrow alt="up right light arrow icon" />
-        </button>
+        </a>
       </div>
     </div>
   );
