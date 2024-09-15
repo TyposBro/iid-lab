@@ -70,13 +70,13 @@ const Intro = ({ navigate }) => {
         </div>
         <div className="flex flex-col gap-[10px] font-semibold text-[18px] ">
           <button
-            className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid active:bg-primary_main active:text-white active:border-primary_main"
+            className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main  no-underline active:bg-primary_main active:text-white active:border-primary_main"
             onClick={() => navigate("/projects")}
           >
             Projects
           </button>
           <button
-            className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid active:bg-primary_main active:text-white active:border-primary_main"
+            className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main  no-underline active:bg-primary_main active:text-white active:border-primary_main"
             onClick={() => navigate("/publications")}
           >
             Publications
@@ -116,12 +116,12 @@ const Prof = () => {
         <a
           href="https://iidl.unist.ac.kr/Profiles/index.html"
           target="_blank"
-          className="w-full h-[50px] border-primary_main bg-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-text_white_primary no-underline"
+          className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main  no-underline active:bg-primary_main active:text-white active:border-primary_main"
         >
           CV
         </a>
         <a
-          className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main  no-underline"
+          className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main  no-underline active:bg-primary_main active:text-white active:border-primary_main"
           href="#contact"
         >
           Contact
