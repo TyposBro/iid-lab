@@ -8,7 +8,7 @@ export const Publications = () => {
         "Interdisciplinary Co-Design Research Practice in the Rehabilitation of Elderly Individuals with Chronic Low Back Pain from a Senior Care Center in South Korea",
       journal: "Applied Sciences",
       year: 2022,
-      authors: "M. Tufail, H. Lee, YG. Moon, H. Kim,KM. Kim",
+      authors: ["M. Tufail", "H. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
       link: "https://www.mdpi.com/2076-3417/12/9/4687",
     },
     {
@@ -16,7 +16,7 @@ export const Publications = () => {
         "How do visitors perceive the significance of tangible cultural heritage through a 3D reconstructed immersive visual experience at the Seokguram Grotto, South Korea?",
       journal: "Science Reports",
       year: 2022,
-      authors: "MC Chang, SW Park, JY Cho, BJ Lee, JM Hwang, KM Kim & DH Park",
+      authors: ["MC Chang", "SW Park", "JY Cho", "BJ Lee", "JM Hwang", "KM Kim & DH Park"],
       link: "https://www.tandfonline.com/doi/full/10.1080/1743873X.2022.2039672",
     },
   ];
@@ -163,7 +163,9 @@ const PublicationList = ({ title, bg, buttonColor, iconColor, buttonBorder, list
                 <span className="font-bold">{item.journal}</span>{" "}
                 <span className="font-normal">{item.year}</span>
               </h4>
-              <h4 className="font-semibold text-[#10719A] text-[14px]">{item.authors}</h4>
+              <h4 className="font-semibold text-[#10719A] text-[14px]">
+                {item.authors.join(", ")}
+              </h4>
             </div>
           );
         })}
