@@ -4,10 +4,10 @@ import { Card } from "components/";
 
 export const Projects = () => {
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
-      <div className="flex flex-col gap-[10px]">
-        <h2 className="text-black font-bold text-[48px] leading-[48px] ">Projects</h2>
-        <div className="border-text_black_secondary  text-[12px] font-normal ">
+    <div className="flex flex-col justify-start items-center pt-[95px] w-full h-dvh overflow-y-scroll">
+      <div className="flex flex-col gap-[10px] px-[25px]">
+        <h2 className="font-bold text-[48px] text-black leading-[48px]">Projects</h2>
+        <div className="border-text_black_secondary font-normal text-[12px]">
           We create innovative design concepts using systematic, human-centered methods and develop
           them into products and services through engineering design. Our focus is on elderly care,
           rehabilitation, healthcare, and safety, collaborating with experts in medicine,
@@ -18,7 +18,7 @@ export const Projects = () => {
       <Current />
       <Awards />
       <Completed />
-      <div className="flex flex-col gap-[50px] py-[50px]">
+      <div className="flex flex-col gap-[50px] px-[25px] py-[50px]">
         <GoTo title="Team members" link={() => console.log("/team")} />
         <GoTo title="Journal publications" link={() => console.log("/publications")} />
       </div>
@@ -53,15 +53,15 @@ const Current = () => {
   ];
 
   return (
-    <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] ">
+    <div className="flex flex-col gap-[30px] px-[25px] py-[30px] w-full">
       <div className="flex items-center">
-        <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] ">
+        <h2 className="font-light text-[48px] text-text_black_primary leading-[48px]">
           Current Projects
         </h2>
         <Down_left_dark_arrow className="size-[58px]" />
       </div>
 
-      <div className="flex flex-col gap-[10px] items-center">
+      <div className="flex flex-col items-center gap-[10px]">
         {projects.map((project) => (
           <Card
             key={project.title}
@@ -110,29 +110,29 @@ const Awards = () => {
   ];
 
   return (
-    <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-black ">
-      <div className="flex flex-col gap-[25px]">
+    <div className="flex flex-col gap-[30px] bg-black py-[30px] w-full">
+      <div className="flex flex-col gap-[25px] px-[25px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-text_white_primary font-extralight text-[42px] leading-[48px] ">
+          <h2 className="font-extralight text-[42px] text-text_white_primary leading-[48px]">
             Awards
           </h2>
-          <Down_straight_neutral_arrow className="size-[46px] rotate-45 text-primary_main" />
+          <Down_straight_neutral_arrow className="text-primary_main rotate-45 size-[46px]" />
         </div>
-        <div className="flex gap-[12px] text-primary_main text-[16px] font-medium ">
-          <button className="rounded-full px-[24px] py-[8px] border-2">Reddot</button>
-          <button className="rounded-full px-[24px] py-[8px] border-2">iF</button>
-          <button className="rounded-full px-[24px] py-[8px] border-2">Others</button>
+        <div className="flex gap-[12px] font-medium text-[16px] text-primary_main">
+          <button className="border-2 px-[24px] py-[8px] rounded-full">Reddot</button>
+          <button className="border-2 px-[24px] py-[8px] rounded-full">iF</button>
+          <button className="border-2 px-[24px] py-[8px] rounded-full">Others</button>
         </div>
       </div>
 
-      <div className="w-full flex gap-[15px] overflow-x-auto">
+      <div className="flex gap-[15px] px-[25px] w-full overflow-x-auto">
         {awards.map((award) => (
           <div
             key={award.title}
-            className="w-[300px] flex flex-col gap-[12px] shrink-0 bg-white rounded-[20px] "
+            className="flex flex-col gap-[12px] bg-white rounded-[20px] w-[300px] shrink-0"
           >
             <div
-              className="bg-border_dark w-full h-[570px] rounded-[20px] relative"
+              className="relative bg-border_dark rounded-[20px] w-full h-[570px]"
               style={{
                 backgroundImage: `url(${award.img})`,
                 backgroundSize: "300px 570px",
@@ -141,16 +141,16 @@ const Awards = () => {
               }}
             />
 
-            <div className="flex flex-col gap-[15px] px-[15px] pb-[5px] ">
-              <h2 className="text-text_black_primary font-bold text-[24px] ">{award.title}</h2>
-              <h3 className="text-border_dark  text-[12px] font-bold">{award.authors}</h3>
-              <h3 className="text-border_dark  text-[12px] font-bold">{award.year}</h3>
+            <div className="flex flex-col gap-[15px] px-[15px] pb-[5px]">
+              <h2 className="font-bold text-[24px] text-text_black_primary">{award.title}</h2>
+              <h3 className="text-border_dark font-bold text-[12px]">{award.authors}</h3>
+              <h3 className="text-border_dark font-bold text-[12px]">{award.year}</h3>
             </div>
           </div>
         ))}
       </div>
 
-      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold  text-[18px] text-primary_main rounded-[15px] ">
+      <button className="flex justify-center items-center gap-[10px] rounded-[15px] h-[50px] font-semibold text-[18px] text-primary_main">
         <span>View All Awards</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
       </button>
@@ -175,32 +175,29 @@ const Completed = () => {
   ];
 
   return (
-    <div
-      className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-primary_main "
-      id="completed"
-    >
-      <div className="flex flex-col gap-[25px]">
+    <div className="flex flex-col gap-[30px] bg-primary_main py-[30px] w-full" id="completed">
+      <div className="flex flex-col gap-[25px] px-[25px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-black font-extralight text-[42px] leading-[48px] ">
+          <h2 className="font-extralight text-[42px] text-black leading-[48px]">
             Completed Projects
           </h2>
-          <Down_straight_neutral_arrow className="size-[56px] -rotate-45 text-text_white_primary" />
+          <Down_straight_neutral_arrow className="text-text_white_primary -rotate-45 size-[56px]" />
         </div>
-        <div className="flex gap-[12px] border-text_black_primary text-[16px] font-medium ">
-          <button className="rounded-full px-[24px] py-[8px] border-2 border-text_black_primary">
+        <div className="flex gap-[12px] border-text_black_primary font-medium text-[16px]">
+          <button className="border-2 px-[24px] py-[8px] border-text_black_primary rounded-full">
             Needs
           </button>
-          <button className="rounded-full px-[24px] py-[8px] border-2 border-text_black_primary">
+          <button className="border-2 px-[24px] py-[8px] border-text_black_primary rounded-full">
             Sorting
           </button>
         </div>
       </div>
 
-      <div className="w-full flex flex-col gap-[15px] overflow-x-auto">
+      <div className="flex flex-col gap-[15px] px-[25px] w-full overflow-x-auto">
         {projects.map((project) => (
-          <div key={project.title} className="w-full relative ">
+          <div key={project.title} className="relative w-full">
             <div
-              className="bg-border_dark w-full h-[260px] rounded-[20px] relative"
+              className="relative bg-border_dark rounded-[20px] w-full h-[260px]"
               style={{
                 background: `url(${project.img})`,
                 backgroundSize: "100% 100%",
@@ -212,15 +209,13 @@ const Completed = () => {
                 style={{ background: "linear-gradient(180deg, #32323200 0%, #323232FF 100%)" }}
               ></div>
               {/* Dark Overlay */}
-              <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
+              <div className="bottom-[20px] absolute flex justify-between items-center px-[20px] w-full">
                 <div>
-                  <h2 className="text-text_white_primary font-bold text-[24px] ">
-                    {project.title}
-                  </h2>
-                  <h3 className="text-text_white_secondary  text-[12px] font-normal">
+                  <h2 className="font-bold text-[24px] text-text_white_primary">{project.title}</h2>
+                  <h3 className="font-normal text-[12px] text-text_white_secondary">
                     {project.desc}
                   </h3>
-                  <h3 className="text-text_white_secondary  text-[12px] font-normal">
+                  <h3 className="font-normal text-[12px] text-text_white_secondary">
                     {project.year}
                   </h3>
                 </div>
@@ -230,7 +225,7 @@ const Completed = () => {
         ))}
       </div>
 
-      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold  text-[18px] text-text_white_primary rounded-[15px] ">
+      <button className="flex justify-center items-center gap-[10px] rounded-[15px] h-[50px] font-semibold text-[18px] text-text_white_primary">
         <span>View All Completed Projects</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
       </button>
@@ -241,15 +236,15 @@ const Completed = () => {
 const GoTo = ({ title, link }) => {
   return (
     <div className="flex flex-col gap-[20px]">
-      <h3 className="text-primary_main font-semibold  text-[28px]">Go to..</h3>
+      <h3 className="font-semibold text-[28px] text-primary_main">Go to..</h3>
       <div className="flex justify-between items-center">
         <h2
-          className="text-text_black_primary  font-light text-[48px] leading-[64px]"
+          className="font-light text-[48px] text-text_black_primary leading-[64px]"
           onClick={link}
         >
           {title}
         </h2>
-        <Down_straight_neutral_arrow className="size-[46px] -rotate-[135deg] text-primary_main" />
+        <Down_straight_neutral_arrow className="text-primary_main -rotate-[135deg] size-[46px]" />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Down_left_dark_arrow } from "assets/";
 
 export const About = () => {
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[30px] pt-[65px]">
+    <div className="flex flex-col justify-start items-center px-[30px] pt-[65px] w-dvw h-dvh overflow-y-scroll">
       <Intro />
       <Tracks />
       <Details />
@@ -13,14 +13,14 @@ export const About = () => {
 
 const Intro = () => {
   return (
-    <div className="w-full flex flex-col gap-[30px] py-[30px]">
+    <div className="flex flex-col gap-[30px] py-[30px] w-full">
       <div className="flex flex-col gap-[15px]">
-        <div className="w-full h-[160px] bg-border_dark rounded-[30px]"></div>
-        <h1 className=" text-text_black_primary text-[48px] font-bold leading-[48px]">
-          Integration <span className="text-primary_main ">&</span> Innovation Design
+        <div className="bg-border_dark rounded-[30px] w-full h-[160px]"></div>
+        <h1 className="font-bold text-[48px] text-text_black_primary leading-[48px]">
+          Integration <span className="text-primary_main">&</span> Innovation Design
         </h1>
       </div>
-      <h3 className=" text-text_black_secondary text-[18px]">
+      <h3 className="text-[18px] text-text_black_secondary">
         Integration + Innovation Design Lab (IIDL) focuses on the design of innovative products and
         services through multi-disciplinary approaches among industrial design, ergonomics, and
         engineering design. IIDL seeks to establish integrated and innovative design methodologies,
@@ -34,24 +34,24 @@ const Intro = () => {
 
 const Tracks = () => {
   return (
-    <div className="w-dvw flex flex-col gap-[30px] p-[30px] ">
+    <div className="flex flex-col gap-[30px] py-[30px] w-full">
       <div className="flex items-center">
-        <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] ">
+        <h2 className="font-light text-[48px] text-text_black_primary leading-[48px]">
           Research Tracks
         </h2>
         <Down_left_dark_arrow className="size-[58px]" />
       </div>
-      <div className="flex flex-wrap gap-[10px] text-[14px] font-normal ">
-        <button className="shrink-0 py-[8px] px-[24px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
+      <div className="flex flex-wrap gap-[10px] font-normal text-[14px]">
+        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main px-[24px] py-[8px] border-solid rounded-full text-primary_main active:text-text_white_primary shrink-0">
           Integrated Design Innovation
         </button>
-        <button className="shrink-0 py-[8px] px-[24px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
+        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main px-[24px] py-[8px] border-solid rounded-full text-primary_main active:text-text_white_primary shrink-0">
           Pervasive Design
         </button>
-        <button className="shrink-0 py-[8px] px-[24px] border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary">
+        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main px-[24px] py-[8px] border-solid rounded-full text-primary_main active:text-text_white_primary shrink-0">
           Engineering Design
         </button>
-        <button className="shrink-0 py-[8px] px-[24px] border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary">
+        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main px-[24px] py-[8px] border-solid rounded-full text-primary_main active:text-text_white_primary shrink-0">
           Transformable Design
         </button>
       </div>
@@ -61,11 +61,11 @@ const Tracks = () => {
 
 const Details = () => {
   return (
-    <div className="w-full py-[30px] flex flex-col gap-[15px]">
-      <h1 className=" text-text_black_primary text-[48px] font-bold leading-[48px]">
+    <div className="flex flex-col gap-[15px] py-[30px] w-full">
+      <h1 className="font-bold text-[48px] text-text_black_primary leading-[48px]">
         Integration Innovation Design
       </h1>
-      <h3 className=" text-text_black_secondary text-[12px]">
+      <h3 className="text-[12px] text-text_black_secondary">
         Owing to the increasing use and expansion of global network infrastructure, a new paradigm
         in the design domain has emerged. This paradigm boosts traditional designers from 2D and 3D
         boundaries to face complex design problems and become design researchers, social innovators,
@@ -74,7 +74,7 @@ const Details = () => {
       </h3>
 
       <div
-        className="w-full h-[200px] bg-border_dark rounded-[20px]"
+        className="bg-border_dark rounded-[20px] w-full h-[200px]"
         style={{
           backgroundImage: "url(/img/projects/current/military_backpack.png)",
           backgroundSize: "100% 200px",
@@ -82,7 +82,7 @@ const Details = () => {
         }}
       />
 
-      <h3 className=" text-text_black_secondary text-[12px]">
+      <h3 className="text-[12px] text-text_black_secondary">
         Integrated Design Innovation seeks holistic approaches to understand social, ecological,
         environmental, medical, and technological problems, and create solutions for complex issues
         faced by society. Using integrated design, IIDL explores various aspects of collaboration
@@ -92,7 +92,7 @@ const Details = () => {
       </h3>
 
       <div
-        className="w-full h-[200px] bg-border_dark rounded-[20px]"
+        className="bg-border_dark rounded-[20px] w-full h-[200px]"
         style={{
           backgroundImage: "url(/img/projects/awards/wave_hat.png)",
           backgroundSize: "100% 200px",
@@ -100,7 +100,7 @@ const Details = () => {
         }}
       />
 
-      <h3 className=" text-text_black_secondary text-[12px]">
+      <h3 className="text-[12px] text-text_black_secondary">
         Currently, one research area focuses on understanding the product design process where
         industrial designers and engineering designers contribute as product designers. Moreover,
         this research area aims to develop an effective and innovative interaction model for
@@ -108,7 +108,7 @@ const Details = () => {
       </h3>
 
       <div
-        className="w-full h-[200px] bg-border_dark rounded-[20px]"
+        className="bg-border_dark rounded-[20px] w-full h-[200px]"
         style={{
           backgroundImage: "url(/img/projects/current/lemmy_ai_based_robot.png)",
           backgroundSize: "100% 200px",
