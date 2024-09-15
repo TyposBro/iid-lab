@@ -10,12 +10,12 @@ export const Footer = () => {
   return (
     <footer
       id="contact"
-      className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] font-regular"
+      className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] "
     >
       <div className="flex flex-row justify-between items-center gap-[20px]">
         <div className="flex flex-col items-start gap-[10px]">
           <Down_right_dark_arrow className="w-[66px] h-[66px]" />
-          <h1 className="text-[64px] leading-[72px] font-light text-text_white_primary font-special">
+          <h1 className="text-[64px] leading-[72px] font-light text-text_white_primary ">
             Contact <span className="text-primary_main">Us</span>
           </h1>
           <p className="text-text_white_tertiary text-[12px] font-normal">

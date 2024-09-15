@@ -6,8 +6,8 @@ export const Projects = () => {
   return (
     <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
       <div className="flex flex-col gap-[10px]">
-        <h2 className="text-black font-bold text-[48px] leading-[48px] font-special">Projects</h2>
-        <div className="border-text_black_secondary  text-[12px] font-normal font-regular">
+        <h2 className="text-black font-bold text-[48px] leading-[48px] ">Projects</h2>
+        <div className="border-text_black_secondary  text-[12px] font-normal ">
           We create innovative design concepts using systematic, human-centered methods and develop
           them into products and services through engineering design. Our focus is on elderly care,
           rehabilitation, healthcare, and safety, collaborating with experts in medicine,
@@ -55,7 +55,7 @@ const Current = () => {
   return (
     <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] ">
       <div className="flex items-center">
-        <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] font-special">
+        <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] ">
           Current Projects
         </h2>
         <Down_left_dark_arrow className="size-[58px]" />
@@ -113,12 +113,12 @@ const Awards = () => {
     <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-black ">
       <div className="flex flex-col gap-[25px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-text_white_primary font-extralight text-[42px] leading-[48px] font-super_special">
+          <h2 className="text-text_white_primary font-extralight text-[42px] leading-[48px] ">
             Awards
           </h2>
           <Down_straight_neutral_arrow className="size-[46px] rotate-45 text-primary_main" />
         </div>
-        <div className="flex gap-[12px] text-primary_main text-[16px] font-medium font-regular">
+        <div className="flex gap-[12px] text-primary_main text-[16px] font-medium ">
           <button className="rounded-full px-[24px] py-[8px] border-2">Reddot</button>
           <button className="rounded-full px-[24px] py-[8px] border-2">iF</button>
           <button className="rounded-full px-[24px] py-[8px] border-2">Others</button>
@@ -142,19 +142,15 @@ const Awards = () => {
             />
 
             <div className="flex flex-col gap-[15px] px-[15px] pb-[5px] ">
-              <h2 className="text-text_black_primary font-bold text-[24px] font-special">
-                {award.title}
-              </h2>
-              <h3 className="text-border_dark font-regular text-[12px] font-bold">
-                {award.authors}
-              </h3>
-              <h3 className="text-border_dark font-regular text-[12px] font-bold">{award.year}</h3>
+              <h2 className="text-text_black_primary font-bold text-[24px] ">{award.title}</h2>
+              <h3 className="text-border_dark  text-[12px] font-bold">{award.authors}</h3>
+              <h3 className="text-border_dark  text-[12px] font-bold">{award.year}</h3>
             </div>
           </div>
         ))}
       </div>
 
-      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main rounded-[15px] ">
+      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold  text-[18px] text-primary_main rounded-[15px] ">
         <span>View All Awards</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
       </button>
@@ -185,12 +181,12 @@ const Completed = () => {
     >
       <div className="flex flex-col gap-[25px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-black font-extralight text-[42px] leading-[48px] font-super_special">
+          <h2 className="text-black font-extralight text-[42px] leading-[48px] ">
             Completed Projects
           </h2>
           <Down_straight_neutral_arrow className="size-[56px] -rotate-45 text-text_white_primary" />
         </div>
-        <div className="flex gap-[12px] border-text_black_primary text-[16px] font-medium font-regular">
+        <div className="flex gap-[12px] border-text_black_primary text-[16px] font-medium ">
           <button className="rounded-full px-[24px] py-[8px] border-2 border-text_black_primary">
             Needs
           </button>
@@ -218,13 +214,13 @@ const Completed = () => {
               {/* Dark Overlay */}
               <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
                 <div>
-                  <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+                  <h2 className="text-text_white_primary font-bold text-[24px] ">
                     {project.title}
                   </h2>
-                  <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+                  <h3 className="text-text_white_secondary  text-[12px] font-normal">
                     {project.desc}
                   </h3>
-                  <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+                  <h3 className="text-text_white_secondary  text-[12px] font-normal">
                     {project.year}
                   </h3>
                 </div>
@@ -234,7 +230,7 @@ const Completed = () => {
         ))}
       </div>
 
-      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-text_white_primary rounded-[15px] ">
+      <button className="flex justify-center items-center gap-[10px] h-[50px] font-semibold  text-[18px] text-text_white_primary rounded-[15px] ">
         <span>View All Completed Projects</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
       </button>
@@ -245,10 +241,10 @@ const Completed = () => {
 const GoTo = ({ title, link }) => {
   return (
     <div className="flex flex-col gap-[20px]">
-      <h3 className="text-primary_main font-semibold font-regular text-[28px]">Go to..</h3>
+      <h3 className="text-primary_main font-semibold  text-[28px]">Go to..</h3>
       <div className="flex justify-between items-center">
         <h2
-          className="text-text_black_primary font-special font-light text-[48px] leading-[64px]"
+          className="text-text_black_primary  font-light text-[48px] leading-[64px]"
           onClick={link}
         >
           {title}

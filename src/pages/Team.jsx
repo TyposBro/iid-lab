@@ -29,13 +29,13 @@ const Prof = () => {
         style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
       ></div>
       <div className="w-full flex flex-col gap-[5px]">
-        <h2 className="font-regular font-bold text-primary_main text-[20px]">{prof.role}</h2>
-        <h1 className="font-super_special text-text_black_primary text-[36px] leading-[36px] font-bold">
+        <h2 className=" font-bold text-primary_main text-[20px]">{prof.role}</h2>
+        <h1 className=" text-text_black_primary text-[36px] leading-[36px] font-bold">
           {prof.name}
         </h1>
-        <h3 className="font-regular text-[12px] text-text_black_secondary">{prof.desc}</h3>
+        <h3 className=" text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
-      <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
+      <div className="flex flex-col gap-[10px] font-semibold text-[18px] ">
         <a
           className="w-full h-[50px] flex justify-center items-center gap-[10px] border-primary_main bg-primary_main rounded-[15px] border-2 border-solid text-text_white_primary"
           href="https://iidl.unist.ac.kr/Profiles/index.html"
@@ -94,12 +94,12 @@ const CurrentTeam = () => {
     <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] ">
       <div className="flex flex-col gap-[10px]">
         <div className="flex items-center">
-          <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] font-special">
+          <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] ">
             Current Team
           </h2>
           <Down_left_dark_arrow className="size-[58px]" />
         </div>
-        <h3 className="text-text_black_secondary font-regular font-light text-[12px]">
+        <h3 className="text-text_black_secondary  font-light text-[12px]">
           Our lab is a vibrant hub of international and Korean researchers from diverse backgrounds,
           creating a dynamic and inclusive environment. Working here is not just productive but also
           a lot of fun, thanks to our enthusiastic and collaborative team!
@@ -157,7 +157,7 @@ const Alumni = () => {
   return (
     <div className="w-dvw flex flex-col gap-[30px] pt-[30px] px-[25px] " id="alumni">
       <div className="flex justify-between items-center ">
-        <h2 className="text-text_black_primary font-extralight text-[48px] leading-[48px] font-special">
+        <h2 className="text-text_black_primary font-extralight text-[48px] leading-[48px] ">
           Alumni
         </h2>
         <Down_left_dark_arrow className="size-[46px]" />

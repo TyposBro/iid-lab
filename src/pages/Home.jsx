@@ -59,16 +59,16 @@ const Intro = ({ navigate }) => {
       {/* <div className="w-full h-[210px] rounded-[30px]"></div> */}
       <div className="w-full flex flex-col gap-[30px]">
         <div className="flex flex-col gap-[8px]">
-          <h1 className="font-special text-text_black_primary text-[48px] font-bold">
+          <h1 className=" text-text_black_primary text-[48px] font-bold">
             Integration <span className="text-primary_main ">&</span> Innovation Design
           </h1>
-          <h3 className="font-regular text-text_black_secondary text-[12px]">
+          <h3 className=" text-text_black_secondary text-[12px]">
             Integration + Innovation Design Lab focuses on design and development of innovative
             products and services by integrating Design, Ergonomics, Engineering, Technology and
             Entrepreneurship.
           </h3>
         </div>
-        <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
+        <div className="flex flex-col gap-[10px] font-semibold text-[18px] ">
           <button
             className="w-full h-[50px] border-border_dark rounded-[15px] grid place-content-center border-2 border-solid active:bg-primary_main active:text-white active:border-primary_main"
             onClick={() => navigate("/projects")}
@@ -106,13 +106,13 @@ const Prof = () => {
         style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
       ></div>
       <div className="w-full flex flex-col gap-[5px]">
-        <h2 className="font-regular font-bold text-primary_main text-[20px]">{prof.role}</h2>
-        <h1 className="font-super_special text-text_black_primary text-[36px] leading-[36px] font-bold">
+        <h2 className=" font-bold text-primary_main text-[20px]">{prof.role}</h2>
+        <h1 className=" text-text_black_primary text-[36px] leading-[36px] font-bold">
           {prof.name}
         </h1>
-        <h3 className="font-regular text-[12px] text-text_black_secondary">{prof.desc}</h3>
+        <h3 className=" text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
-      <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
+      <div className="flex flex-col gap-[10px] font-semibold text-[18px] ">
         <a
           href="https://iidl.unist.ac.kr/Profiles/index.html"
           target="_blank"
@@ -160,7 +160,7 @@ const Members = () => {
   return (
     <div className="w-dvw my-[30px] shrink-0 flex flex-col gap-[30px] ">
       <div className="flex flex-col gap-[10px] px-[25px]">
-        <h1 className="text-[42px] text-text_black_primary font-light font-super_special leading-[46px] ">
+        <h1 className="text-[42px] text-text_black_primary font-light  leading-[46px] ">
           Team Members
         </h1>
       </div>
@@ -176,17 +176,15 @@ const Members = () => {
                 backgroundPosition: "center",
               }}
             ></div>
-            <div className="flex flex-col gap-[4px] font-regular">
+            <div className="flex flex-col gap-[4px] ">
               <h2 className="font-bold text-[18px] text-text_black_primary">{member.name}</h2>
-              <h3 className="font-regular font-normal text-[12px] text-text_black_primary">
-                {member.role}
-              </h3>
+              <h3 className=" font-normal text-[12px] text-text_black_primary">{member.role}</h3>
             </div>
           </div>
         ))}
       </div>
       <a
-        className="flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main  no-underline"
+        className="flex justify-center items-center gap-[10px] font-semibold  text-[18px] text-primary_main  no-underline"
         href="/team#alumni"
         target="_blank"
       >
@@ -223,10 +221,10 @@ const Projects = () => {
   return (
     <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-black ">
       <div className="flex flex-col gap-[10px]">
-        <h2 className="text-text_white_primary font-extralight text-[42px] leading-[48px] font-super_special">
+        <h2 className="text-text_white_primary font-extralight text-[42px] leading-[48px] ">
           Current Projects
         </h2>
-        <h3 className="text-text_white_secondary font-regular font-light text-[12px]">
+        <h3 className="text-text_white_secondary  font-light text-[12px]">
           We create innovative design concepts through systematic, human-centered methods,
           developing them into products and services using engineering design. Our focus is on
           elderly care, rehabilitation, healthcare, and safety, and we collaborate closely with
@@ -246,10 +244,10 @@ const Projects = () => {
               {/* Dark Overlay */}
             </div>
             <div className="absolute bottom-[20px] left-[20px] ">
-              <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+              <h2 className="text-text_white_primary font-bold text-[24px] ">
                 {projects[0].title}
               </h2>
-              <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+              <h3 className="text-text_white_secondary  text-[12px] font-normal">
                 {projects[0].desc}
               </h3>
             </div>
@@ -267,10 +265,8 @@ const Projects = () => {
                 {/* Dark Overlay */}
               </div>
               <div className="absolute bottom-[20px] left-[20px] ">
-                <h2 className="text-text_white_primary font-bold text-[24px] font-special">
-                  {project.title}
-                </h2>
-                <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+                <h2 className="text-text_white_primary font-bold text-[24px] ">{project.title}</h2>
+                <h3 className="text-text_white_secondary  text-[12px] font-normal">
                   {project.desc}
                 </h3>
               </div>
@@ -293,10 +289,10 @@ const Projects = () => {
               {/* Dark Overlay */}
             </div>
             <div className="absolute bottom-[20px] left-[20px] ">
-              <h2 className="text-text_white_primary font-bold text-[24px] font-special">
+              <h2 className="text-text_white_primary font-bold text-[24px] ">
                 {projects.at(-1).title}
               </h2>
-              <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
+              <h3 className="text-text_white_secondary  text-[12px] font-normal">
                 {projects.at(-1).desc}
               </h3>
             </div>
@@ -305,7 +301,7 @@ const Projects = () => {
       </div>
 
       <a
-        className="flex justify-center items-center gap-[10px] h-[50px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] "
+        className="flex justify-center items-center gap-[10px] h-[50px] font-semibold  text-[18px] text-primary_main border-solid border-2 border-primary_main rounded-[15px] "
         href="/projects#completed"
         target="_blank"
       >
@@ -368,14 +364,14 @@ const Journal = () => {
   return (
     <div className="w-dvw py-[30px] flex flex-col gap-[30px] bg-primary_main">
       <div className="flex flex-col gap-[20px] px-[25px]">
-        <h2 className="text-5xl font-super_special text-text_white_primary leading-[48px] tracking-normal">
+        <h2 className="text-5xl  text-text_white_primary leading-[48px] tracking-normal">
           Journal Papers
         </h2>
         <div className="flex gap-[10px]">
-          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] bg-primary_main text-text_black_primary">
+          <button className="grid place-content-center px-6 py-2 font-medium  text-[16px] border-solid border-2 rounded-[183px] bg-primary_main text-text_black_primary">
             International
           </button>
-          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] bg-primary_main text-text_black_primary">
+          <button className="grid place-content-center px-6 py-2 font-medium  text-[16px] border-solid border-2 rounded-[183px] bg-primary_main text-text_black_primary">
             Domestic
           </button>
         </div>
@@ -387,7 +383,7 @@ const Journal = () => {
             className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-text_black_primary "
           >
             <a
-              className="text-[16px] font-regular font-normal text-text_white_primary underline break-words"
+              className="text-[16px]  font-normal text-text_white_primary underline break-words"
               href={paper.link}
               target="_blank"
               rel="noreferrer"
@@ -396,14 +392,14 @@ const Journal = () => {
             </a>
             <div className="flex justify-between items-end">
               <div
-                className="flex flex-col text-[14px] font-regular font-semibold grow shrink-0"
+                className="flex flex-col text-[14px]  font-semibold grow shrink-0"
                 style={{ color: paper.color }}
               >
                 {paper.authors.map((author) => (
                   <div key={author}>{author}</div>
                 ))}
               </div>
-              <div className="flex flex-col justify-end font-special text-[20px]">
+              <div className="flex flex-col justify-end  text-[20px]">
                 <div className="text-text_white_tertiary font-normal text-right">{paper.year}</div>
                 <div className="font-bold text-text_white_primary break-words text-right">
                   {paper.conference}
@@ -415,7 +411,7 @@ const Journal = () => {
       </div>
       <div className="w-full px-[25px]">
         <a
-          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] "
+          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold  text-[18px] text-text_white_primary border-solid border-2 rounded-[15px] "
           href="/publications#journal"
         >
           <span>All Journal Papers</span>
@@ -481,15 +477,15 @@ const Conference = () => {
   return (
     <div className="w-dvw py-[30px] flex flex-col gap-[30px]">
       <div className="flex flex-col gap-[20px] px-[25px]">
-        <h2 className="flex items-end text-5xl font-super_special text-text_black_primary leading-[48px] tracking-normal">
+        <h2 className="flex items-end text-5xl  text-text_black_primary leading-[48px] tracking-normal">
           <span>Conference Papers</span>
           <Down_left_dark_arrow className="size-[51px]" />
         </h2>
         <div className="flex gap-[10px]">
-          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] text-primary_main">
+          <button className="grid place-content-center px-6 py-2 font-medium  text-[16px] border-solid border-2 rounded-[183px] text-primary_main">
             International
           </button>
-          <button className="grid place-content-center px-6 py-2 font-medium font-regular text-[16px] border-solid border-2 rounded-[183px] text-primary_main">
+          <button className="grid place-content-center px-6 py-2 font-medium  text-[16px] border-solid border-2 rounded-[183px] text-primary_main">
             Domestic
           </button>
         </div>
@@ -501,7 +497,7 @@ const Conference = () => {
             className="shrink-0 h-[300px] w-[310px] flex flex-col justify-between p-[20px] rounded-[20px] bg-[#C1EDFF] "
           >
             <a
-              className="text-[18px] font-regular font-normal text-text_black_primary underline break-words"
+              className="text-[18px]  font-normal text-text_black_primary underline break-words"
               href={paper.link}
               target="_blank"
               rel="noreferrer"
@@ -510,14 +506,14 @@ const Conference = () => {
             </a>
             <div className="flex justify-between items-end">
               <div
-                className="flex flex-col text-[14px] font-regular font-semibold"
+                className="flex flex-col text-[14px]  font-semibold"
                 style={{ color: paper.color }}
               >
                 {paper.authors.map((author) => (
                   <span key={author}>{author}</span>
                 ))}
               </div>
-              <div className="flex flex-col font-special text-[20px] text-right">
+              <div className="flex flex-col  text-[20px] text-right">
                 <span className=" text-text_black_primary font-normal"> {paper.year} </span>
                 <span className="font-bold text-text_black_primary "> {paper.conference} </span>
                 <span className="text-text_black_primary font-normal"> {paper.location} </span>
@@ -528,7 +524,7 @@ const Conference = () => {
       </div>
       <div className="w-full px-[25px]">
         <a
-          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold font-regular text-[18px] text-primary_main border-solid border-2 rounded-[15px] "
+          className="h-[50px] w-full flex justify-center items-center gap-[10px] font-semibold  text-[18px] text-primary_main border-solid border-2 rounded-[15px] "
           href="/publications#conference"
         >
           <span>All Conference Papers</span>

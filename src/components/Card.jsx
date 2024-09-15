@@ -20,10 +20,8 @@ const Card = ({ title, subtitle, bg }) => {
         {/* Dark Overlay */}
         <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
           <div>
-            <h2 className="text-text_white_primary font-bold text-[24px] font-special">{title}</h2>
-            <h3 className="text-text_white_secondary font-regular text-[12px] font-normal">
-              {subtitle}
-            </h3>
+            <h2 className="text-text_white_primary font-bold text-[24px] ">{title}</h2>
+            <h3 className="text-text_white_secondary  text-[12px] font-normal">{subtitle}</h3>
           </div>
         </div>
       </div>

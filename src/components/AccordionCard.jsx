@@ -21,10 +21,8 @@ const AccordionCard = ({ title, subtitle, desc, bg }) => {
         {/* Dark Overlay */}
         <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
           <div>
-            <h2 className="text-text_white_primary font-bold text-[24px] font-special">{title}</h2>
-            <h3 className="text-primary_main italic font-regular text-[12px] font-bold">
-              {subtitle}
-            </h3>
+            <h2 className="text-text_white_primary font-bold text-[24px] ">{title}</h2>
+            <h3 className="text-primary_main italic  text-[12px] font-bold">{subtitle}</h3>
           </div>
           <Down_straight_neutral_arrow
             className={`size-[27px] transform origin-center transition duration-500 ease-out text-primary_main ${

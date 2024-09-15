@@ -76,10 +76,8 @@ export const Publications = () => {
   return (
     <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
       <div className="flex flex-col gap-[10px]">
-        <h2 className="text-black font-bold text-[48px] leading-[48px] font-special">
-          Publications
-        </h2>
-        <div className="border-text_black_secondary  text-[12px] font-normal font-regular">
+        <h2 className="text-black font-bold text-[48px] leading-[48px] ">Publications</h2>
+        <div className="border-text_black_secondary  text-[12px] font-normal ">
           We&apos;ve published world-class research and won prestigious design awards. Our students
           gain the integrated knowledge and experience needed to lead new product development,
           leading to successful careers after graduation.
@@ -122,13 +120,11 @@ const PublicationList = ({ title, bg, buttonColor, iconColor, buttonBorder, list
     <div className={`w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] bg-primary_main ${bg}`}>
       <div className="flex flex-col gap-[25px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-black font-extralight text-[42px] leading-[48px] font-super_special">
-            {title}
-          </h2>
+          <h2 className="text-black font-extralight text-[42px] leading-[48px] ">{title}</h2>
           <Down_straight_neutral_arrow className={`size-[56px] rotate-45 ${iconColor}`} />
         </div>
         <div
-          className={`flex gap-[12px] border-text_black_primary text-[16px] font-medium font-regular ${buttonColor}`}
+          className={`flex gap-[12px] border-text_black_primary text-[16px] font-medium  ${buttonColor}`}
         >
           <button
             className={`rounded-full px-[24px] py-[8px] border-2 ${buttonColor} ${buttonBorder}`}
@@ -156,20 +152,18 @@ const PublicationList = ({ title, bg, buttonColor, iconColor, buttonBorder, list
               className="w-full flex flex-col justify-between gap-[16px] rounded-[20px] p-[20px]  bg-[#C1EDFF]"
             >
               <a
-                className="font-regular font-normal text-[20px] underline"
+                className=" font-normal text-[20px] underline"
                 href={item.link}
                 target="_blank"
                 rel="noreferrer"
               >
                 {item.title}
               </a>
-              <h4 className="text-[20px] font-special">
+              <h4 className="text-[20px] ">
                 <span className="font-bold">{item.journal}</span>{" "}
                 <span className="font-normal">{item.year}</span>
               </h4>
-              <h4 className="font-semibold text-[14px] font-regular text-[#10719A]">
-                {item.authors}
-              </h4>
+              <h4 className="font-semibold text-[14px]  text-[#10719A]">{item.authors}</h4>
             </div>
           );
         })}
