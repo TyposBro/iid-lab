@@ -49,10 +49,10 @@ export const MainCarousel = ({ slides }) => {
         ))}
       </Swiper>
 
-      <div className="h-8 w-8 swiper-button-prev absolute left-1 top-1/2 z-10 -translate-y-1/2 cursor-pointer bg-primary_main opacity-50 rounded-full ">
+      <div className="h-8 w-8 swiper-button-prev absolute left-1 top-1/2 z-[2] -translate-y-1/2 cursor-pointer bg-primary_main opacity-50 rounded-full ">
         <ChevronLeft className="h-8 w-8 text-white" />
       </div>
-      <div className="h-8 w-8 swiper-button-next absolute right-1 top-1/2 z-10 -translate-y-1/2 cursor-pointer bg-primary_main opacity-50 rounded-full">
+      <div className="h-8 w-8 swiper-button-next absolute right-1 top-1/2 z-[2] -translate-y-1/2 cursor-pointer bg-primary_main opacity-50 rounded-full">
         <ChevronRight className="h-8 w-8 text-white" />
       </div>
     </div>
