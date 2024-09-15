@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { MainCarousel } from "components/";
 import { useNavigate } from "react-router";
 
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
@@ -45,12 +46,17 @@ export const Home = () => {
 export default Home;
 
 const Intro = ({ navigate }) => {
+  const slides = [
+    "/img/home/home_intro.png",
+    "/img/home/home_intro.png",
+    "/img/home/home_intro.png",
+    "/img/home/home_intro.png",
+  ];
+
   return (
     <div className="w-full flex flex-col">
-      <div
-        className="w-full h-[210px] bg-border_dark rounded-[30px]"
-        style={{ backgroundImage: `url(/img/home/home_intro.png)`, backgroundSize: "100% 210px" }}
-      ></div>
+      <MainCarousel slides={slides} />
+      {/* <div className="w-full h-[210px] rounded-[30px]"></div> */}
       <div className="w-full flex flex-col gap-[30px]">
         <div className="flex flex-col gap-[8px]">
           <h1 className="font-special text-text_black_primary text-[48px] font-bold">
