@@ -59,15 +59,15 @@
   }
   &__item {
     margin: 10px auto;
-    width: 80%;
+    width: 70%;
   }
 
   &__link {
     &:link,
     &:visited {
       display: inline-block;
-      font-size: 30px;
-      font-weight: 300;
+      font-size: 18px;
+      font-weight: 500;
       height: 50px;
       width: 100%;
       color: #25aae1;
@@ -78,7 +78,10 @@
       background-size: 220%;
       transition-property: transform, background-position, color;
       transition: 400ms ease-in-out;
-      text-align: center;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     &:hover,

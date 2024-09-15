@@ -10,15 +10,15 @@ export const Footer = () => {
   return (
     <footer
       id="contact"
-      className="w-full h-fit flex flex-col justify-center items-center gap-[80px] bg-text_black_primary relative p-[30px] "
+      className="relative flex flex-col justify-center items-center gap-[80px] bg-text_black_primary p-[30px] w-full h-fit"
     >
       <div className="flex flex-row justify-between items-center gap-[20px]">
         <div className="flex flex-col items-start gap-[10px]">
           <Down_right_dark_arrow className="w-[66px] h-[66px]" />
-          <h1 className="text-[64px] leading-[72px] font-light text-text_white_primary ">
+          <h1 className="font-light text-[64px] text-text_white_primary leading-[72px]">
             Contact <span className="text-primary_main">Us</span>
           </h1>
-          <p className="text-text_white_tertiary text-[12px] font-normal">
+          <p className="text-[12px] text-text_white_tertiary">
             If you have any inquires, please contact us via following email or telephone number. We
             would also be thrilled to have you visit our lab!
           </p>
@@ -42,7 +42,7 @@ export const Footer = () => {
             +82-52-217-2714
           </a>
         </div>
-        <div className="flex items-center gap-[10px] ">
+        <div className="flex items-center gap-[10px]">
           <Footer_email className="w-6 h-6" />
           <a className="text-sm" href="mailto:kmyung@unist.ac.kr">
             kmyung@unist.ac.kr

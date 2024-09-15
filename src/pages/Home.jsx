@@ -7,7 +7,8 @@ import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 
 import PropTypes from "prop-types";
 
-import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
+import { Down_left_dark_arrow, Link, Up_right_neutral_arrow } from "assets/";
+import { truncateText } from "utils/text";
 
 export const Home = () => {
   const ref = useRef(null);
@@ -178,7 +179,7 @@ const Members = () => {
             ></div>
             <div className="flex flex-col gap-[4px]">
               <h2 className="font-bold text-[18px] text-text_black_primary">{member.name}</h2>
-              <h3 className="font-normal text-[12px] text-text_black_primary">{member.role}</h3>
+              <h3 className="text-[12px] text-text_black_primary">{member.role}</h3>
             </div>
           </div>
         ))}
@@ -245,9 +246,7 @@ const Projects = () => {
             </div>
             <div className="bottom-[20px] left-[20px] absolute">
               <h2 className="font-bold text-[24px] text-text_white_primary">{projects[0].title}</h2>
-              <h3 className="font-normal text-[12px] text-text_white_secondary">
-                {projects[0].desc}
-              </h3>
+              <h3 className="text-[12px] text-text_white_secondary">{projects[0].desc}</h3>
             </div>
           </div>
         )}
@@ -264,9 +263,7 @@ const Projects = () => {
               </div>
               <div className="bottom-[20px] left-[20px] absolute">
                 <h2 className="font-bold text-[24px] text-text_white_primary">{project.title}</h2>
-                <h3 className="font-normal text-[12px] text-text_white_secondary">
-                  {project.desc}
-                </h3>
+                <h3 className="text-[12px] text-text_white_secondary">{project.desc}</h3>
               </div>
             </div>
           ))}
@@ -290,9 +287,7 @@ const Projects = () => {
               <h2 className="font-bold text-[24px] text-text_white_primary">
                 {projects.at(-1).title}
               </h2>
-              <h3 className="font-normal text-[12px] text-text_white_secondary">
-                {projects.at(-1).desc}
-              </h3>
+              <h3 className="text-[12px] text-text_white_secondary">{projects.at(-1).desc}</h3>
             </div>
           </div>
         )}
@@ -378,31 +373,26 @@ const Journal = () => {
         {journalPapers.map((paper) => (
           <div
             key={paper.title}
-            className="flex flex-col justify-between bg-text_black_primary p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0"
+            className="flex flex-col justify-between bg-text_black_primary p-[20px] rounded-[20px] w-[310px] h-[310px] shrink-0"
           >
-            <a
-              className="font-normal text-[16px] text-text_white_primary underline break-words"
-              href={paper.link}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {paper.title}
-            </a>
-            <div className="flex justify-between items-end">
-              <div
-                className="flex flex-col font-semibold text-[14px] grow shrink-0"
-                style={{ color: paper.color }}
-              >
-                {paper.authors.map((author) => (
-                  <div key={author}>{author}</div>
-                ))}
-              </div>
-              <div className="flex flex-col justify-end text-[20px]">
-                <div className="text-right font-normal text-text_white_tertiary">{paper.year}</div>
-                <div className="text-right font-bold text-text_white_primary break-words">
-                  {paper.conference}
+            <span className="text-[16px] text-text_white_primary break-words">
+              {truncateText(paper.title, 150)}
+            </span>
+            <div className="flex justify-center items-center">
+              <div className="flex flex-col justify-between">
+                <div className="flex flex-col text-[20px]">
+                  <div className="font-bold text-text_white_primary break-words">
+                    {paper.conference}
+                  </div>
+                  <div className="text-text_white_tertiary">{paper.year}</div>
+                </div>
+                <div className="font-semibold text-[14px]" style={{ color: paper.color }}>
+                  {paper.authors.join(", ")}
                 </div>
               </div>
+              <a href={paper.link} target="_blank" rel="noreferrer">
+                <Link className="text-text_white_primary size-[25px]" />
+              </a>
             </div>
           </div>
         ))}
@@ -494,28 +484,26 @@ const Conference = () => {
             key={paper.title}
             className="flex flex-col justify-between bg-[#C1EDFF] p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0"
           >
-            <a
-              className="font-normal text-[18px] text-text_black_primary underline break-words"
-              href={paper.link}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {paper.title}
-            </a>
-            <div className="flex justify-between items-end">
-              <div
-                className="flex flex-col font-semibold text-[14px]"
-                style={{ color: paper.color }}
-              >
-                {paper.authors.map((author) => (
-                  <span key={author}>{author}</span>
-                ))}
+            <span className="text-[18px] text-text_black_primary break-words">
+              {truncateText(paper.title, 150)}
+            </span>
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col justify-between">
+                <div className="flex flex-col text-[20px]">
+                  <span className="font-bold text-text_black_primary"> {paper.conference} </span>
+                  <span className="text-text_black_primary"> {paper.year} </span>
+                  <span className="text-text_black_primary"> {paper.location} </span>
+                </div>
+                <div
+                  className="flex flex-col font-semibold text-[14px]"
+                  style={{ color: paper.color }}
+                >
+                  {paper.authors.join(", ")}
+                </div>
               </div>
-              <div className="text-right flex flex-col text-[20px]">
-                <span className="font-normal text-text_black_primary"> {paper.year} </span>
-                <span className="font-bold text-text_black_primary"> {paper.conference} </span>
-                <span className="font-normal text-text_black_primary"> {paper.location} </span>
-              </div>
+              <a href={paper.link} target="_blank" rel="noreferrer">
+                <Link className="text-text_black_primary size-[25px]" />
+              </a>
             </div>
           </div>
         ))}

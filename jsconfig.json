@@ -13,8 +13,8 @@
       // "context": ["./src/context/*"],
       // "exp": ["src/exp/*"],
       "pages": ["./src/pages/*"],
-      "styles": ["./src/styles/*"]
-      // "utils": ["./src/utils/*"]
+      "styles": ["./src/styles/*"],
+      "utils": ["./src/utils/*"]
     }
   },
 

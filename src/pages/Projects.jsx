@@ -7,7 +7,7 @@ export const Projects = () => {
     <div className="flex flex-col justify-start items-center pt-[95px] w-full h-dvh overflow-y-scroll">
       <div className="flex flex-col gap-[10px] px-[25px]">
         <h2 className="font-bold text-[48px] text-black leading-[48px]">Projects</h2>
-        <div className="border-text_black_secondary font-normal text-[12px]">
+        <div className="border-text_black_secondary text-[12px]">
           We create innovative design concepts using systematic, human-centered methods and develop
           them into products and services through engineering design. Our focus is on elderly care,
           rehabilitation, healthcare, and safety, collaborating with experts in medicine,
@@ -212,12 +212,8 @@ const Completed = () => {
               <div className="bottom-[20px] absolute flex justify-between items-center px-[20px] w-full">
                 <div>
                   <h2 className="font-bold text-[24px] text-text_white_primary">{project.title}</h2>
-                  <h3 className="font-normal text-[12px] text-text_white_secondary">
-                    {project.desc}
-                  </h3>
-                  <h3 className="font-normal text-[12px] text-text_white_secondary">
-                    {project.year}
-                  </h3>
+                  <h3 className="text-[12px] text-text_white_secondary">{project.desc}</h3>
+                  <h3 className="text-[12px] text-text_white_secondary">{project.year}</h3>
                 </div>
               </div>
             </div>

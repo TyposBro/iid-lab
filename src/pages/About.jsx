@@ -41,7 +41,7 @@ const Tracks = () => {
         </h2>
         <Down_left_dark_arrow className="size-[58px]" />
       </div>
-      <div className="flex flex-wrap gap-[10px] font-normal text-[14px]">
+      <div className="flex flex-wrap gap-[10px] text-[14px]">
         <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main px-[24px] py-[8px] border-solid rounded-full text-primary_main active:text-text_white_primary shrink-0">
           Integrated Design Innovation
         </button>

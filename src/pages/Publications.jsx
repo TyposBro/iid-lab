@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
-import { Down_straight_neutral_arrow } from "assets/";
+import { Down_straight_neutral_arrow, Link } from "assets/";
+import { truncateText } from "utils/text";
 
 export const Publications = () => {
   const journalPapers = [
@@ -77,7 +78,7 @@ export const Publications = () => {
     <div className="flex flex-col justify-start items-center pt-[95px] w-full h-dvh overflow-y-scroll">
       <div className="flex flex-col gap-[10px] px-[25px]">
         <h2 className="font-bold text-[48px] text-black leading-[48px]">Publications</h2>
-        <div className="border-text_black_secondary font-normal text-[12px]">
+        <div className="border-text_black_secondary  text-[12px]">
           We&apos;ve published world-class research and won prestigious design awards. Our students
           gain the integrated knowledge and experience needed to lead new product development,
           leading to successful careers after graduation.
@@ -151,21 +152,26 @@ const PublicationList = ({ title, bg, buttonColor, iconColor, buttonBorder, list
               key={item.title}
               className="flex flex-col justify-between gap-[16px] bg-[#C1EDFF] p-[20px] rounded-[20px] w-full"
             >
-              <a
-                className="font-normal text-[20px] underline"
-                href={item.link}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {item.title}
-              </a>
-              <h4 className="text-[20px]">
-                <span className="font-bold">{item.journal}</span>{" "}
-                <span className="font-normal">{item.year}</span>
-              </h4>
-              <h4 className="font-semibold text-[#10719A] text-[14px]">
-                {item.authors.join(", ")}
-              </h4>
+              <span className=" text-[20px]">{truncateText(item.title, 150)}</span>
+              <div className="flex justify-between items-center">
+                <div className="flex flex-col max-w-[70%]">
+                  <h4 className=" flex flex-col text-[20px]">
+                    <span className="font-bold">{item.journal}</span>{" "}
+                    <span className="">{item.year}</span>
+                  </h4>
+                  <h4 className="font-semibold text-[#10719A] text-[14px]">
+                    {item.authors.join(", ")}
+                  </h4>
+                </div>
+                <a
+                  className="flex justify-end items-center grow shrink-0"
+                  href={item.link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Link className="size-[24px] text-[#10719A]" />
+                </a>
+              </div>
             </div>
           );
         })}

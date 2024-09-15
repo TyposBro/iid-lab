@@ -2,9 +2,9 @@ import PropTypes from "prop-types";
 
 const Card = ({ title, subtitle, bg }) => {
   return (
-    <div key={title} className="w-full relative ">
+    <div key={title} className="relative w-full">
       <div
-        className="bg-border_dark w-full h-[200px] rounded-[20px] relative"
+        className="relative bg-border_dark rounded-[20px] w-full h-[200px]"
         style={{
           background: `url(${bg})`,
           backgroundSize: "100% 200px",
@@ -18,10 +18,10 @@ const Card = ({ title, subtitle, bg }) => {
           style={{ background: "linear-gradient(180deg, #32323200 0%, #323232FF 100%)" }}
         ></div>
         {/* Dark Overlay */}
-        <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
+        <div className="bottom-[20px] absolute flex justify-between items-center px-[20px] w-full">
           <div>
-            <h2 className="text-text_white_primary font-bold text-[24px] ">{title}</h2>
-            <h3 className="text-text_white_secondary  text-[12px] font-normal">{subtitle}</h3>
+            <h2 className="font-bold text-[24px] text-text_white_primary">{title}</h2>
+            <h3 className="text-[12px] text-text_white_secondary">{subtitle}</h3>
           </div>
         </div>
       </div>
