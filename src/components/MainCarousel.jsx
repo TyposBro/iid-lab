@@ -27,24 +27,34 @@ export const MainCarousel = ({ slides }) => {
         }}
         pagination={{
           clickable: true,
-          renderBullet: function (index, className) {
+          renderBullet: function (index, cname) {
             return (
               '<span class="' +
-              className +
+              cname +
               ' w-3 h-3 mt-10 rounded-full cursor-pointer transition-colors duration-300"></span>'
             );
           },
         }}
         loop={true}
         autoplay={{
-          delay: 2500,
+          delay: 5000,
           disableOnInteraction: false,
         }}
         modules={[Autoplay, Navigation, Pagination]}
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide}>
-            <img src={slide} alt="" />
+            <div
+              src={slide}
+              alt=""
+              className="w-full h-[200px] rounded-[20px]"
+              style={{
+                backgroundImage: `url(${slide})`,
+                backgroundSize: "100% 200px",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
