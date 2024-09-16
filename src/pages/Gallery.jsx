@@ -41,7 +41,7 @@ const events = [
       "/img/gallery/unist-2024/2.png",
       "/img/gallery/unist-2024/3.png",
     ],
-    type: "conference",
+    type: "lab",
   },
 
   {
@@ -54,7 +54,7 @@ const events = [
       "/img/gallery/gyeongju-2023/3.png",
       "/img/gallery/gyeongju-2023/4.png",
     ],
-    type: "conference",
+    type: "lab",
   },
 
   {
@@ -86,9 +86,11 @@ export const Gallery = () => {
       <div className="flex flex-col gap-[16px] py-8">
         <Filter selected={selected} setSelected={setSelected} />
         <div className="flex flex-col gap-4">
-          {events.map((event, index) => (
-            <Event key={index} event={event} />
-          ))}
+          {selected === "latest"
+            ? events.map((event, index) => <Event key={index} event={event} />)
+            : events
+                .filter((event) => event.type === selected)
+                .map((event, index) => <Event key={index} event={event} />)}
         </div>
       </div>
     </div>
