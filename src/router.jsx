@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
-import { Home, About, Projects, Publications, Team, News, Gallery } from "pages/";
+import { Home, About, Projects, Publications, Team, News, Gallery, Prof } from "pages/";
 import { Navbar, Footer } from "components/";
 
 const router = createBrowserRouter([
@@ -21,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/publications", element: <Publications /> },
       { path: "/team", element: <Team /> },
       { path: "/about", element: <About /> },
+      { path: "/professor", element: <Prof /> },
     ],
   },
 ]);
