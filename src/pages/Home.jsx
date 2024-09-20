@@ -35,7 +35,7 @@ export const Home = () => {
           muted={true}
         />
       </div>
-      <Prof />
+      <Prof navigate={navigate} />
       <Members />
       <Projects />
       <Journal />
@@ -92,7 +92,7 @@ Intro.propTypes = {
   navigate: PropTypes.func.isRequired,
 };
 
-const Prof = () => {
+const Prof = ({ navigate }) => {
   const prof = {
     img: "/img/people/director/prof.png",
     name: "Professor KwanMyung Kim",
@@ -115,8 +115,7 @@ const Prof = () => {
       </div>
       <div className="flex flex-col gap-[10px] font-semibold text-[18px]">
         <a
-          href="https://iidl.unist.ac.kr/Profiles/index.html"
-          target="_blank"
+          onClick={() => navigate("/prof")}
           className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
         >
           CV
@@ -130,6 +129,10 @@ const Prof = () => {
       </div>
     </div>
   );
+};
+
+Prof.propTypes = {
+  navigate: PropTypes.func.isRequired,
 };
 
 const Members = () => {
