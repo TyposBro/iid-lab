@@ -37,6 +37,8 @@ export const Carousel = ({ slides }) => {
   );
 };
 
+export default Carousel;
+
 Carousel.propTypes = {
   slides: PropTypes.array.isRequired,
 };

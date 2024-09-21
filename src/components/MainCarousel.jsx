@@ -69,6 +69,8 @@ export const MainCarousel = ({ slides }) => {
   );
 };
 
+export default MainCarousel;
+
 MainCarousel.propTypes = {
   slides: PropTypes.array.isRequired,
 };
