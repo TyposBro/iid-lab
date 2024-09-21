@@ -112,26 +112,33 @@ export const News = () => {
     });
   };
 
+  const changeSelected = (value) => {
+    setSelected(value);
+    setLimit(5);
+  };
+
+  const filteredEvents =
+    selected === "Latest" ? events : events.filter((event) => event.type === selected);
+
   return (
     <div className="flex flex-col justify-start items-center pt-16 pb-12 w-full h-dvh overflow-y-scroll no-scrollbar px-7 gap-4">
       <Intro slides={slides} />
       <div className="flex flex-col gap-[16px]">
-        <Filter selected={selected} setSelected={setSelected} list={events} />
+        <Filter selected={selected} setSelected={changeSelected} list={events} />
         <div className="flex flex-col gap-4">
-          {selected === "Latest"
-            ? events.slice(0, limit).map((event, index) => <Event key={index} event={event} />)
-            : events
-                .filter((event) => event.type === selected)
-                .slice(0, limit)
-                .map((event, index) => <Event key={index} event={event} />)}
+          {filteredEvents.slice(0, limit).map((event, index) => (
+            <Event key={index} event={event} />
+          ))}
         </div>
       </div>
-      <div
-        onClick={loadMore}
-        className="w-full border-2 border-primary_main border-solid text-center text-primary_main text-[18px] font-medium rounded-[15px] py-[10px] active:text-text_white_primary active:bg-primary_main"
-      >
-        More
-      </div>
+      {limit < filteredEvents.length && (
+        <button
+          className="flex justify-center items-center w-full h-12 text-lg font-bold text-primary_main bg-primary_light rounded-lg"
+          onClick={loadMore}
+        >
+          Load More
+        </button>
+      )}
     </div>
   );
 };
