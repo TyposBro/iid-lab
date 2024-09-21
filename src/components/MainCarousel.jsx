@@ -17,9 +17,9 @@ import "../styles/carousel.css";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 
-export const MainCarousel = ({ slides }) => {
+export const MainCarousel = ({ slides, autoplay = true }) => {
   return (
-    <div className="relative">
+    <div className="w-full relative">
       <Swiper
         navigation={{
           prevEl: ".swiper-button-prev",
@@ -36,10 +36,14 @@ export const MainCarousel = ({ slides }) => {
           },
         }}
         loop={true}
-        autoplay={{
-          delay: 5000,
-          disableOnInteraction: false,
-        }}
+        autoplay={
+          autoplay
+            ? {
+                delay: 5000,
+                disableOnInteraction: false,
+              }
+            : false
+        }
         modules={[Autoplay, Navigation, Pagination]}
       >
         {slides.map((slide) => (
@@ -73,4 +77,5 @@ export default MainCarousel;
 
 MainCarousel.propTypes = {
   slides: PropTypes.array.isRequired,
+  autoplay: PropTypes.bool,
 };
