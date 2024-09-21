@@ -39,16 +39,26 @@ const Intro = () => {
         </div>
         <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
         {/* Stats */}
-        <div className="flex flex-row gap-[20px] flex-wrap">
-          {prof.stats.map((stat) => (
-            <div
-              key={stat.key}
-              className="flex flex-col justify-center items-center gap-[15px] max-w-[120px] text-center"
-            >
-              <h1 className="font-bold text-[24px] text-primary_main">{stat.value}</h1>
-              <h3 className="text-[12px] text-text_black_secondary">{stat.key}</h3>
+        <div className="flex flex-col items-center gap-[15px]">
+          <div className="flex justify-center gap-[15px] w-full">
+            <div className="max-w-[120px] text-center">
+              <h1 className="font-semibold text-[64px] leading-[48px]">{prof.stats[0].value}</h1>
+              <h3 className="text-[12px] text-text_black_secondary">{prof.stats[0].key}</h3>
             </div>
-          ))}
+            <div className="max-w-[120px] text-center">
+              <h1 className="font-semibold text-[64px] leading-[48px]">{prof.stats[1].value}</h1>
+              <h3 className="text-[12px] text-text_black_secondary">{prof.stats[1].key}</h3>
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-[15px] w-full">
+            {prof.stats.slice(2).map((elem) => (
+              <div key={elem.key} className="max-w-[120px] text-center">
+                <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
+                <h3 className="text-[12px] text-text_black_secondary">{elem.key}</h3>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Interest */}
