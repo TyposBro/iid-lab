@@ -99,23 +99,38 @@ And [a link](https://nextjs.org)`,
 
 export const News = () => {
   const [selected, setSelected] = useState("Latest");
+  const [limit, setLimit] = useState(5);
 
   const slides = events.map((event) => {
     return event.images[0];
   });
 
+  const loadMore = () => {
+    setLimit((prev) => {
+      if (prev + 5 > events.length) return events.length;
+      return prev + 5;
+    });
+  };
+
   return (
-    <div className="flex flex-col justify-start items-center pt-16 w-full h-dvh overflow-y-scroll no-scrollbar px-7">
+    <div className="flex flex-col justify-start items-center pt-16 pb-12 w-full h-dvh overflow-y-scroll no-scrollbar px-7 gap-4">
       <Intro slides={slides} />
-      <div className="flex flex-col gap-[16px] py-8">
+      <div className="flex flex-col gap-[16px]">
         <Filter selected={selected} setSelected={setSelected} list={events} />
         <div className="flex flex-col gap-4">
           {selected === "Latest"
-            ? events.slice(0, 5).map((event, index) => <Event key={index} event={event} />)
+            ? events.slice(0, limit).map((event, index) => <Event key={index} event={event} />)
             : events
                 .filter((event) => event.type === selected)
+                .slice(0, limit)
                 .map((event, index) => <Event key={index} event={event} />)}
         </div>
+      </div>
+      <div
+        onClick={loadMore}
+        className="w-full border-2 border-primary_main border-solid text-center text-primary_main text-[18px] font-medium rounded-[15px] py-[10px] active:text-text_white_primary active:bg-primary_main"
+      >
+        More
       </div>
     </div>
   );
@@ -141,15 +156,15 @@ Intro.propTypes = {
 
 const Event = ({ event }) => {
   return (
-    <div className="flex flex-col gap-[15px] py-4 w-full">
+    <div className="flex flex-col gap-4 py-2 w-full">
       <div className="flex justify-between text-text_black_secondary text-[12px]">
         <span>{event.date}</span>
         <span className="font-bold">{event.type}</span>
       </div>
-      <MainCarousel slides={event.images} autoplay={false} />
-
+      <img src={event.images[0]} className="w-full rounded-[20px]" />
       <div className="text-[20px] font-bold">{event.title}</div>
       <Markdown markdown={event.text} />
+      <div className="h-[4px] border-y-2 border-primary_main border-solid rounded mx-8" />
     </div>
   );
 };

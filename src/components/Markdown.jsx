@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const Markdown = ({ markdown }) => {
   return (
-    <div className="w-full">
+    <div className="w-full text-text_black_secondary text-[16px]">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
     </div>
   );

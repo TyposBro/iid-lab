@@ -19,7 +19,7 @@ import ChevronRight from "@mui/icons-material/ChevronRight";
 
 export const MainCarousel = ({ slides, autoplay = true }) => {
   return (
-    <div className="w-full relative">
+    <div className="w-full relative overflow-hidden">
       <Swiper
         navigation={{
           prevEl: ".swiper-button-prev",
