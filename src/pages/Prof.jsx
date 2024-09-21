@@ -2,6 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 
 import { Down_straight_neutral_arrow } from "assets";
+import { GoTo } from "components/";
 
 const prof = {
   img: "/img/people/director/prof.png",
@@ -114,6 +115,8 @@ const Prof = () => {
           Contact
         </a>
       </div>
+
+      <GoTo title="Projects Gallery" link="/projects" />
     </div>
   );
 };

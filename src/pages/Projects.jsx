@@ -1,6 +1,5 @@
-import PropTypes from "prop-types";
 import { Down_left_dark_arrow, Down_straight_neutral_arrow, Up_right_neutral_arrow } from "assets/";
-import { Card } from "components/";
+import { Card, GoTo } from "components/";
 
 export const Projects = () => {
   return (
@@ -19,8 +18,8 @@ export const Projects = () => {
       <Awards />
       <Completed />
       <div className="flex flex-col gap-[50px] px-[25px] py-[50px]">
-        <GoTo title="Team members" link={() => console.log("/team")} />
-        <GoTo title="Journal publications" link={() => console.log("/publications")} />
+        <GoTo title="Team members" link="/team" />
+        <GoTo title="Journal publications" link="/publications" />
       </div>
     </div>
   );
@@ -227,26 +226,4 @@ const Completed = () => {
       </button>
     </div>
   );
-};
-
-const GoTo = ({ title, link }) => {
-  return (
-    <div className="flex flex-col gap-[20px]">
-      <h3 className="font-semibold text-[28px] text-primary_main">Go to..</h3>
-      <div className="flex justify-between items-center">
-        <h2
-          className="font-light text-[48px] text-text_black_primary leading-[64px]"
-          onClick={link}
-        >
-          {title}
-        </h2>
-        <Down_straight_neutral_arrow className="text-primary_main -rotate-[135deg] size-[46px]" />
-      </div>
-    </div>
-  );
-};
-
-GoTo.propTypes = {
-  title: PropTypes.string.isRequired,
-  link: PropTypes.string.isRequired,
 };
