@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { MainCarousel } from "components/";
+import { Filter, MainCarousel } from "components/";
 import { Down_left_dark_arrow } from "assets/";
 
 const events = [
   {
-    conference: "IEA 2024",
+    title: "IEA 2024",
     year: 2024,
     location: "Jeju",
     images: [
@@ -14,11 +14,11 @@ const events = [
       "/img/gallery/jeju-2024/3.png",
       "/img/gallery/jeju-2024/4.png",
     ],
-    type: "conference",
+    type: "Conferences",
   },
 
   {
-    conference: "DESIGN 2024",
+    title: "DESIGN 2024",
     year: 2024,
     location: "Dubrovnik (Croacia)",
     images: [
@@ -29,11 +29,11 @@ const events = [
       "/img/gallery/croatia-2024/5.png",
       "/img/gallery/croatia-2024/6.png",
     ],
-    type: "conference",
+    type: "Conferences",
   },
 
   {
-    conference: "Teacher's Day",
+    title: "Teacher's Day",
     year: 2024,
     location: "UNIST",
     images: [
@@ -41,11 +41,11 @@ const events = [
       "/img/gallery/unist-2024/2.png",
       "/img/gallery/unist-2024/3.png",
     ],
-    type: "lab",
+    type: "Lab Events",
   },
 
   {
-    conference: "IID Lab Annual Workshop",
+    title: "IID Lab Annual Workshop",
     year: 2023,
     location: "Gyeongju",
     images: [
@@ -54,11 +54,11 @@ const events = [
       "/img/gallery/gyeongju-2023/3.png",
       "/img/gallery/gyeongju-2023/4.png",
     ],
-    type: "lab",
+    type: "Lab Events",
   },
 
   {
-    conference: "IASDR 2023",
+    title: "IASDR 2023",
     year: 2023,
     location: "Milan",
     images: [
@@ -69,12 +69,12 @@ const events = [
       "/img/gallery/milan-2023/5.png",
       "/img/gallery/milan-2023/6.png",
     ],
-    type: "conference",
+    type: "Conferences",
   },
 ];
 
 export const Gallery = () => {
-  const [selected, setSelected] = useState("latest");
+  const [selected, setSelected] = useState("Latest");
 
   const slides = events.map((event) => {
     return event.images[0];
@@ -84,10 +84,10 @@ export const Gallery = () => {
     <div className="flex flex-col justify-start items-center pt-16 w-full h-dvh overflow-y-scroll no-scrollbar">
       <Intro slides={slides} />
       <div className="flex flex-col gap-[16px] py-8">
-        <Filter selected={selected} setSelected={setSelected} />
+        <Filter selected={selected} setSelected={setSelected} list={events} />
         <div className="flex flex-col gap-4">
-          {selected === "latest"
-            ? events.map((event, index) => <Event key={index} event={event} />)
+          {selected === "Latest"
+            ? events.slice(0, 5).map((event, index) => <Event key={index} event={event} />)
             : events
                 .filter((event) => event.type === selected)
                 .map((event, index) => <Event key={index} event={event} />)}
@@ -115,42 +115,6 @@ Intro.propTypes = {
   slides: PropTypes.array.isRequired,
 };
 
-const Filter = ({ selected, setSelected }) => {
-  return (
-    <div className="flex flex-wrap gap-[10px] px-[20px] font-bold text-[15px]">
-      <button
-        className={`place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main px-[12px] py-[4px] border-solid rounded-[15px] text-primary_main active:text-white no-underline ${
-          selected === "latest" ? "bg-primary_main text-white" : ""
-        }`}
-        onClick={() => setSelected("latest")}
-      >
-        Latest
-      </button>
-      <button
-        className={`place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main px-[12px] py-[4px] border-solid rounded-[15px] text-primary_main active:text-white no-underline ${
-          selected === "conference" ? "bg-primary_main text-white" : ""
-        }`}
-        onClick={() => setSelected("conference")}
-      >
-        Conferences
-      </button>
-      <button
-        className={`place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main px-[12px] py-[4px] border-solid rounded-[15px] text-primary_main active:text-white no-underline ${
-          selected === "lab" ? "bg-primary_main text-white" : ""
-        }`}
-        onClick={() => setSelected("lab")}
-      >
-        Lab Events
-      </button>
-    </div>
-  );
-};
-
-Filter.propTypes = {
-  selected: PropTypes.string.isRequired,
-  setSelected: PropTypes.func.isRequired,
-};
-
 const Event = ({ event }) => {
   return (
     <div className="flex flex-col gap-[10px] py-4">
@@ -171,7 +135,7 @@ const Event = ({ event }) => {
         ))}
       </div>
       <div className="text-center">
-        {event?.conference}, {event?.location}
+        {event?.title}, {event?.location}
       </div>
     </div>
   );
