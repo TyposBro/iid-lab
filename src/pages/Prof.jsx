@@ -94,9 +94,26 @@ const prof = {
 
 const Prof = () => {
   return (
-    <div className="flex flex-col justify-start items-center pt-[95px] px-[25px] w-full h-dvh overflow-y-scroll no-scrollbart">
+    <div className="flex flex-col justify-start items-center pt-[95px] px-[25px] w-full h-dvh overflow-y-scroll no-scrollbart gap-6">
       <Intro prof={prof} />
       <Background list={prof.background} />
+      <Links list={prof.background} />
+
+      <div className="w-full flex flex-col gap-[10px] font-semibold text-[18px]">
+        <a
+          href="https://iidl.unist.ac.kr/Profiles/index.html"
+          target="_blank"
+          className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+        >
+          Download CV
+        </a>
+        <a
+          className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+          href="#contact"
+        >
+          Contact
+        </a>
+      </div>
     </div>
   );
 };
@@ -118,7 +135,7 @@ const Intro = ({ prof }) => {
         </div>
         <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
         {/* Stats */}
-        <div className="flex flex-col items-center gap-4 w-full">
+        <div className="flex flex-col items-center gap-4 w-full py-6 ">
           {/* First row - always 2 items */}
           <div className="flex justify-center gap-4 w-full">
             {prof.stats.slice(0, 2).map((elem) => (
@@ -159,21 +176,6 @@ const Intro = ({ prof }) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-[10px] font-semibold text-[18px]">
-        <a
-          href="https://iidl.unist.ac.kr/Profiles/index.html"
-          target="_blank"
-          className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-        >
-          CV
-        </a>
-        <a
-          className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-          href="#contact"
-        >
-          Contact
-        </a>
-      </div>
     </div>
   );
 };
@@ -184,7 +186,7 @@ Intro.propTypes = {
 
 const Background = ({ list }) => {
   return (
-    <div className="flex flex-col gap-[10px] w-full">
+    <div className="flex flex-col w-full">
       <h2 className="font-semibold text-[16px] text-primary_main">Background</h2>
       <div className="flex flex-col gap-[10px]">
         {list.map((elem) => (
@@ -203,11 +205,13 @@ const AccordionCard = ({ title, items }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div key={title} className="w-full relative " onClick={() => setExpanded((prev) => !prev)}>
-      <div className="flex justify-between items-center w-full relative  ">
-        <div>
-          <h2 className="font-bold text-[48px] ">{title}</h2>
-        </div>
+    <div key={title} className="w-full relative" onClick={() => setExpanded((prev) => !prev)}>
+      <div
+        className={`flex justify-between items-center w-full relative border-b-text_black_primary ${
+          expanded ? "" : "border-b-[1px]"
+        }`}
+      >
+        <h2 className="font-semibold text-[48px] leading-[48px]">{title}</h2>
         <Down_straight_neutral_arrow
           className={`size-[30px] transform origin-center transition duration-500 ease-out text-white bg-primary_main rounded-full p-[5px] ${
             expanded ? "rotate-180" : ""
@@ -220,11 +224,11 @@ const AccordionCard = ({ title, items }) => {
           expanded ? "grid-rows-[1fr] py-[15px] opacity-100" : "grid-rows-[0fr]  opacity-0"
         }`}
       >
-        <div className="overflow-hidden">
+        <div className="flex flex-col gap-4 overflow-hidden">
           {items.map((item) => (
-            <div key={item.period} className="flex flex-col gap-[5px]">
-              <div className="font-semibold text-[16px]">{item.period}</div>
-              <div className="font-light text-[14px]">{item.desc}</div>
+            <div key={item.period} className="flex gap-4">
+              <div className="font-semibold text-[11px] flex-shrink-0 w-1/3">{item.period}</div>
+              <div className="font-light text-[11px]">{item.desc}</div>
             </div>
           ))}
         </div>
@@ -236,4 +240,28 @@ const AccordionCard = ({ title, items }) => {
 AccordionCard.propTypes = {
   title: PropTypes.string.isRequired,
   items: PropTypes.array.isRequired,
+};
+
+const Links = () => {
+  return (
+    <div className="flex flex-col w-full">
+      <h2 className="font-semibold text-[16px] text-primary_main">
+        Professional Activities and Services
+      </h2>
+      <div className="flex flex-col gap-[10px]">
+        <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
+          <h2 className="font-semibold text-[24px] leading-[48px]">Journal Papers</h2>
+          <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
+        </div>
+        <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
+          <h2 className="font-semibold text-[24px] leading-[48px]">Conference Papers</h2>
+          <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
+        </div>
+        <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
+          <h2 className="font-semibold text-[24px] leading-[48px]">Design Awards</h2>
+          <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
+        </div>
+      </div>
+    </div>
+  );
 };
