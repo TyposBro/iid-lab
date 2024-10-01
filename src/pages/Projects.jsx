@@ -15,11 +15,10 @@ export const Projects = () => {
       </div>
 
       <Current />
-      <Awards />
       <Completed />
+      <Awards />
       <div className="flex flex-col gap-[50px] px-[25px] py-[50px]">
-        <GoTo title="Team members" link="/team" />
-        <GoTo title="Journal publications" link="/publications" />
+        <GoTo title="Projects Gallery" link="/gallery" />
       </div>
     </div>
   );
@@ -109,15 +108,13 @@ const Awards = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-[30px] bg-black py-[30px] w-full">
+    <div className="flex flex-col gap-[30px] bg-primary_main py-[30px] w-full">
       <div className="flex flex-col gap-[25px] px-[25px]">
         <div className="flex justify-between items-center">
-          <h2 className="font-extralight text-[42px] text-text_white_primary leading-[48px]">
-            Awards
-          </h2>
-          <Down_straight_neutral_arrow className="text-primary_main rotate-45 size-[46px]" />
+          <h2 className="font-light text-[48px]  leading-[48px]">Awards</h2>
+          <Down_straight_neutral_arrow className=" rotate-45 size-[46px]" />
         </div>
-        <div className="flex gap-[12px] font-medium text-[16px] text-primary_main">
+        <div className="flex gap-[12px] font-medium text-base ">
           <button className="border-2 px-[24px] py-[8px] rounded-full">Reddot</button>
           <button className="border-2 px-[24px] py-[8px] rounded-full">iF</button>
           <button className="border-2 px-[24px] py-[8px] rounded-full">Others</button>
@@ -174,21 +171,18 @@ const Completed = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-[30px] bg-primary_main py-[30px] w-full" id="completed">
+    <div className="flex flex-col gap-[30px] bg-text_black_primary py-[30px] w-full" id="completed">
       <div className="flex flex-col gap-[25px] px-[25px]">
         <div className="flex justify-between items-center">
-          <h2 className="font-extralight text-[42px] text-black leading-[48px]">
+          <h2 className="font-extralight text-[48px] text-white leading-[50px]">
             Completed Projects
           </h2>
           <Down_straight_neutral_arrow className="text-text_white_primary -rotate-45 size-[56px]" />
         </div>
-        <div className="flex gap-[12px] border-text_black_primary font-medium text-[16px]">
-          <button className="border-2 px-[24px] py-[8px] border-text_black_primary rounded-full">
-            Needs
-          </button>
-          <button className="border-2 px-[24px] py-[8px] border-text_black_primary rounded-full">
-            Sorting
-          </button>
+        <div className="flex gap-[12px] border-white font-medium text-base text-white">
+          <button className="border-2 px-[24px] py-[8px] border-white rounded-full">Recent</button>
+          <button className="border-2 px-[24px] py-[8px] border-white rounded-full">2024</button>
+          <button className="border-2 px-[24px] py-[8px] border-white rounded-full">2023</button>
         </div>
       </div>
 
