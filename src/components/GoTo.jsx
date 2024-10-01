@@ -13,7 +13,7 @@ const GoTo = ({ title, link }) => {
         >
           {title}
         </HashLink>
-        <Down_straight_neutral_arrow className="text-primary_main -rotate-[135deg] size-[46px]" />
+        <Down_straight_neutral_arrow className="text-primary_main -rotate-[135deg] size-20" />
       </div>
     </div>
   );

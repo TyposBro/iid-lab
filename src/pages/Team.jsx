@@ -1,13 +1,13 @@
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
-import { AccordionCard } from "components/";
+import { AccordionCard, GoTo } from "components/";
 
 export const Team = () => {
   return (
     <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-dvw h-dvh overflow-y-scroll">
-      {/* <Intro /> */}
       <Prof />
       <CurrentTeam />
       <Alumni />
+      <GoTo title="Projects Gallery" link="/gallery" />
     </div>
   );
 };
@@ -88,6 +88,13 @@ const CurrentTeam = () => {
       role: "Undergraduate Intern",
       bio: "Donierbek is doing Bachelor of Science in Industrial design in UNIST. His main interest is designing products that are both comfortable to use and have a unique appearance design.",
     },
+
+    {
+      img: "/img/people/current/alina_alimova.png",
+      name: "Alina Alimova",
+      role: "Undergraduate Intern",
+      bio: "Alina Alimova is an undergraduate student from Kazakhstan, specializing in designing tangible products with a focus on ergonomics and user interaction.",
+    },
   ];
 
   return (
@@ -145,6 +152,12 @@ const Alumni = () => {
       name: "Alisher Saduakas",
       role: "Masters",
       bio: "Alisher Saduakas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
+    },
+    {
+      img: "/img/people/alumni/alisher_saduakas.png",
+      name: "Malika Gabbas",
+      role: "Masters",
+      bio: "Malika Gabbas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
     {
       img: "/img/people/alumni/muhammad_tufail.png",
