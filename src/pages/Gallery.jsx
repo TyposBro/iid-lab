@@ -84,7 +84,9 @@ export const Gallery = () => {
     <div className="flex flex-col justify-start items-center pt-16 w-full h-dvh overflow-y-scroll no-scrollbar">
       <Intro slides={slides} />
       <div className="flex flex-col gap-[16px] py-8">
-        <Filter selected={selected} setSelected={setSelected} list={events} />
+        <div className="px-4">
+          <Filter selected={selected} setSelected={setSelected} list={events} />
+        </div>
         <div className="flex flex-col gap-4">
           {selected === "Latest"
             ? events.slice(0, 5).map((event, index) => <Event key={index} event={event} />)

@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import { Down_left_dark_arrow } from "assets/";
 
 const Filter = ({ selected, setSelected, list }) => {
   const filters = [...new Set(list.map((item) => item.type))];
