@@ -1,5 +1,6 @@
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import { Down_left_dark_arrow } from "assets/";
+import { MainCarousel } from "components";
 
 export const About = () => {
   return (
@@ -12,10 +13,17 @@ export const About = () => {
 };
 
 const Intro = () => {
+  const slides = [
+    "/img/home/home_intro.png",
+    "/img/gallery/jeju-2024/1.png",
+    "/img/gallery/croatia-2024/1.png",
+    "/img/gallery/unist-2024/1.png",
+    "/img/gallery/gyeongju-2023/1.png",
+  ];
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full">
       <div className="flex flex-col gap-[15px]">
-        <div className="bg-border_dark rounded-[30px] w-full h-[160px]"></div>
+        <MainCarousel slides={slides} />
         <h1 className="font-bold text-[48px] text-text_black_primary leading-[48px]">
           Integration <span className="text-primary_main">&</span> Innovation Design
         </h1>

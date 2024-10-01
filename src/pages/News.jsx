@@ -5,30 +5,6 @@ import { Down_left_dark_arrow } from "assets/";
 
 const events = [
   {
-    title: "TEST MARKDOWN",
-    text: `# Welcome to my Next.js Markdown page!
-
-This is a paragraph with **bold** and *italic* text.
-
-## Here's a list:
-- Item 1
-- Item 2
-- Item 3
-
-And [a link](https://nextjs.org)`,
-    date: "May, 2024",
-    images: [
-      "/img/gallery/milan-2023/1.png",
-      "/img/gallery/milan-2023/2.png",
-      "/img/gallery/milan-2023/3.png",
-      "/img/gallery/milan-2023/4.png",
-      "/img/gallery/milan-2023/5.png",
-      "/img/gallery/milan-2023/6.png",
-    ],
-    type: "MARKDOWN",
-  },
-
-  {
     title: " IID Lab Director Appointed Dean of Research Affairs at UNIST",
     text: "Professor KwanMyung Kim, Director of the IID Lab, has been appointed as the new Dean of Research Affairs at UNIST, starting from September 1, 2024. This new role recognizes his significant contributions to research and innovation at UNIST. As Dean of Research Affairs, Professor Kim will oversee and drive the university's research initiatives, fostering a collaborative and impactful research environment.",
     date: "September, 2024",
