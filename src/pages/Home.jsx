@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { MainCarousel } from "components/";
+import { GoTo, MainCarousel } from "components/";
 import { useNavigate } from "react-router";
 
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
@@ -40,6 +40,7 @@ export const Home = () => {
       <Projects />
       <Journal />
       <Conference />
+      <GoTo title="Projects Gallery" link="/gallery" />
     </div>
   );
 };
@@ -49,9 +50,10 @@ export default Home;
 const Intro = ({ navigate }) => {
   const slides = [
     "/img/home/home_intro.png",
-    "/img/home/home_intro.png",
-    "/img/home/home_intro.png",
-    "/img/home/home_intro.png",
+    "/img/gallery/jeju-2024/1.png",
+    "/img/gallery/croatia-2024/1.png",
+    "/img/gallery/unist-2024/1.png",
+    "/img/gallery/gyeongju-2023/1.png",
   ];
 
   return (
@@ -60,7 +62,7 @@ const Intro = ({ navigate }) => {
       {/* <div className="rounded-[30px] w-full h-[210px]"></div> */}
       <div className="flex flex-col gap-[30px] w-full">
         <div className="flex flex-col gap-[8px]">
-          <h1 className="font-bold text-[48px] text-text_black_primary">
+          <h1 className="text-[44px] text-text_black_primary tracking-[-4%] leading-[48px]">
             Integration <span className="text-primary_main">&</span> Innovation Design
           </h1>
           <h3 className="text-[12px] text-text_black_secondary">
