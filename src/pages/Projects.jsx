@@ -128,25 +128,26 @@ const Awards = () => {
             className="flex flex-col gap-[12px] bg-white rounded-[20px] w-[300px] shrink-0"
           >
             <div
-              className="relative bg-border_dark rounded-[20px] w-full h-[570px]"
+              className="relative bg-border_dark rounded-[20px] w-full h-[480px]"
               style={{
                 backgroundImage: `url(${award.img})`,
-                backgroundSize: "300px 570px",
+                // backgroundSize: "100% 100%",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
               }}
             />
 
             <div className="flex flex-col gap-[15px] px-[15px] pb-[5px]">
               <h2 className="font-bold text-[24px] text-text_black_primary">{award.title}</h2>
-              <h3 className="text-border_dark font-bold text-[12px]">{award.authors}</h3>
+              <h3 className="text-border_dark font-light text-base">{award.authors}</h3>
               <h3 className="text-border_dark font-bold text-[12px]">{award.year}</h3>
             </div>
           </div>
         ))}
       </div>
 
-      <button className="flex justify-center items-center gap-[10px] rounded-[15px] h-[50px] font-semibold text-[18px] text-primary_main">
+      <button className="flex justify-center items-center gap-[10px] rounded-[15px] h-[50px] font-bold text-lg">
         <span>View All Awards</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
       </button>
