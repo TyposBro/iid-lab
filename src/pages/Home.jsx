@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 
 import { Down_left_dark_arrow, Link, Up_right_neutral_arrow } from "assets/";
 import { truncateText } from "utils/text";
+import { HashLink } from "react-router-hash-link";
 
 export const Home = () => {
   const ref = useRef(null);
@@ -116,18 +117,18 @@ const Prof = ({ navigate }) => {
         <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
       <div className="flex flex-col gap-[10px] font-semibold text-[18px]">
-        <a
+        <div
           onClick={() => navigate("/prof")}
           className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
         >
           CV
-        </a>
-        <a
+        </div>
+        <HashLink
           className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-          href="#contact"
+          to="#contact"
         >
           Contact
-        </a>
+        </HashLink>
       </div>
     </div>
   );
@@ -189,14 +190,13 @@ const Members = () => {
           </div>
         ))}
       </div>
-      <a
-        className="flex justify-center items-center gap-[10px] font-semibold text-[18px] text-primary_main no-underline"
-        href="/team#alumni"
-        target="_blank"
+      <HashLink
+        className="flex justify-center items-center gap-[10px] font-semibold text-[18px] text-primary_main no-underline  active:border-primary_main active:bg-primary_main active:text-white rounded-[15px] mx-6 h-[50px]"
+        to="/team#alumni"
       >
         <span>View Past Members</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </a>
+      </HashLink>
     </div>
   );
 };
@@ -298,14 +298,13 @@ const Projects = () => {
         )}
       </div>
 
-      <a
+      <HashLink
         className="flex justify-center items-center gap-[10px] border-2 border-primary_main border-solid rounded-[15px] h-[50px] font-semibold text-[18px] text-primary_main"
-        href="/projects#completed"
-        target="_blank"
+        to="/projects#completed"
       >
         <span>Completed Projects</span>
         <Up_right_neutral_arrow alt="up right light arrow icon" />
-      </a>
+      </HashLink>
     </div>
   );
 };
@@ -403,13 +402,13 @@ const Journal = () => {
         ))}
       </div>
       <div className="px-[25px] w-full">
-        <a
+        <HashLink
           className="flex justify-center items-center gap-[10px] border-2 border-solid rounded-[15px] w-full h-[50px] font-semibold text-[18px] text-text_white_primary"
-          href="/publications#journal"
+          to="/publications#journal"
         >
           <span>All Journal Papers</span>
           <Up_right_neutral_arrow alt="up right light arrow icon" />
-        </a>
+        </HashLink>
       </div>
     </div>
   );
@@ -514,13 +513,13 @@ const Conference = () => {
         ))}
       </div>
       <div className="px-[25px] w-full">
-        <a
+        <HashLink
           className="flex justify-center items-center gap-[10px] border-2 border-solid rounded-[15px] w-full h-[50px] font-semibold text-[18px] text-primary_main"
-          href="/publications#conference"
+          to="/publications#conference"
         >
           <span>All Conference Papers</span>
           <Up_right_neutral_arrow alt="up right light arrow icon" />
-        </a>
+        </HashLink>
       </div>
     </div>
   );
