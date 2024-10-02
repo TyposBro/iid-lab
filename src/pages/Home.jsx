@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { GoTo, MainCarousel } from "components/";
 import { useNavigate } from "react-router";
 
@@ -318,6 +318,7 @@ const Journal = () => {
       conference: "Applied Sciences",
       link: "https://www.mdpi.com/2076-3417/12/9/4687",
       color: "#08DBE9",
+      type: "International",
     },
     {
       title:
@@ -327,6 +328,7 @@ const Journal = () => {
       conference: "Journal of Heritage Tourism",
       link: "https://www.tandfonline.com/doi/full/10.1080/1743873X.2022.2039672",
       color: "#6E95E0",
+      type: "International",
     },
     {
       title:
@@ -336,6 +338,7 @@ const Journal = () => {
       conference: "Science Reports",
       link: "https://www.nature.com/articles/s41598-021-86502-w",
       color: "#476BE8",
+      type: "International",
     },
 
     {
@@ -346,6 +349,7 @@ const Journal = () => {
       conference: "Physical Activity Review",
       link: "https://www.physactiv.eu/wp-content/uploads/2021/05/2021_929.pdf",
       color: "#AF3BE7",
+      type: "International",
     },
     {
       title:
@@ -355,8 +359,12 @@ const Journal = () => {
       conference: "HFE",
       link: "https://www.inderscience.com/offers.php?id=118217",
       color: "#2BC04C",
+      type: "Domestic",
     },
   ];
+
+  const filters = [...new Set(journalPapers.map((item) => item.type))];
+  const [selected, setSelected] = useState(filters[0]);
 
   return (
     <div className="flex flex-col gap-[30px] bg-primary_main py-[30px] w-full">
@@ -365,41 +373,48 @@ const Journal = () => {
           Journal Papers
         </h2>
         <div className="flex gap-[10px]">
-          <button className="place-content-center border-2 grid bg-primary_main px-6 py-2 border-solid rounded-[183px] font-medium text-[16px] text-text_black_primary">
-            International
-          </button>
-          <button className="place-content-center border-2 grid bg-primary_main px-6 py-2 border-solid rounded-[183px] font-medium text-[16px] text-text_black_primary">
-            Domestic
-          </button>
+          {filters.map((item) => (
+            <button
+              key={item}
+              className={`place-content-center border-2 grid bg-primary_main px-6 py-2 border-solid rounded-[183px] font-medium text-[16px] text-text_black_primary ${
+                selected === item ? "text-white bg-primary_main" : ""
+              }`}
+              onClick={() => setSelected(item)}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </div>
       <div className="flex gap-[10px] px-[25px] overflow-x-scroll">
-        {journalPapers.map((paper) => (
-          <div
-            key={paper.title}
-            className="flex flex-col justify-between bg-text_black_primary p-[20px] rounded-[20px] w-[310px] h-[310px] shrink-0"
-          >
-            <span className="text-[16px] text-text_white_primary break-words">
-              {truncateText(paper.title, 150)}
-            </span>
-            <div className="flex justify-center items-center">
-              <div className="flex flex-col justify-between">
-                <div className="flex flex-col text-[20px]">
-                  <div className="font-bold text-text_white_primary break-words">
-                    {paper.conference}
+        {journalPapers
+          .filter((event) => event.type === selected)
+          .map((paper) => (
+            <div
+              key={paper.title}
+              className="flex flex-col justify-between bg-text_black_primary p-[20px] rounded-[20px] w-[310px] h-[310px] shrink-0"
+            >
+              <span className="text-[16px] text-text_white_primary break-words">
+                {truncateText(paper.title, 150)}
+              </span>
+              <div className="flex justify-center items-center">
+                <div className="flex flex-col justify-between">
+                  <div className="flex flex-col text-[20px]">
+                    <div className="font-bold text-text_white_primary break-words">
+                      {paper.conference}
+                    </div>
+                    <div className="text-text_white_tertiary">{paper.year}</div>
                   </div>
-                  <div className="text-text_white_tertiary">{paper.year}</div>
+                  <div className="font-semibold text-[14px]" style={{ color: paper.color }}>
+                    {paper.authors.join(", ")}
+                  </div>
                 </div>
-                <div className="font-semibold text-[14px]" style={{ color: paper.color }}>
-                  {paper.authors.join(", ")}
-                </div>
+                <a href={paper.link} target="_blank" rel="noreferrer">
+                  <Link className="text-text_white_primary size-[25px]" />
+                </a>
               </div>
-              <a href={paper.link} target="_blank" rel="noreferrer">
-                <Link className="text-text_white_primary size-[25px]" />
-              </a>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
       <div className="px-[25px] w-full">
         <HashLink
@@ -424,6 +439,7 @@ const Conference = () => {
       location: "Dubrovnik, Croatia",
       color: "#10719A",
       link: "https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/introducing-a-framework-to-translate-user-scenarios-into-engineering-specifications-with-action-steps/21306D946ED8FF4C56AEC995CAE50768",
+      type: "International",
     },
     {
       title:
@@ -434,6 +450,7 @@ const Conference = () => {
       location: "Milan, Italy",
       color: "#003152",
       link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/223/",
+      type: "International",
     },
     {
       title: "Dynamic personalities for elderly care robots: user-based recommendations",
@@ -443,6 +460,7 @@ const Conference = () => {
       location: "Milan, Italy",
       color: "#03ADBB",
       link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/210/",
+      type: "International",
     },
 
     {
@@ -453,6 +471,7 @@ const Conference = () => {
       location: "New York, USA",
       color: "#03ADBB",
       link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
+      type: "International",
     },
     {
       title:
@@ -463,8 +482,12 @@ const Conference = () => {
       location: "New York, USA",
       color: "#03ADBB",
       link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
+      type: "Domestic",
     },
   ];
+
+  const filters = [...new Set(conferencePapers.map((item) => item.type))];
+  const [selected, setSelected] = useState(filters[0]);
 
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full">
@@ -474,43 +497,50 @@ const Conference = () => {
           <Down_left_dark_arrow className="size-[51px]" />
         </h2>
         <div className="flex gap-[10px]">
-          <button className="place-content-center border-2 grid px-6 py-2 border-solid rounded-[183px] font-medium text-[16px] text-primary_main">
-            International
-          </button>
-          <button className="place-content-center border-2 grid px-6 py-2 border-solid rounded-[183px] font-medium text-[16px] text-primary_main">
-            Domestic
-          </button>
+          {filters.map((item) => (
+            <button
+              key={item}
+              className={`place-content-center border-2 grid px-6 py-2 border-solid rounded-[183px] font-medium text-[16px] text-primary_main border-primary_main ${
+                selected === item ? "bg-primary_main text-white" : ""
+              }`}
+              onClick={() => setSelected(item)}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </div>
       <div className="flex gap-[10px] px-[25px] overflow-x-scroll">
-        {conferencePapers.map((paper) => (
-          <div
-            key={paper.title}
-            className="flex flex-col justify-between bg-[#C1EDFF] p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0"
-          >
-            <span className="text-[18px] text-text_black_primary break-words">
-              {truncateText(paper.title, 150)}
-            </span>
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col justify-between">
-                <div className="flex flex-col text-[20px]">
-                  <span className="font-bold text-text_black_primary"> {paper.conference} </span>
-                  <span className="text-text_black_primary"> {paper.year} </span>
-                  <span className="text-text_black_primary"> {paper.location} </span>
+        {conferencePapers
+          .filter((event) => event.type === selected)
+          .map((paper) => (
+            <div
+              key={paper.title}
+              className="flex flex-col justify-between bg-[#C1EDFF] p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0"
+            >
+              <span className="text-[18px] text-text_black_primary break-words">
+                {truncateText(paper.title, 150)}
+              </span>
+              <div className="flex justify-between items-center">
+                <div className="flex flex-col justify-between">
+                  <div className="flex flex-col text-[20px]">
+                    <span className="font-bold text-text_black_primary"> {paper.conference} </span>
+                    <span className="text-text_black_primary"> {paper.year} </span>
+                    <span className="text-text_black_primary"> {paper.location} </span>
+                  </div>
+                  <div
+                    className="flex flex-col font-semibold text-[14px]"
+                    style={{ color: paper.color }}
+                  >
+                    {paper.authors.join(", ")}
+                  </div>
                 </div>
-                <div
-                  className="flex flex-col font-semibold text-[14px]"
-                  style={{ color: paper.color }}
-                >
-                  {paper.authors.join(", ")}
-                </div>
+                <a href={paper.link} target="_blank" rel="noreferrer">
+                  <Link className="text-text_black_primary size-[25px]" />
+                </a>
               </div>
-              <a href={paper.link} target="_blank" rel="noreferrer">
-                <Link className="text-text_black_primary size-[25px]" />
-              </a>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
       <div className="px-[25px] w-full">
         <HashLink
