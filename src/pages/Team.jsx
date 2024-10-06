@@ -1,5 +1,7 @@
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
 import { AccordionCard, GoTo } from "components/";
+import { useState } from "react";
+import { HashLink } from "react-router-hash-link";
 
 export const Team = () => {
   return (
@@ -36,14 +38,12 @@ const Prof = () => {
         <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
       <div className="flex flex-col gap-[10px] font-semibold text-[18px]">
-        <a
+        <HashLink
           className="flex justify-center items-center gap-[10px] border-2 border-primary_main bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-text_white_primary"
-          href="https://iidl.unist.ac.kr/Profiles/index.html"
-          target="_blank"
-          rel="noopener noreferrer"
+          to="/prof"
         >
           CV <Up_right_neutral_arrow />
-        </a>
+        </HashLink>
         <a
           className="place-content-center border-2 border-primary_main grid border-solid rounded-[15px] w-full h-[50px] text-primary_main"
           href="mailto:kmyung@unist.ac.kr"
@@ -60,13 +60,13 @@ const CurrentTeam = () => {
     {
       img: "/img/people/current/haebin_lee.png",
       name: "Haebin Lee",
-      role: "PhD Candidate",
+      role: "PhD",
       bio: "Haebin Lee is a PhD Candidate in the Design Department at UNIST. He has done Master of Science in Industrial Design from Department of Industrial Design at Ulsan National Institute of Science & Technology (UNIST), Ulsan, South Korea. His main research interest is combining Design and Engineerig for new product design. Currently, he is pursuing his PhD research in Transformable Design using Design and Mechanical Engineering.",
     },
     {
       img: "/img/people/current/ulugbek_ismatullaev.png",
       name: "Ulugbek Ismatullaev",
-      role: "PhD Candidate",
+      role: "PhD",
       bio: "Ulugbek Ismatullaev is a PhD Candidate in the Design Department at UNIST. He completed his Master's degree in Industrial Engineering at the Kumoh National Institute of Technology (KIT) in Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. His current research focuses on developing design methods and tools to translate user scenarios into engineering specifications.",
     },
     {
@@ -85,17 +85,21 @@ const CurrentTeam = () => {
     {
       img: "/img/people/current/donierbek_abdurakhimov.png",
       name: "Donierbek Abdurakhimov",
-      role: "Undergraduate Intern",
+      role: "Intern",
       bio: "Donierbek is doing Bachelor of Science in Industrial design in UNIST. His main interest is designing products that are both comfortable to use and have a unique appearance design.",
     },
 
     {
       img: "/img/people/current/alina_alimova.png",
       name: "Alina Alimova",
-      role: "Undergraduate Intern",
+      role: "Intern",
       bio: "Alina Alimova is an undergraduate student from Kazakhstan, specializing in designing tangible products with a focus on ergonomics and user interaction.",
     },
   ];
+
+  const derivedRoles = [...new Set(members.map((member) => member.role))];
+
+  const [selected, setSetselected] = useState(derivedRoles[0]);
 
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full">
@@ -113,27 +117,40 @@ const CurrentTeam = () => {
         </h3>
       </div>
       <div className="flex gap-[10px]">
-        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary">
-          PhD
+        <button
+          className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
+            "All" === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+          }`}
+          key="All"
+          onClick={() => setSetselected("All")}
+        >
+          All
         </button>
-        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary">
-          Masters
-        </button>
-        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary">
-          Interns
-        </button>
+        {derivedRoles.map((role) => (
+          <button
+            className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
+              role === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+            }`}
+            key={role}
+            onClick={() => setSetselected(role)}
+          >
+            {role}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-col items-center gap-[10px]">
-        {members.map((member) => (
-          <AccordionCard
-            key={member.name}
-            title={member.name}
-            subtitle={member.role}
-            bg={member.img}
-            desc={member.bio}
-          />
-        ))}
+        {members
+          .filter((elem) => (selected === "All" ? true : elem.role === selected))
+          .map((member) => (
+            <AccordionCard
+              key={member.name}
+              title={member.name}
+              subtitle={member.role}
+              bg={member.img}
+              desc={member.bio}
+            />
+          ))}
       </div>
     </div>
   );
@@ -141,6 +158,12 @@ const CurrentTeam = () => {
 
 const Alumni = () => {
   const members = [
+    {
+      img: "/img/people/alumni/muhammad_tufail.png",
+      name: "Muhammad Tufail",
+      role: "PhD",
+      bio: "Muhammad Tufail is a PhD student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
+    },
     {
       img: "/img/people/alumni/joongsoo_kim.png",
       name: "Joongsoo Kim",
@@ -159,13 +182,11 @@ const Alumni = () => {
       role: "Masters",
       bio: "Malika Gabbas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
-    {
-      img: "/img/people/alumni/muhammad_tufail.png",
-      name: "Muhammad Tufail",
-      role: "PhD",
-      bio: "Muhammad Tufail is a PhD student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
-    },
   ];
+
+  const derivedRoles = [...new Set(members.map((member) => member.role))];
+
+  const [selected, setSetselected] = useState("All");
 
   return (
     <div className="flex flex-col gap-[30px] pt-[30px] w-full" id="alumni">
@@ -176,27 +197,40 @@ const Alumni = () => {
         <Down_left_dark_arrow className="size-[46px]" />
       </div>
       <div className="flex gap-[10px]">
-        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary">
-          PhD
+        <button
+          className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
+            "All" === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+          }`}
+          key={"All"}
+          onClick={() => setSetselected("All")}
+        >
+          All
         </button>
-        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary">
-          Masters
-        </button>
-        <button className="place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary">
-          Interns
-        </button>
+        {derivedRoles.map((role) => (
+          <button
+            className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
+              role === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+            }`}
+            key={role}
+            onClick={() => setSetselected(role)}
+          >
+            {role}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-col items-center gap-[10px]">
-        {members.map((member) => (
-          <AccordionCard
-            key={member.name}
-            title={member.name}
-            subtitle={member.role}
-            bg={member.img}
-            desc={member.bio}
-          />
-        ))}
+        {members
+          .filter((elem) => (selected === "All" ? true : elem.role === selected))
+          .map((member) => (
+            <AccordionCard
+              key={member.name}
+              title={member.name}
+              subtitle={member.role}
+              bg={member.img}
+              desc={member.bio}
+            />
+          ))}
       </div>
 
       <button className="flex items-center gap-[10px] active:bg-primary_main mx-auto px-[24px] py-[8px] rounded-[18px] font-semibold text-[18px] text-primary_main active:text-white">
