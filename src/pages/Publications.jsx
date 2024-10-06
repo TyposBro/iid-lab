@@ -6,19 +6,56 @@ export const Publications = () => {
   const journalPapers = [
     {
       title:
-        "Interdisciplinary Co-Design Research Practice in the Rehabilitation of Elderly Individuals with Chronic Low Back Pain from a Senior Care Center in South Korea",
-      journal: "Applied Sciences",
-      year: 2022,
-      authors: ["M. Tufail", "H. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
-      link: "https://www.mdpi.com/2076-3417/12/9/4687",
+        "The Design of Rehabilitation Device for Upper Limb After Stroke Using an Integrated Design Process, December 2021 HongKong",
+      publisher: "IASDR",
+      year: 2021,
+      authors: ["Jaehan Park", "M. Tufail", "HB. Lee", "KM. Kim"],
+      // link: "https://www.mdpi.com/2076-3417/12/9/4687",
     },
+
     {
       title:
-        "How do visitors perceive the significance of tangible cultural heritage through a 3D reconstructed immersive visual experience at the Seokguram Grotto, South Korea?",
-      journal: "Science Reports",
-      year: 2022,
-      authors: ["MC Chang", "SW Park", "JY Cho", "BJ Lee", "JM Hwang", "KM Kim & DH Park"],
-      link: "https://www.tandfonline.com/doi/full/10.1080/1743873X.2022.2039672",
+        "Comparison of three different types of exercises for selective contractions of supra- and infrahyoid muscles",
+      publisher: "Scientific Reports",
+      year: 2021,
+      authors: ["MC Chang", "SW Park", "JY Cho", "BJ Lee,", "JM Hwang", "KM Kim", "DH Park"],
+      // link: "https://www.mdpi.com/2076-3417/12/9/4687",
+    },
+
+    {
+      title:
+        "How do Visitors Perceive the Significance of Tangible Cultural Heritage through a 3D Reconstructed Immersive Visual Experience?",
+      publisher: "HT",
+      year: 2020,
+      authors: ["M. Tufail", "J.H. Park", "H. Kim", "KM. Kim"],
+      // link: "https://www.mdpi.com/2076-3417/12/9/4687",
+    },
+
+    {
+      title:
+        "Sustainable and ICT-Enabled Development in Developing Areas: An E-Heritage E-Commerce Service for Handicraft Marketing",
+      publisher: "JoP: CS",
+      year: 2018,
+      authors: ["M. Tufail", "KM. Kim"],
+      // link: "https://www.mdpi.com/2076-3417/12/9/4687",
+    },
+
+    {
+      title:
+        "Cognitive styles in design problem solving: Insights from network-based cognitive maps",
+      publisher: "Design Studies",
+      year: 2015,
+      authors: ["EJ. Kim", "KM. Kim"],
+      // link: "https://www.mdpi.com/2076-3417/12/9/4687",
+    },
+
+    {
+      title:
+        "Design Constraints Adopted by Industrial Design Students in the Concept Design phase, 27. No. 2. pp199-213",
+      publisher: "AoDR",
+      year: 2014,
+      authors: ["Y. Kim", "KM. Kim"],
+      // link: "https://www.mdpi.com/2076-3417/12/9/4687",
     },
   ];
 
@@ -28,28 +65,43 @@ export const Publications = () => {
         "Introducing a framework to translate user scenarios into engineering specifications with “action steps”",
       authors: ["Ulugbek Ismatullaev", "KM. Kim"],
       year: "2024",
-      conference: "DESIGN CONFERENCE",
+      publisher: "DESIGN CONFERENCE",
       location: "Dubrovnik, Croatia",
-      color: "#10719A",
       link: "https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/introducing-a-framework-to-translate-user-scenarios-into-engineering-specifications-with-action-steps/21306D946ED8FF4C56AEC995CAE50768",
     },
+    {
+      title:
+        "How do visitors perceive the significance of tangible cultural heritage through a 3D reconstructed immersive visual experience at the Seokguram Grotto, South Korea?",
+      publisher: "Science Reports",
+      year: 2022,
+      authors: ["MC Chang", "SW Park", "JY Cho", "BJ Lee", "JM Hwang", "KM Kim & DH Park"],
+      link: "https://www.tandfonline.com/doi/full/10.1080/1743873X.2022.2039672",
+    },
+
+    {
+      title:
+        "Interdisciplinary Co-Design Research Practice in the Rehabilitation of Elderly Individuals with Chronic Low Back Pain from a Senior Care Center in South Korea",
+      publisher: "Applied Sciences",
+      year: 2022,
+      authors: ["M. Tufail", "H. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
+      link: "https://www.mdpi.com/2076-3417/12/9/4687",
+    },
+
     {
       title:
         "Exercise Characteristics of Older Adults and Considerations for Exercise Equipment Design for them",
       authors: ["J. Kim", "A. Saduakas", "U. Ismatullaev", "D. Lee", "BB. Garza", "KM. Kim"],
       year: "2023",
-      conference: "IASDR",
+      publisher: "IASDR",
       location: "Milan, Italy",
-      color: "#003152",
       link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/223/",
     },
     {
       title: "Dynamic personalities for elderly care robots: user-based recommendations",
       authors: ["D. Lee", "A. Saduakas", "U. Ismatullaev", "BB. Garza", "J. Kim", "KM. Kim"],
       year: "2023",
-      conference: "IASDR",
+      publisher: "IASDR",
       location: "Milan, Italy",
-      color: "#03ADBB",
       link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/210/",
     },
 
@@ -57,9 +109,8 @@ export const Publications = () => {
       title: "Human Factors Considerations in Design for the Elderly",
       authors: ["U. Ismatullaev", "A. Saduakas", "KM. Kim"],
       year: "2022",
-      conference: "AHFE",
+      publisher: "AHFE",
       location: "New York, USA",
-      color: "#03ADBB",
       link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
     },
     {
@@ -67,9 +118,8 @@ export const Publications = () => {
         "Addressing the Gaps in Elderly Falling Prevention from the Perspective of a Human-Centered Design.",
       authors: ["A. Saduakas", "U. Ismatullaev", "KM. Kim"],
       year: "2022",
-      conference: "AHFE",
+      publisher: "AHFE",
       location: "New York, USA",
-      color: "#03ADBB",
       link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
     },
   ];
@@ -153,24 +203,22 @@ const PublicationList = ({ title, bg, buttonColor, iconColor, buttonBorder, list
               className="flex flex-col justify-between gap-[16px] bg-[#C1EDFF] p-[20px] rounded-[20px] w-full"
             >
               <span className=" text-[20px]">{truncateText(item.title, 150)}</span>
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col max-w-[70%]">
-                  <h4 className=" flex flex-col text-[20px]">
-                    <span className="font-bold">{item.journal}</span>{" "}
-                    <span className="">{item.year}</span>
-                  </h4>
-                  <h4 className="font-semibold text-[#10719A] text-[14px]">
-                    {item.authors.join(", ")}
-                  </h4>
-                </div>
-                <a
-                  className="flex justify-end items-center grow shrink-0"
-                  href={item.link}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Link className="size-[24px] text-[#10719A]" />
-                </a>
+              <div className="flex flex-col gap-4">
+                <h4 className=" flex gap-3 justify-between items-center text-[20px]">
+                  <span className="font-bold shrink-0">{item.publisher}</span>{" "}
+                  <span className="">{item.year}</span>
+                  <a
+                    className="flex justify-end items-center grow shrink-0"
+                    href={item.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Link className="size-[24px] text-[#10719A]" />
+                  </a>
+                </h4>
+                <h4 className="font-semibold text-[#10719A] text-[14px]">
+                  {item.authors.join(", ")}
+                </h4>
               </div>
             </div>
           );
