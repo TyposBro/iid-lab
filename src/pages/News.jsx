@@ -125,7 +125,7 @@ const Intro = ({ slides }) => {
   return (
     <div className="flex flex-col gap-[16px] py-8 w-full">
       <h2 className="flex justify-between items-end text-5xl text-text_black_primary leading-[48px] tracking-normal">
-        <span>Gallery</span>
+        <span>News</span>
         <Down_left_dark_arrow className="size-[51px]" />
       </h2>
       <MainCarousel slides={slides} />
