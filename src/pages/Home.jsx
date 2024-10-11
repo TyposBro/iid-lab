@@ -120,7 +120,7 @@ const Prof = ({ navigate }) => {
         <div className="flex flex-col gap-[10px] font-semibold text-[18px] sm:flex-row sm:w-72">
           <div
             onClick={() => navigate("/prof")}
-            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline cursor-pointer"
           >
             CV
           </div>
@@ -228,11 +228,11 @@ const Projects = () => {
 
   return (
     <div className="flex flex-col gap-[30px] bg-black px-[25px] py-[30px] w-full">
-      <div className="flex flex-col gap-[10px]">
-        <h2 className="font-extralight text-[42px] text-text_white_primary leading-[48px]">
+      <div className="flex flex-col gap-[10px] sm:items-center sm:gap-10 sm:flex-row sm:shrink-0 ">
+        <h2 className="font-extralight text-[42px] text-text_white_primary sm:text-[80px]">
           Current Projects
         </h2>
-        <h3 className="font-light text-[12px] text-text_white_secondary">
+        <h3 className="font-light text-[12px] text-text_white_secondary sm:text-lg">
           We create innovative design concepts through systematic, human-centered methods,
           developing them into products and services using engineering design. Our focus is on
           elderly care, rehabilitation, healthcare, and safety, and we collaborate closely with

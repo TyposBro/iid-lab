@@ -10,21 +10,19 @@ export const Footer = () => {
   return (
     <footer
       id="contact"
-      className="relative flex flex-col justify-center items-center gap-[80px] bg-text_black_primary p-[30px] w-full h-fit"
+      className="relative flex flex-col justify-center bg-text_black_primary p-[30px] w-full h-fit sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:items-center sm:justify-items-end"
     >
-      <div className="flex flex-row justify-between items-center gap-[20px]">
-        <div className="flex flex-col items-start gap-[10px]">
-          <Down_right_dark_arrow className="w-[66px] h-[66px]" />
-          <h1 className="font-light text-[64px] text-text_white_primary leading-[72px]">
-            Contact <span className="text-primary_main">Us</span>
-          </h1>
-          <p className="text-[12px] text-text_white_tertiary">
-            If you have any inquires, please contact us via following email or telephone number. We
-            would also be thrilled to have you visit our lab!
-          </p>
-        </div>
+      <Down_right_dark_arrow className="size-16 sm:size-32 sm:col-start-2 sm:row-start-2 sm:rotate-180" />
+      <div className="flex flex-col gap-[10px] m-auto">
+        <h1 className="font-light text-[64px] text-text_white_primary leading-[72px]">
+          Contact <span className="text-primary_main">Us</span>
+        </h1>
+        <p className="text-[12px] text-text_white_tertiary">
+          If you have any inquires, please contact us via following email or telephone number. We
+          would also be thrilled to have you visit our lab!
+        </p>
       </div>
-      <div className="flex flex-col items-start gap-[10px] text-text_white_secondary">
+      <div className="flex flex-col gap-[10px] text-text_white_secondary my-16 mx-auto">
         <a
           className="flex items-center gap-[10px]"
           href="https://map.naver.com/p/search/UNIST/place/16601096?c=18.34,0,0,0,dh"
@@ -49,7 +47,10 @@ export const Footer = () => {
           </a>
         </div>
       </div>
-      <Footer_logo alt="" />
+      <Footer_logo
+        alt=""
+        className="mx-auto sm:mx-0 sm:col-start-2 sm:row-start-1 sm:justify-self-end"
+      />
     </footer>
   );
 };
