@@ -102,9 +102,10 @@ const Prof = () => {
 
       <div className="w-full flex flex-col gap-[10px] font-semibold text-[18px]">
         <a
-          href="https://iidl.unist.ac.kr/Profiles/index.html"
+          href="/cv.pdf"
           target="_blank"
           className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+          download="KM_Kim-cv.pdf"
         >
           Download CV
         </a>
@@ -126,9 +127,12 @@ const Intro = ({ prof }) => {
   return (
     <div className="flex flex-col gap-[30px] w-full">
       <div
-        className="mx-auto w-full min-h-[360px]"
-        style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
-      />
+        className="mx-auto w-full h-[360px] sm:h-auto sm:p-16"
+        // style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
+      >
+        <img src={prof.img} alt="" className="block w-full h-full sm:h-auto object-cover" />
+      </div>
+
       <div className="flex flex-col gap-[10px] w-full">
         <div>
           <h2 className="font-semibold text-[16px] text-primary_main">{prof.role}</h2>
@@ -138,9 +142,9 @@ const Intro = ({ prof }) => {
         </div>
         <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
         {/* Stats */}
-        <div className="flex flex-col items-center gap-4 w-full py-6 ">
+        <div className="flex flex-col items-center gap-4 w-full py-6 sm:gap-16">
           {/* First row - always 2 items */}
-          <div className="flex justify-center gap-4 w-full">
+          <div className="flex justify-center gap-4 w-full sm:gap-16">
             {prof.stats.slice(0, 2).map((elem) => (
               <div key={elem.key} className="max-w-[120px] text-center">
                 <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
@@ -150,7 +154,7 @@ const Intro = ({ prof }) => {
           </div>
 
           {/* Second row - next 3 items */}
-          <div className="flex justify-center gap-4 w-full">
+          <div className="flex justify-center gap-4 w-full sm:gap-16">
             {prof.stats.slice(2, 5).map((elem) => (
               <div key={elem.key} className="max-w-[120px] text-center">
                 <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
@@ -161,7 +165,7 @@ const Intro = ({ prof }) => {
 
           {/* Additional rows - any remaining items */}
           {prof.stats.length > 5 && (
-            <div className="flex flex-wrap justify-center gap-4 w-full">
+            <div className="flex flex-wrap justify-center gap-4 w-full sm:gap-16">
               {prof.stats.slice(5).map((elem) => (
                 <div key={elem.key} className="max-w-[120px] text-center">
                   <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
