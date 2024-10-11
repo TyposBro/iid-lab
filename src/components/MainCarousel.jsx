@@ -51,12 +51,13 @@ export const MainCarousel = ({ slides, autoplay = true }) => {
             <div
               src={slide}
               alt=""
-              className="w-full h-[200px] rounded-[20px]"
+              className="w-full h-[200px] rounded-[20px] sm:min-h-[500px]"
               style={{
                 backgroundImage: `url(${slide})`,
-                backgroundSize: "100% 200px",
+                backgroundSize: "100% 100%",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
+                objectFit: "cover",
               }}
             />
           </SwiperSlide>

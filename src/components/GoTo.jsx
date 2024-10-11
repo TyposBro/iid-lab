@@ -4,7 +4,7 @@ import { HashLink } from "react-router-hash-link";
 
 const GoTo = ({ title, link }) => {
   return (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex flex-col gap-[20px] w-full px-6">
       <h3 className="font-semibold text-[28px] text-primary_main">Go to..</h3>
       <div className="flex justify-between items-center">
         <HashLink

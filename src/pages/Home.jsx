@@ -58,10 +58,10 @@ const Intro = ({ navigate }) => {
   ];
 
   return (
-    <div className="flex flex-col px-[25px] w-full">
+    <div className="flex flex-col px-[25px] w-full sm:gap-8">
       <MainCarousel slides={slides} />
       {/* <div className="rounded-[30px] w-full h-[210px]"></div> */}
-      <div className="flex flex-col gap-[30px] w-full">
+      <div className="flex flex-col gap-[30px] w-full sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-[8px]">
           <h1 className="text-[44px] text-text_black_primary tracking-[-4%] leading-[48px]">
             Integration <span className="text-primary_main">&</span> Innovation Design
@@ -74,13 +74,13 @@ const Intro = ({ navigate }) => {
         </div>
         <div className="flex flex-col gap-[10px] font-semibold text-[18px]">
           <button
-            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline sm:h-14 sm:w-64"
             onClick={() => navigate("/projects")}
           >
             Projects
           </button>
           <button
-            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline sm:h-14 sm:w-64"
             onClick={() => navigate("/publications")}
           >
             Publications
@@ -104,31 +104,33 @@ const Prof = ({ navigate }) => {
   };
 
   return (
-    <div className="flex flex-col gap-[30px] my-[30px] px-[25px] w-full">
+    <div className="flex flex-col gap-[30px] my-[30px] px-[25px] w-full sm:flex-row">
       <div
-        className="mx-auto rounded-[30px] w-[240px] h-[300px]"
+        className="mx-auto rounded-[30px] w-[240px] h-[300px] sm:flex-shrink-0 "
         style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
       ></div>
-      <div className="flex flex-col gap-[5px] w-full">
-        <h2 className="font-bold text-[20px] text-primary_main">{prof.role}</h2>
-        <h1 className="font-bold text-[36px] text-text_black_primary leading-[36px]">
-          {prof.name}
-        </h1>
-        <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
-      </div>
-      <div className="flex flex-col gap-[10px] font-semibold text-[18px]">
-        <div
-          onClick={() => navigate("/prof")}
-          className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-        >
-          CV
+      <div className="flex flex-col gap-[30px] sm:justify-between">
+        <div className="flex flex-col gap-[5px] w-full">
+          <h2 className="font-bold text-[20px] text-primary_main">{prof.role}</h2>
+          <h1 className="font-bold text-[36px] text-text_black_primary leading-[36px]">
+            {prof.name}
+          </h1>
+          <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
         </div>
-        <HashLink
-          className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-          to="#contact"
-        >
-          Contact
-        </HashLink>
+        <div className="flex flex-col gap-[10px] font-semibold text-[18px] sm:flex-row sm:w-72">
+          <div
+            onClick={() => navigate("/prof")}
+            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+          >
+            CV
+          </div>
+          <HashLink
+            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
+            to="#contact"
+          >
+            Contact
+          </HashLink>
+        </div>
       </div>
     </div>
   );
@@ -392,7 +394,7 @@ const Journal = () => {
           .map((paper) => (
             <div
               key={paper.title}
-              className="flex flex-col justify-between bg-text_black_primary p-[20px] rounded-[20px] w-[310px] h-[310px] shrink-0"
+              className="flex flex-col justify-between bg-text_black_primary p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0 sm:w-96"
             >
               <span className="text-[16px] text-text_white_primary break-words">
                 {truncateText(paper.title, 150)}
@@ -516,7 +518,7 @@ const Conference = () => {
           .map((paper) => (
             <div
               key={paper.title}
-              className="flex flex-col justify-between bg-[#C1EDFF] p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0"
+              className="flex flex-col justify-between bg-[#C1EDFF] p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0 sm:w-96"
             >
               <span className="text-[18px] text-text_black_primary break-words">
                 {truncateText(paper.title, 150)}
