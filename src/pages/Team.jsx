@@ -5,7 +5,7 @@ import { HashLink } from "react-router-hash-link";
 
 export const Team = () => {
   return (
-    <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-dvw h-dvh overflow-y-scroll">
+    <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full h-dvh overflow-y-scroll">
       <Prof />
       <CurrentTeam />
       <Alumni />
