@@ -13,3 +13,29 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+
+@keyframes shrinkRight {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 50%;
+  }
+}
+
+@media (min-width: 640px) {
+  .animate-shrink-right > .layer-1 {
+    transition: width 0.5s ease-in-out;
+    width: 100%;
+    right: 0;
+  }
+  .animate-shrink-right:hover > .layer-1 {
+    transition: width 0.5s ease-in-out;
+    width: 50%;
+  }
+
+  .animate-shrink-right:hover > .layer-1 > :last-child {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+}

@@ -17,9 +17,14 @@ export const Projects = () => {
       <Current />
       <Completed />
       <Awards />
-      <div className="flex flex-col gap-[50px] px-[25px] py-[50px]">
+      {window.innerWidth <= 640 ? (
         <GoTo title="Projects Gallery" link="/gallery" />
-      </div>
+      ) : (
+        <div className="sm:w-full sm:items-center sm:flex sm:justify-between">
+          <GoTo title="Team members" link="/team" />
+          <GoTo title="Publications" link="/publications" />
+        </div>
+      )}
     </div>
   );
 };
@@ -32,27 +37,31 @@ const Current = () => {
       img: "/img/projects/current/lemmy_ai_based_robot.png",
       title: "Lemmy - AI Based Robot",
       subtitle: "Elderly care robot-service system",
+      desc: "Development of a robot-service system for elderly care, including a robot, a service platform, and a service model",
     },
     {
       img: "/img/projects/current/lg_hower_gym.png",
       title: "LG Hover Gym",
       subtitle: "Designing accessories for LG Hower Gym",
+      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,",
     },
     {
       img: "/img/projects/current/military_sleeping_bag.png",
       title: "Military Sleeping Bag",
       subtitle: "Military Backpack and Frame Design for effective Weight Distribution System ",
+      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,",
     },
     {
       img: "/img/projects/current/military_backpack.png",
       title: "Military backpack",
       subtitle: "Winter sleeping bag for Special Forces",
+      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,",
     },
   ];
 
   return (
     <div className="flex flex-col gap-[30px] px-[25px] py-[30px] w-full">
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <h2 className="font-light text-[48px] text-text_black_primary leading-[48px]">
           Current Projects
         </h2>
@@ -66,6 +75,8 @@ const Current = () => {
             title={project.title}
             subtitle={project.subtitle}
             bg={project.img}
+            desc={project.desc}
+            action={project.action}
           />
         ))}
       </div>
@@ -125,7 +136,7 @@ const Awards = () => {
         {awards.map((award) => (
           <div
             key={award.title}
-            className="flex flex-col gap-[12px] bg-white rounded-[20px] w-[300px] shrink-0"
+            className="flex flex-col gap-[12px] bg-white rounded-[20px] w-[300px] shrink-0 cursor-pointer"
           >
             <div
               className="relative bg-border_dark rounded-[20px] w-full h-[480px]"
@@ -187,9 +198,9 @@ const Completed = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-[15px] px-[25px] w-full overflow-x-auto">
+      <div className="flex flex-col gap-[15px] px-[25px] w-full overflow-x-auto sm:grid sm:grid-cols-3 ">
         {projects.map((project) => (
-          <div key={project.title} className="relative w-full">
+          <div key={project.title} className="relative w-full cursor-pointer">
             <div
               className="relative bg-border_dark rounded-[20px] w-full h-[260px]"
               style={{
@@ -200,7 +211,7 @@ const Completed = () => {
               {/* Dark Overlay */}
               <div
                 className="absolute inset-0 bg-black rounded-[20px]"
-                style={{ background: "linear-gradient(180deg, #32323200 0%, #323232FF 100%)" }}
+                style={{ background: "linear-gradient(180deg, #32323200 20%, #323232AA 100%)" }}
               ></div>
               {/* Dark Overlay */}
               <div className="bottom-[20px] absolute flex justify-between items-center px-[20px] w-full">
