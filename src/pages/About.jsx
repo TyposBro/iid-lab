@@ -43,7 +43,7 @@ const Intro = () => {
 const Tracks = () => {
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full">
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <h2 className="font-light text-[48px] text-text_black_primary leading-[48px]">
           Research Tracks
         </h2>
@@ -69,28 +69,31 @@ const Tracks = () => {
 
 const Details = () => {
   return (
-    <div className="flex flex-col gap-[15px] py-[30px] w-full">
-      <h1 className="font-bold text-[48px] text-text_black_primary leading-[48px]">
-        Integration Innovation Design
-      </h1>
-      <h3 className="text-[12px] text-text_black_secondary">
-        Owing to the increasing use and expansion of global network infrastructure, a new paradigm
-        in the design domain has emerged. This paradigm boosts traditional designers from 2D and 3D
-        boundaries to face complex design problems and become design researchers, social innovators,
-        knowledgeable problem solvers, and innovation-focused businessmen. This transformation is
-        achieved through an interdisciplinary environment and collaboration among related fields.
-      </h3>
+    <div className="flex flex-col gap-[15px] py-[30px] w-full sm:grid sm:grid-cols-2">
+      <div className="flex flex-col gap-[15px] sm:order-1">
+        <h1 className="font-bold text-3xl text-text_black_primary leading-[48px]">
+          Integration Innovation Design
+        </h1>
+        <h3 className="text-[12px] text-text_black_secondary">
+          Owing to the increasing use and expansion of global network infrastructure, a new paradigm
+          in the design domain has emerged. This paradigm boosts traditional designers from 2D and
+          3D boundaries to face complex design problems and become design researchers, social
+          innovators, knowledgeable problem solvers, and innovation-focused businessmen. This
+          transformation is achieved through an interdisciplinary environment and collaboration
+          among related fields.
+        </h3>
+      </div>
 
       <div
-        className="bg-border_dark rounded-[20px] w-full h-[200px]"
+        className="bg-border_dark rounded-[20px] w-full h-[200px] sm:h-96 bg-no-repeat object-cover sm:order-2"
         style={{
           backgroundImage: "url(/img/projects/current/military_backpack.png)",
-          backgroundSize: "100% 200px",
           backgroundPosition: "center",
+          backgroundSize: "100% 100%",
         }}
       />
 
-      <h3 className="text-[12px] text-text_black_secondary">
+      <h3 className="text-[12px] text-text_black_secondary sm:order-4">
         Integrated Design Innovation seeks holistic approaches to understand social, ecological,
         environmental, medical, and technological problems, and create solutions for complex issues
         faced by society. Using integrated design, IIDL explores various aspects of collaboration
@@ -100,15 +103,15 @@ const Details = () => {
       </h3>
 
       <div
-        className="bg-border_dark rounded-[20px] w-full h-[200px]"
+        className="bg-border_dark rounded-[20px] w-full h-[200px] sm:h-96 bg-no-repeat sm:order-3 object-cover "
         style={{
           backgroundImage: "url(/img/projects/awards/wave_hat.png)",
-          backgroundSize: "100% 200px",
           backgroundPosition: "center",
+          backgroundSize: "100% 100%",
         }}
       />
 
-      <h3 className="text-[12px] text-text_black_secondary">
+      <h3 className="text-[12px] text-text_black_secondary sm:order-5">
         Currently, one research area focuses on understanding the product design process where
         industrial designers and engineering designers contribute as product designers. Moreover,
         this research area aims to develop an effective and innovative interaction model for
@@ -116,11 +119,11 @@ const Details = () => {
       </h3>
 
       <div
-        className="bg-border_dark rounded-[20px] w-full h-[200px]"
+        className="bg-border_dark rounded-[20px] w-full h-[200px] sm:order-6 sm:h-96 bg-no-repeat object-cover"
         style={{
           backgroundImage: "url(/img/projects/current/lemmy_ai_based_robot.png)",
-          backgroundSize: "100% 200px",
           backgroundPosition: "center",
+          backgroundSize: "100% 100%",
         }}
       />
     </div>
