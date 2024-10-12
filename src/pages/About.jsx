@@ -4,7 +4,7 @@ import { MainCarousel } from "components";
 
 export const About = () => {
   return (
-    <div className="flex flex-col justify-start items-center px-[30px] pt-[65px] w-dvw h-dvh overflow-y-scroll">
+    <div className="flex flex-col justify-start items-center px-[30px] pt-[65px] w-full h-dvh overflow-y-scroll">
       <Intro />
       <Tracks />
       <Details />
