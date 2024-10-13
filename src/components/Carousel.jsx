@@ -1,18 +1,17 @@
+import PropTypes from "prop-types";
+
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import img from "../img.json";
+
+// import required modules
+import { Pagination, Navigation } from "swiper/modules";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-// import required modules
-import { Pagination, Navigation } from "swiper";
-
-export const Carousel = () => {
-  const slides = img.HOME.SHOWCASE;
-
+export const Carousel = ({ slides }) => {
   return (
     <div className="carousel">
       <Swiper
@@ -26,14 +25,20 @@ export const Carousel = () => {
         }}
         navigation={true}
         modules={[Pagination, Navigation]}
-        className="carousel__swiper"
+        className=""
       >
         {slides.map((slide, i) => (
-          <SwiperSlide key={i} className="carousel__slide">
-            <img className="carousel__slide-img" src={`/img/home/showcase/${slide}`} alt="" />
+          <SwiperSlide key={i} className="">
+            <img className="" src={slide} alt="" />
           </SwiperSlide>
         ))}
       </Swiper>
     </div>
   );
+};
+
+export default Carousel;
+
+Carousel.propTypes = {
+  slides: PropTypes.array.isRequired,
 };

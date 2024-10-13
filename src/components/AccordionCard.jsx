@@ -21,21 +21,21 @@ const AccordionCard = ({ title, subtitle, desc, bg }) => {
         {/* Dark Overlay */}
         <div className="w-full flex justify-between items-center absolute bottom-[20px] px-[20px] ">
           <div>
-            <h2 className="text-text_white_primary font-bold text-[24px] font-special">{title}</h2>
-            <h3 className="text-primary_main italic font-regular text-[12px] font-bold">
-              {subtitle}
-            </h3>
+            <h2 className="text-text_white_primary font-bold text-[24px] ">{title}</h2>
+            <h3 className="text-primary_main italic  text-[12px] font-medium">{subtitle}</h3>
           </div>
-          <Down_straight_neutral_arrow
-            className={`size-[27px] transform origin-center transition duration-500 ease-out text-primary_main ${
-              expanded ? "rotate-180" : ""
-            }`}
-          />
+          <div className="bg-white rounded-full size-8 grid place-content-center">
+            <Down_straight_neutral_arrow
+              className={`size-5 transform origin-center transition duration-500 ease-out text-primary_main ${
+                expanded ? "rotate-180" : ""
+              }`}
+            />
+          </div>
         </div>
       </div>
 
       <div
-        className={`grid px-[10px] transition-all duration-700 ease-in-out ${
+        className={`grid px-[10px] transition-all duration-700 ease-in-out text-border_dark ${
           expanded ? "grid-rows-[1fr] py-[15px] opacity-100" : "grid-rows-[0fr]  opacity-0"
         }`}
       >

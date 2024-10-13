@@ -6,6 +6,7 @@ export { default as Footer_email } from "./footer_email.svg?react";
 export { default as Footer_location } from "./footer_location.svg?react";
 export { default as Footer_logo } from "./footer_logo.svg?react";
 export { default as Footer_phone } from "./footer_phone.svg?react";
+export { default as Link } from "./link.svg?react";
 export { default as Navbar_logo } from "./navbar_logo.svg?react";
 export { default as Up_right_dark_arrow } from "./up_right_dark_arrow.svg?react";
 export { default as Up_right_neutral_arrow } from "./up_right_neutral_arrow.svg?react";

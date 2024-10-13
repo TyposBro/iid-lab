@@ -28,7 +28,12 @@ export const MenuButton = ({ navigate }) => {
         <ul className="nav__list">
           <li className="nav__item" onClick={() => handleNavigation("/about")}>
             <a href="#about" className="nav__link">
-              About IIDL
+              About IID Lab
+            </a>
+          </li>
+          <li className="nav__item" onClick={() => handleNavigation("/team")}>
+            <a href="#team" className="nav__link">
+              Team
             </a>
           </li>
           <li className="nav__item" onClick={() => handleNavigation("/projects")}>
@@ -41,14 +46,14 @@ export const MenuButton = ({ navigate }) => {
               Publications
             </a>
           </li>
-          <li className="nav__item" onClick={() => handleNavigation("/team")}>
-            <a href="#team" className="nav__link">
-              Team
+          <li className="nav__item" onClick={() => handleNavigation("/news")}>
+            <a href="#news" className="nav__link">
+              News
             </a>
           </li>
-          <li className="nav__item" onClick={() => handleNavigation("/")}>
-            <a href="#news" className="nav__link">
-              Home
+          <li className="nav__item" onClick={() => handleNavigation("/gallery")}>
+            <a href="#gallery" className="nav__link">
+              Gallery
             </a>
           </li>
         </ul>

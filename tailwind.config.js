@@ -4,9 +4,7 @@ export default {
   theme: {
     extend: {},
     fontFamily: {
-      regular: ["Inter", "sans-serif"],
-      special: ["Space Grotesk", "sans-serif"],
-      super_special: ["Archivo", "monospace"],
+      sans: ["-apple-system", "BlinkMacSystemFont", "Inter", "sans-serif"],
     },
     colors: {
       text_white_primary: "#fffffff2",

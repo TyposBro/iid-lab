@@ -1,13 +1,22 @@
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
-import { AccordionCard } from "components/";
+import { AccordionCard, GoTo } from "components/";
+import { useState } from "react";
+import { HashLink } from "react-router-hash-link";
 
 export const Team = () => {
   return (
-    <div className="w-dvw h-dvh flex flex-col justify-start items-center overflow-y-scroll px-[25px] pt-[95px]">
-      {/* <Intro /> */}
+    <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full h-dvh overflow-y-scroll">
       <Prof />
       <CurrentTeam />
       <Alumni />
+      {window.innerWidth <= 640 ? (
+        <GoTo title="Projects Gallery" link="/gallery" />
+      ) : (
+        <div className="w-full flex justify-between">
+          <GoTo title="Projects Gallery" link="/gallery" />
+          <GoTo title="Lab News" link="/news" />
+        </div>
+      )}
     </div>
   );
 };
@@ -23,29 +32,27 @@ const Prof = () => {
   };
 
   return (
-    <div className="my-[30px] w-full flex flex-col gap-[30px]">
+    <div className="flex flex-col gap-[30px] my-[30px] w-full sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:gap-5 ">
       <div
-        className="w-full h-[360px] rounded-[30px]"
+        className="rounded-[30px] w-full h-[360px] sm:size-96 sm:m-auto sm:col-start-2 row-start-1 row-end-3 sm:self-start"
         style={{ backgroundImage: `url(${prof.img})`, backgroundSize: "cover" }}
       ></div>
-      <div className="w-full flex flex-col gap-[5px]">
-        <h2 className="font-regular font-bold text-primary_main text-[20px]">{prof.role}</h2>
-        <h1 className="font-super_special text-text_black_primary text-[36px] leading-[36px] font-bold">
+      <div className="flex flex-col gap-[5px] w-full">
+        <h2 className="font-bold text-[20px] text-primary_main">{prof.role}</h2>
+        <h1 className="font-bold text-[36px] text-text_black_primary leading-[36px]">
           {prof.name}
         </h1>
-        <h3 className="font-regular text-[12px] text-text_black_secondary">{prof.desc}</h3>
+        <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>
       </div>
-      <div className="flex flex-col gap-[10px] font-semibold text-[18px] font-regular">
-        <a
-          className="w-full h-[50px] flex justify-center items-center gap-[10px] border-primary_main bg-primary_main rounded-[15px] border-2 border-solid text-text_white_primary"
-          href="https://iidl.unist.ac.kr/Profiles/index.html"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div className="flex flex-col gap-[10px] font-semibold text-[18px] sm:flex-row sm:w-1/2">
+        <HashLink
+          className="flex justify-center items-center gap-[10px] border-2 border-primary_main bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-text_white_primary"
+          to="/prof"
         >
           CV <Up_right_neutral_arrow />
-        </a>
+        </HashLink>
         <a
-          className="w-full h-[50px]  border-primary_main rounded-[15px] grid place-content-center border-2 border-solid text-primary_main "
+          className="place-content-center border-2 border-primary_main grid border-solid rounded-[15px] w-full h-[50px] text-primary_main"
           href="mailto:kmyung@unist.ac.kr"
         >
           Contact
@@ -60,13 +67,13 @@ const CurrentTeam = () => {
     {
       img: "/img/people/current/haebin_lee.png",
       name: "Haebin Lee",
-      role: "PhD Candidate",
+      role: "PhD",
       bio: "Haebin Lee is a PhD Candidate in the Design Department at UNIST. He has done Master of Science in Industrial Design from Department of Industrial Design at Ulsan National Institute of Science & Technology (UNIST), Ulsan, South Korea. His main research interest is combining Design and Engineerig for new product design. Currently, he is pursuing his PhD research in Transformable Design using Design and Mechanical Engineering.",
     },
     {
       img: "/img/people/current/ulugbek_ismatullaev.png",
       name: "Ulugbek Ismatullaev",
-      role: "PhD Candidate",
+      role: "PhD",
       bio: "Ulugbek Ismatullaev is a PhD Candidate in the Design Department at UNIST. He completed his Master's degree in Industrial Engineering at the Kumoh National Institute of Technology (KIT) in Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. His current research focuses on developing design methods and tools to translate user scenarios into engineering specifications.",
     },
     {
@@ -85,48 +92,72 @@ const CurrentTeam = () => {
     {
       img: "/img/people/current/donierbek_abdurakhimov.png",
       name: "Donierbek Abdurakhimov",
-      role: "Undergraduate Intern",
+      role: "Intern",
       bio: "Donierbek is doing Bachelor of Science in Industrial design in UNIST. His main interest is designing products that are both comfortable to use and have a unique appearance design.",
+    },
+
+    {
+      img: "/img/people/current/alina_alimova.png",
+      name: "Alina Alimova",
+      role: "Intern",
+      bio: "Alina Alimova is an undergraduate student from Kazakhstan, specializing in designing tangible products with a focus on ergonomics and user interaction.",
     },
   ];
 
+  const derivedRoles = [...new Set(members.map((member) => member.role))];
+
+  const [selected, setSetselected] = useState(derivedRoles[0]);
+
   return (
-    <div className="w-dvw flex flex-col gap-[30px] py-[30px] px-[25px] ">
+    <div className="flex flex-col gap-[30px] py-[30px] w-full">
       <div className="flex flex-col gap-[10px]">
-        <div className="flex items-center">
-          <h2 className="text-text_black_primary font-light text-[48px] leading-[48px] font-special">
+        <div className="flex items-center justify-between">
+          <h2 className="font-light text-[48px] text-text_black_primary leading-[48px]">
             Current Team
           </h2>
           <Down_left_dark_arrow className="size-[58px]" />
         </div>
-        <h3 className="text-text_black_secondary font-regular font-light text-[12px]">
+        <h3 className="font-light text-[12px] text-text_black_secondary">
           Our lab is a vibrant hub of international and Korean researchers from diverse backgrounds,
           creating a dynamic and inclusive environment. Working here is not just productive but also
           a lot of fun, thanks to our enthusiastic and collaborative team!
         </h3>
       </div>
-      <div className="flex gap-[10px]">
-        <button className="w-full h-[30px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
-          PhD
+      <div className="flex gap-[10px] sm:w-1/2 lg:w-1/3">
+        <button
+          className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
+            "All" === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+          }`}
+          key="All"
+          onClick={() => setSetselected("All")}
+        >
+          All
         </button>
-        <button className="w-full h-[30px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
-          Masters
-        </button>
-        <button className="w-full h-[30px] border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary">
-          Interns
-        </button>
+        {derivedRoles.map((role) => (
+          <button
+            className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
+              role === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+            }`}
+            key={role}
+            onClick={() => setSetselected(role)}
+          >
+            {role}
+          </button>
+        ))}
       </div>
 
-      <div className="flex flex-col gap-[10px] items-center">
-        {members.map((member) => (
-          <AccordionCard
-            key={member.name}
-            title={member.name}
-            subtitle={member.role}
-            bg={member.img}
-            desc={member.bio}
-          />
-        ))}
+      <div className="flex flex-col items-center gap-[10px] sm:grid sm:grid-cols-2 lg:grid-cols-3 ">
+        {members
+          .filter((elem) => (selected === "All" ? true : elem.role === selected))
+          .map((member) => (
+            <AccordionCard
+              key={member.name}
+              title={member.name}
+              subtitle={member.role}
+              bg={member.img}
+              desc={member.bio}
+            />
+          ))}
       </div>
     </div>
   );
@@ -134,6 +165,12 @@ const CurrentTeam = () => {
 
 const Alumni = () => {
   const members = [
+    {
+      img: "/img/people/alumni/muhammad_tufail.png",
+      name: "Muhammad Tufail",
+      role: "PhD",
+      bio: "Muhammad Tufail is a PhD student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
+    },
     {
       img: "/img/people/alumni/joongsoo_kim.png",
       name: "Joongsoo Kim",
@@ -147,46 +184,63 @@ const Alumni = () => {
       bio: "Alisher Saduakas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
     {
-      img: "/img/people/alumni/muhammad_tufail.png",
-      name: "Muhammad Tufail",
-      role: "PhD",
-      bio: "Muhammad Tufail is a PhD student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
+      img: "/img/people/alumni/alisher_saduakas.png",
+      name: "Malika Gabbas",
+      role: "Masters",
+      bio: "Malika Gabbas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
     },
   ];
 
+  const derivedRoles = [...new Set(members.map((member) => member.role))];
+
+  const [selected, setSetselected] = useState("All");
+
   return (
-    <div className="w-dvw flex flex-col gap-[30px] pt-[30px] px-[25px] " id="alumni">
-      <div className="flex justify-between items-center ">
-        <h2 className="text-text_black_primary font-extralight text-[48px] leading-[48px] font-special">
+    <div className="flex flex-col gap-[30px] pt-[30px] w-full" id="alumni">
+      <div className="flex justify-between items-center">
+        <h2 className="font-extralight text-[48px] text-text_black_primary leading-[48px]">
           Alumni
         </h2>
         <Down_left_dark_arrow className="size-[46px]" />
       </div>
-      <div className="flex gap-[10px]">
-        <button className="w-full h-[30px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
-          PhD
+      <div className="flex gap-[10px] sm:w-1/2 lg:w-1/3">
+        <button
+          className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
+            "All" === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+          }`}
+          key={"All"}
+          onClick={() => setSetselected("All")}
+        >
+          All
         </button>
-        <button className="w-full h-[30px]  border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary ">
-          Masters
-        </button>
-        <button className="w-full h-[30px] border-primary_main rounded-full grid place-content-center border-2 border-solid text-primary_main active:bg-primary_main active:text-text_white_primary">
-          Interns
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-[10px] items-center">
-        {members.map((member) => (
-          <AccordionCard
-            key={member.name}
-            title={member.name}
-            subtitle={member.role}
-            bg={member.img}
-            desc={member.bio}
-          />
+        {derivedRoles.map((role) => (
+          <button
+            className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary  ${
+              role === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
+            }`}
+            key={role}
+            onClick={() => setSetselected(role)}
+          >
+            {role}
+          </button>
         ))}
       </div>
 
-      <button className="flex items-center gap-[10px] mx-auto text-primary_main font-semibold text-[18px] rounded-[18px] active:bg-primary_main active:text-white py-[8px] px-[24px]">
+      <div className="flex flex-col items-center gap-[10px] sm:grid sm:grid-cols-2 lg:grid-cols-3">
+        {members
+          .filter((elem) => (selected === "All" ? true : elem.role === selected))
+          .map((member) => (
+            <AccordionCard
+              key={member.name}
+              title={member.name}
+              subtitle={member.role}
+              bg={member.img}
+              desc={member.bio}
+            />
+          ))}
+      </div>
+
+      <button className="flex items-center gap-[10px] active:bg-primary_main mx-auto px-[24px] py-[8px] rounded-[18px] font-semibold text-[18px] text-primary_main active:text-white">
         View All Alumni <Up_right_neutral_arrow />
       </button>
     </div>

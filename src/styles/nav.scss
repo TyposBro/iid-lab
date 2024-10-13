@@ -50,38 +50,38 @@
     transition-property: opacity width;
   }
   &__list {
-    list-style: none;
-    text-align: center;
+    height: 100%;
     width: 100%;
-
-    @include mixins.centerDiv;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   &__item {
-    margin: 1rem;
+    margin: 10px auto;
+    width: 70%;
   }
 
   &__link {
     &:link,
     &:visited {
       display: inline-block;
-      font-size: 30px;
-      font-weight: 300;
-      padding: 8px 24px;
+      font-size: 18px;
+      font-weight: 500;
+      height: 50px;
+      width: 100%;
       color: #25aae1;
       text-transform: uppercase;
       text-decoration: none;
-      border: #25aae1 solid 1px;
-      border-radius: 20px;
-      // background-image: linear-gradient(
-      //   120deg,
-      //   transparent 0%,
-      //   transparent 50%,
-      //   variables.$color-white 50%
-      // );
-
+      border: #25aae1 solid 2px;
+      border-radius: 15px;
       background-size: 220%;
       transition-property: transform, background-position, color;
       transition: 400ms ease-in-out;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     &:hover,
@@ -89,7 +89,6 @@
     &:active {
       background-position: 100%;
       color: variables.$color-primary-dark;
-      transform: translateX(1rem);
       background-color: #25aae1;
       color: white;
     }
