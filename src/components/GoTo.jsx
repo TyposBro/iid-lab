@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Down_straight_neutral_arrow } from "assets/";
+import { Down_straight_neutral_arrow } from "@/assets/";
 import { HashLink } from "react-router-hash-link";
 
 const GoTo = ({ title, link }) => {

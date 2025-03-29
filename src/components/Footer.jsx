@@ -4,7 +4,7 @@ import {
   Footer_location,
   Footer_logo,
   Footer_phone,
-} from "assets/";
+} from "@/assets/";
 
 export const Footer = () => {
   return (

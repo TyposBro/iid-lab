@@ -1,12 +1,12 @@
-import { Down_left_dark_arrow, Up_right_neutral_arrow } from "assets/";
-import { AccordionCard, GoTo } from "components/";
-import { useState } from "react";
+import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
+import { AccordionCard, GoTo } from "@/components/";
+import { useState, useEffect } from "react";
 import { HashLink } from "react-router-hash-link";
 
 export const Team = () => {
   return (
     <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full h-dvh overflow-y-scroll">
-      <Prof />
+      <TeamProf />
       <CurrentTeam />
       <Alumni />
       {window.innerWidth <= 640 ? (
@@ -23,13 +23,33 @@ export const Team = () => {
 
 export default Team;
 
-const Prof = () => {
-  const prof = {
-    img: "/img/people/director/prof_team.png",
-    name: "Professor KwanMyung Kim",
-    role: "Lab Director",
-    desc: "Dr. KwanMyung Kim is a full professor in Department of Design and the director of Integration and Innovation Design Lab (IIDL). He was a Dean of Graduate School of Creative Design Engineering during 2016-2020. He serves as an editor for Archives of Design Research and ICONARP International Journal of Architecture and Planning. He is also a CEO of ID SPACE Corp., a start-up company that commercializes academic research outcomes. Before joining UNIST, he worked in industry for 14 years as a product designer/engineer. With his strong practical knowdge and experience he persues to integrate design and engineering, and industry and academic knowledge in the major IIDL’s research domains including Design for Elderly, Rehabilitation and Health Care.",
-  };
+const TeamProf = () => {
+  const [prof, setProf] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfData = async () => {
+      try {
+        const response = await fetch("/api/professor");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProf(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchProfData();
+  }, []);
+
+  if (loading) return <div>Loading Professor...</div>;
+  if (error) return <div>Error loading Professor: {error}</div>;
+  if (!prof) return <div>Professor data not found.</div>;
 
   return (
     <div className="flex flex-col gap-[30px] my-[30px] w-full sm:grid sm:grid-cols-2 sm:grid-rows-2 sm:gap-5 ">
@@ -53,7 +73,7 @@ const Prof = () => {
         </HashLink>
         <a
           className="place-content-center border-2 border-primary_main grid border-solid rounded-[15px] w-full h-[50px] text-primary_main"
-          href="mailto:kmyung@unist.ac.kr"
+          href={`mailto:${prof.email || "kmyung@unist.ac.kr"}`}
         >
           Contact
         </a>
@@ -63,50 +83,34 @@ const Prof = () => {
 };
 
 const CurrentTeam = () => {
-  const members = [
-    {
-      img: "/img/people/current/haebin_lee.png",
-      name: "Haebin Lee",
-      role: "PhD",
-      bio: "Haebin Lee is a PhD Candidate in the Design Department at UNIST. He has done Master of Science in Industrial Design from Department of Industrial Design at Ulsan National Institute of Science & Technology (UNIST), Ulsan, South Korea. His main research interest is combining Design and Engineerig for new product design. Currently, he is pursuing his PhD research in Transformable Design using Design and Mechanical Engineering.",
-    },
-    {
-      img: "/img/people/current/ulugbek_ismatullaev.png",
-      name: "Ulugbek Ismatullaev",
-      role: "PhD",
-      bio: "Ulugbek Ismatullaev is a PhD Candidate in the Design Department at UNIST. He completed his Master's degree in Industrial Engineering at the Kumoh National Institute of Technology (KIT) in Gumi, Korea. His research interests include Human Factors and Ergonomics, UX Design, and Product Design. His current research focuses on developing design methods and tools to translate user scenarios into engineering specifications.",
-    },
-    {
-      img: "/img/people/current/danyal_sarfraz.png",
-      name: "Danial Sarfraz",
-      role: "Masters",
-      bio: "Danyal Sarfraz is a Masters student from Pakistan specializing in implementation of 3D and VR/XR technology in industrial design. He received his BS in Industrial Design from Pakistan’s most prestigious university, NUST.",
-    },
-    {
-      img: "/img/people/current/jonghyun_kim.png",
-      name: "JoungHyun Kim",
-      role: "Masters",
-      bio: "JoungHyun Kim is a combined Master's-PhD student in the Design Department at UNIST. She is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
-    },
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selected, setSetselected] = useState("All");
+  const [derivedRoles, setDerivedRoles] = useState([]);
 
-    {
-      img: "/img/people/current/donierbek_abdurakhimov.png",
-      name: "Donierbek Abdurakhimov",
-      role: "Intern",
-      bio: "Donierbek is doing Bachelor of Science in Industrial design in UNIST. His main interest is designing products that are both comfortable to use and have a unique appearance design.",
-    },
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        const response = await fetch("/api/team/members/current");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMembers(data);
+        setDerivedRoles(["All", ...new Set(data.map((member) => member.role))]);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
 
-    {
-      img: "/img/people/current/alina_alimova.png",
-      name: "Alina Alimova",
-      role: "Intern",
-      bio: "Alina Alimova is an undergraduate student from Kazakhstan, specializing in designing tangible products with a focus on ergonomics and user interaction.",
-    },
-  ];
+    fetchTeamMembers();
+  }, []);
 
-  const derivedRoles = [...new Set(members.map((member) => member.role))];
-
-  const [selected, setSetselected] = useState(derivedRoles[0]);
+  if (loading) return <div>Loading Current Team...</div>;
+  if (error) return <div>Error loading Current Team: {error}</div>;
 
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full">
@@ -164,36 +168,34 @@ const CurrentTeam = () => {
 };
 
 const Alumni = () => {
-  const members = [
-    {
-      img: "/img/people/alumni/muhammad_tufail.png",
-      name: "Muhammad Tufail",
-      role: "PhD",
-      bio: "Muhammad Tufail is a PhD student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
-    },
-    {
-      img: "/img/people/alumni/joongsoo_kim.png",
-      name: "Joongsoo Kim",
-      role: "Masters",
-      bio: "Joongsoo Kim is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
-    },
-    {
-      img: "/img/people/alumni/alisher_saduakas.png",
-      name: "Alisher Saduakas",
-      role: "Masters",
-      bio: "Alisher Saduakas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
-    },
-    {
-      img: "/img/people/alumni/alisher_saduakas.png",
-      name: "Malika Gabbas",
-      role: "Masters",
-      bio: "Malika Gabbas is a Master's student in the Design Department at UNIST. He is interested in how design can enhance human interaction with technology, particularly with AI, making it more intuitive and engaging.",
-    },
-  ];
-
-  const derivedRoles = [...new Set(members.map((member) => member.role))];
-
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selected, setSetselected] = useState("All");
+  const [derivedRoles, setDerivedRoles] = useState([]);
+
+  useEffect(() => {
+    const fetchAlumniMembers = async () => {
+      try {
+        const response = await fetch("/api/team/members/alumni");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMembers(data);
+        setDerivedRoles(["All", ...new Set(data.map((member) => member.role))]);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchAlumniMembers();
+  }, []);
+
+  if (loading) return <div>Loading Alumni...</div>;
+  if (error) return <div>Error loading Alumni: {error}</div>;
 
   return (
     <div className="flex flex-col gap-[30px] pt-[30px] w-full" id="alumni">

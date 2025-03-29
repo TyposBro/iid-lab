@@ -1,4 +1,4 @@
-import { Down_straight_neutral_arrow } from "assets";
+import { Down_straight_neutral_arrow } from "@/assets";
 import PropTypes from "prop-types";
 import { useState } from "react";
 

@@ -1,5 +1,10 @@
-import { Down_left_dark_arrow, Down_straight_neutral_arrow, Up_right_neutral_arrow } from "assets/";
-import { Card, GoTo } from "components/";
+import {
+  Down_left_dark_arrow,
+  Down_straight_neutral_arrow,
+  Up_right_neutral_arrow,
+} from "@/assets/";
+import { Card, GoTo } from "@/components/";
+import { useState, useEffect } from "react";
 
 export const Projects = () => {
   return (
@@ -32,32 +37,31 @@ export const Projects = () => {
 export default Projects;
 
 const Current = () => {
-  const projects = [
-    {
-      img: "/img/projects/current/lemmy_ai_based_robot.png",
-      title: "Lemmy - AI Based Robot",
-      subtitle: "Elderly care robot-service system",
-      desc: "Development of a robot-service system for elderly care, including a robot, a service platform, and a service model",
-    },
-    {
-      img: "/img/projects/current/lg_hower_gym.png",
-      title: "LG Hover Gym",
-      subtitle: "Designing accessories for LG Hower Gym",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,",
-    },
-    {
-      img: "/img/projects/current/military_sleeping_bag.png",
-      title: "Military Sleeping Bag",
-      subtitle: "Military Backpack and Frame Design for effective Weight Distribution System ",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,",
-    },
-    {
-      img: "/img/projects/current/military_backpack.png",
-      title: "Military backpack",
-      subtitle: "Winter sleeping bag for Special Forces",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,",
-    },
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCurrentProjects = async () => {
+      try {
+        const response = await fetch("/api/projects/current");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProjects(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchCurrentProjects();
+  }, []);
+
+  if (loading) return <div>Loading Current Projects...</div>;
+  if (error) return <div>Error loading Current Projects: {error}</div>;
 
   return (
     <div className="flex flex-col gap-[30px] px-[25px] py-[30px] w-full">
@@ -85,38 +89,31 @@ const Current = () => {
 };
 
 const Awards = () => {
-  const awards = [
-    {
-      title: "iF Design Award - UMAY",
-      year: 2022,
-      img: "/img/projects/awards/umay.png",
-      authors: "M. Gabbas, Y. Ismailov, KM Kim",
-    },
-    {
-      title: "Best of the Best, RedDot - GOOPI",
-      year: 2021,
-      img: "/img/projects/awards/goopi.png",
-      authors: "JH Park, M. Gabbas, YD Ryu, KM Kim",
-    },
-    {
-      title: "iF Design Award - Wave Hat",
-      year: 2021,
-      img: "/img/projects/awards/wave_hat.png",
-      authors: "SJ Joo, DB Lee, JY Lee, HM Choi, HJ Jin, SY Park, H KIM, KM Kim",
-    },
-    {
-      title: "iF Design Award - Wave App",
-      year: 2021,
-      img: "/img/projects/awards/wave_app.png",
-      authors: "SJ Joo, DB Lee, JY Lee, HM Choi, HJ Jin, SY Park, H KIM, KM Kim",
-    },
-    {
-      title: "Good Design - Anybaro",
-      year: 2019,
-      img: "/img/projects/awards/anybaro.png",
-      authors: "JH Yang, KM Kim",
-    },
-  ];
+  const [awards, setAwards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAwards = async () => {
+      try {
+        const response = await fetch("/api/projects/awards");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAwards(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchAwards();
+  }, []);
+
+  if (loading) return <div>Loading Awards...</div>;
+  if (error) return <div>Error loading Awards: {error}</div>;
 
   return (
     <div className="flex flex-col gap-[30px] bg-primary_main py-[30px] w-full">
@@ -142,7 +139,6 @@ const Awards = () => {
               className="relative bg-border_dark rounded-[20px] w-full h-[480px]"
               style={{
                 backgroundImage: `url(${award.img})`,
-                // backgroundSize: "100% 100%",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
@@ -167,20 +163,31 @@ const Awards = () => {
 };
 
 const Completed = () => {
-  const projects = [
-    {
-      title: "Food Waste Disposer Accessibility Kit",
-      desc: "Development of a kit to improve accessibility for installing food waste disposers and to check installation feasibility",
-      year: "09/2023-03/2024",
-      img: "/img/projects/completed/food_waste_disposer_accesibility_kit.png",
-    },
-    {
-      title: "UMAY",
-      desc: "Data-base Dysphagia rehabilitation training device and Gamified UI Design",
-      year: "2020-2023",
-      img: "/img/projects/completed/umay.png",
-    },
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCompletedProjects = async () => {
+      try {
+        const response = await fetch("/api/projects/completed");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProjects(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchCompletedProjects();
+  }, []);
+
+  if (loading) return <div>Loading Completed Projects...</div>;
+  if (error) return <div>Error loading Completed Projects: {error}</div>;
 
   return (
     <div className="flex flex-col gap-[30px] bg-text_black_primary py-[30px] w-full" id="completed">

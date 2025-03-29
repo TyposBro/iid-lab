@@ -1,6 +1,6 @@
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
-import { Down_left_dark_arrow } from "assets/";
-import { MainCarousel } from "components";
+import { Down_left_dark_arrow } from "@/assets/";
+import { MainCarousel } from "@/components";
 
 export const About = () => {
   return (

@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { GoTo, MainCarousel } from "components/";
+import { useRef, useState, useEffect } from "react";
+import { GoTo, MainCarousel } from "@/components/";
 import { useNavigate } from "react-router";
 
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
@@ -7,8 +7,8 @@ import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 
 import PropTypes from "prop-types";
 
-import { Down_left_dark_arrow, Link, Up_right_neutral_arrow } from "assets/";
-import { truncateText } from "utils/text";
+import { Down_left_dark_arrow, Link, Up_right_neutral_arrow } from "@/assets/";
+import { truncateText } from "@/utils/text";
 import { HashLink } from "react-router-hash-link";
 
 export const Home = () => {
@@ -96,12 +96,40 @@ Intro.propTypes = {
 };
 
 const Prof = ({ navigate }) => {
-  const prof = {
-    img: "/img/people/director/prof.png",
-    name: "Professor KwanMyung Kim",
-    role: "Lab Director",
-    desc: "Dr. KwanMyung Kim, a full professor and director of IIDL, has 14 years of industry experience. He integrates design and engineering, focusing on elderly care, rehabilitation, and healthcare. He's also the CEO of ID SPACE Corp. and has held key academic roles, including Dean and journal editor.",
-  };
+  const [prof, setProf] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfessorData = async () => {
+      try {
+        const response = await fetch("/api/professor");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProf(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchProfessorData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading professor data...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading professor data: {error}</div>;
+  }
+
+  if (!prof) {
+    return <div>No professor data found.</div>;
+  }
 
   return (
     <div className="flex flex-col gap-[30px] my-[30px] px-[25px] w-full sm:flex-row">
@@ -141,30 +169,36 @@ Prof.propTypes = {
 };
 
 const Members = () => {
-  const members = [
-    {
-      img: "/img/people/current/ulugbek_ismatullaev.png",
-      name: "Ulugbek Ismatullaev",
-      role: "PhD Candidate",
-    },
-    { img: "/img/people/current/daehun_lee_home.png", name: "Daehun Lee", role: "PhD Candidate" },
-    { img: "/img/people/current/haebin_lee.png", name: "Haebin Lee", role: "PhD Candidate" },
-    {
-      img: "/img/people/current/danyal_sarfraz.png",
-      name: "Danyal Sarfraz",
-      role: "Masters Researcher",
-    },
-    {
-      img: "/img/people/current/jonghyun_kim.png",
-      name: "Jonghyun Kim",
-      role: "Masters Researcher",
-    },
-    {
-      img: "/img/people/current/donierbek_abdurakhimov.png",
-      name: "Donierbek Abdurakhimov",
-      role: "Intern",
-    },
-  ];
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        const response = await fetch("/api/team");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMembers(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchTeamMembers();
+  }, []);
+
+  if (loading) {
+    return <div>Loading team members...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading team members: {error}</div>;
+  }
 
   return (
     <div className="flex flex-col gap-[30px] my-[30px] w-full shrink-0">
@@ -175,7 +209,7 @@ const Members = () => {
       </div>
       <div className="flex flex-row gap-[10px] px-[25px] w-full overflow-x-scroll">
         {members.map((member) => (
-          <div key={member.name} className="flex flex-col gap-[14px] w-full">
+          <div key={member._id} className="flex flex-col gap-[14px] w-full">
             <div
               className="bg-border_dark rounded-[20px] w-[170px] h-[270px] shrink-0"
               style={{
@@ -203,28 +237,36 @@ const Members = () => {
   );
 };
 const Projects = () => {
-  const projects = [
-    {
-      title: "Military Backpack",
-      desc: "Military Backpack and Frame Design for effective Weight Distribution System",
-      img: "/img/projects/current/military_backpack.png",
-    },
-    {
-      title: "LG Hower Gym",
-      desc: "Description goes here up to two lines max",
-      img: "/img/projects/current/lg_hower_gym.png",
-    },
-    {
-      title: "Military Sleeping Bag",
-      desc: "Winter sleeping bag for Special Forces",
-      img: "/img/projects/military_sleeping_bag1.png",
-    },
-    {
-      title: "Lemmy - AI Based Robot",
-      desc: "Elderly care robot-service system",
-      img: "/img/projects/current/lemmy_ai_based_robot.png",
-    },
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCurrentProjects = async () => {
+      try {
+        const response = await fetch("/api/projects/current");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProjects(data.slice(0, 4)); // Limit to the first 4 projects for the home page
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchCurrentProjects();
+  }, []);
+
+  if (loading) {
+    return <div>Loading projects...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading projects: {error}</div>;
+  }
 
   return (
     <div className="flex flex-col gap-[30px] bg-black px-[25px] py-[30px] w-full">
@@ -259,7 +301,7 @@ const Projects = () => {
         )}
         <div className="relative flex gap-[15px] w-full overflow-x-auto">
           {projects.slice(1, -1).map((project) => (
-            <div key={project.title} className="relative w-full">
+            <div key={project._id} className="relative w-full">
               <div
                 className="bg-border_dark rounded-[20px] w-full h-[270px]"
                 style={{ backgroundImage: `url(${project.img})`, backgroundSize: "cover" }}
@@ -310,63 +352,47 @@ const Projects = () => {
     </div>
   );
 };
-const Journal = () => {
-  const journalPapers = [
-    {
-      title:
-        "Interdisciplinary Co-Design Research Practice in the Rehabilitation of Elderly Individuals with Chronic Low Back Pain from a Senior Care Center in South Korea",
-      authors: ["M. Tufail", "HB Lee", "YG Moon", "H. Kim", "KM. Kim"],
-      year: "2022",
-      conference: "Applied Sciences",
-      link: "https://www.mdpi.com/2076-3417/12/9/4687",
-      color: "#08DBE9",
-      type: "International",
-    },
-    {
-      title:
-        "How do visitors perceive the significance of tangible cultural heritage through a 3D reconstructed immersive visual experience at the Seokguram Grotto, South Korea?",
-      authors: ["M. Tufail", "J. Park", "H. Kim", "S. Kim", "KM. Kim"],
-      year: "2022",
-      conference: "Journal of Heritage Tourism",
-      link: "https://www.tandfonline.com/doi/full/10.1080/1743873X.2022.2039672",
-      color: "#6E95E0",
-      type: "International",
-    },
-    {
-      title:
-        "Comparison of three different types of exercises for selective contractions of supra- and infrahyoid muscles",
-      authors: ["MC. Chang", "S. Park", "JY. Cho", "BJ. Lee", "JM. Hwang", "KM. Kim", "D. Park"],
-      year: "2021",
-      conference: "Science Reports",
-      link: "https://www.nature.com/articles/s41598-021-86502-w",
-      color: "#476BE8",
-      type: "International",
-    },
 
-    {
-      title:
-        "The Effect of Lumbar Erector Spinae Muscle Endurance Exercise on Perceived Low-back Pain in Older Adults",
-      authors: ["M. Tufail", "HB. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
-      year: "2021",
-      conference: "Physical Activity Review",
-      link: "https://www.physactiv.eu/wp-content/uploads/2021/05/2021_929.pdf",
-      color: "#AF3BE7",
-      type: "International",
-    },
-    {
-      title:
-        "Effects of standing exercise tasks with a sloped surface intervention on trunk muscle activation and low-back pain intensity in women aged ≥ 70 years",
-      authors: ["M. Tufail", "HB. Lee", "YG. Moon", "H. Kim", "KM. Kim"],
-      year: "2021",
-      conference: "HFE",
-      link: "https://www.inderscience.com/offers.php?id=118217",
-      color: "#2BC04C",
-      type: "Domestic",
-    },
-  ];
+const Journal = () => {
+  const [journalPapers, setJournalPapers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selected, setSelected] = useState(""); // Initialize with an empty string
+
+  useEffect(() => {
+    const fetchJournalPapers = async () => {
+      try {
+        const response = await fetch("/api/publications/journals");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setJournalPapers(data.slice(0, 5)); // Limit to the first 5 for the home page
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchJournalPapers();
+  }, []);
 
   const filters = [...new Set(journalPapers.map((item) => item.type))];
-  const [selected, setSelected] = useState(filters[0]);
+  // Set the initial selected value after filters are available, or keep it empty if no filters
+  useEffect(() => {
+    if (filters.length > 0) {
+      setSelected(filters[0]);
+    }
+  }, [filters]);
+
+  if (loading) {
+    return <div>Loading journal papers...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading journal papers: {error}</div>;
+  }
 
   return (
     <div className="flex flex-col gap-[30px] bg-primary_main py-[30px] w-full">
@@ -390,10 +416,10 @@ const Journal = () => {
       </div>
       <div className="flex gap-[10px] px-[25px] overflow-x-scroll">
         {journalPapers
-          .filter((event) => event.type === selected)
+          .filter((paper) => paper.type === selected)
           .map((paper) => (
             <div
-              key={paper.title}
+              key={paper._id}
               className="flex flex-col justify-between bg-text_black_primary p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0 sm:w-96"
             >
               <span className="text-[16px] text-text_white_primary break-words">
@@ -430,66 +456,47 @@ const Journal = () => {
     </div>
   );
 };
-const Conference = () => {
-  const conferencePapers = [
-    {
-      title:
-        "Introducing a framework to translate user scenarios into engineering specifications with “action steps”",
-      authors: ["Ulugbek Ismatullaev", "KM. Kim"],
-      year: "2024",
-      conference: "DESIGN CONFERENCE",
-      location: "Dubrovnik, Croatia",
-      color: "#10719A",
-      link: "https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/introducing-a-framework-to-translate-user-scenarios-into-engineering-specifications-with-action-steps/21306D946ED8FF4C56AEC995CAE50768",
-      type: "International",
-    },
-    {
-      title:
-        "Exercise Characteristics of Older Adults and Considerations for Exercise Equipment Design for them",
-      authors: ["J. Kim", "A. Saduakas", "U. Ismatullaev", "D. Lee", "BB. Garza", "KM. Kim"],
-      year: "2023",
-      conference: "IASDR",
-      location: "Milan, Italy",
-      color: "#003152",
-      link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/223/",
-      type: "International",
-    },
-    {
-      title: "Dynamic personalities for elderly care robots: user-based recommendations",
-      authors: ["D. Lee", "A. Saduakas", "U. Ismatullaev", "BB. Garza", "J. Kim", "KM. Kim"],
-      year: "2023",
-      conference: "IASDR",
-      location: "Milan, Italy",
-      color: "#03ADBB",
-      link: "https://dl.designresearchsociety.org/iasdr/iasdr2023/fullpapers/210/",
-      type: "International",
-    },
 
-    {
-      title: "Human Factors Considerations in Design for the Elderly",
-      authors: ["U. Ismatullaev", "A. Saduakas", "KM. Kim"],
-      year: "2022",
-      conference: "AHFE",
-      location: "New York, USA",
-      color: "#03ADBB",
-      link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
-      type: "International",
-    },
-    {
-      title:
-        "Addressing the Gaps in Elderly Falling Prevention from the Perspective of a Human-Centered Design.",
-      authors: ["A. Saduakas", "U. Ismatullaev", "KM. Kim"],
-      year: "2022",
-      conference: "AHFE",
-      location: "New York, USA",
-      color: "#03ADBB",
-      link: "https://openaccess.cms-conferences.org/publications/book/978-1-958651-14-8/article/978-1-958651-14-8_3",
-      type: "Domestic",
-    },
-  ];
+const Conference = () => {
+  const [conferencePapers, setConferencePapers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selected, setSelected] = useState(""); // Initialize with an empty string
+
+  useEffect(() => {
+    const fetchConferencePapers = async () => {
+      try {
+        const response = await fetch("/api/publications/conferences");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setConferencePapers(data.slice(0, 5)); // Limit to the first 5 for the home page
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchConferencePapers();
+  }, []);
 
   const filters = [...new Set(conferencePapers.map((item) => item.type))];
-  const [selected, setSelected] = useState(filters[0]);
+  // Set the initial selected value after filters are available, or keep it empty if no filters
+  useEffect(() => {
+    if (filters.length > 0) {
+      setSelected(filters[0]);
+    }
+  }, [filters]);
+
+  if (loading) {
+    return <div>Loading conference papers...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading conference papers: {error}</div>;
+  }
 
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full">
@@ -514,10 +521,10 @@ const Conference = () => {
       </div>
       <div className="flex gap-[10px] px-[25px] overflow-x-scroll">
         {conferencePapers
-          .filter((event) => event.type === selected)
+          .filter((paper) => paper.type === selected)
           .map((paper) => (
             <div
-              key={paper.title}
+              key={paper._id}
               className="flex flex-col justify-between bg-[#C1EDFF] p-[20px] rounded-[20px] w-[310px] h-[300px] shrink-0 sm:w-96"
             >
               <span className="text-[18px] text-text_black_primary break-words">
