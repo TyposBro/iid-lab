@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Filter, MainCarousel } from "@/components";
+import { Filter, MainCarousel, LoadingSpinner } from "@/components";
 import { Down_left_dark_arrow } from "@/assets";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api"; // Import BASE_URL
@@ -145,48 +145,93 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
   const [newTitle, setNewTitle] = useState("");
   const [newDate, setNewDate] = useState(null); // Store date object
   const [newLocation, setNewLocation] = useState("");
-  const [newImages, setNewImages] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]); // To store selected image files
   const [newType, setNewType] = useState("");
   const { adminToken } = useAdmin();
+
+  // New state to track loading for create, update, and delete
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [imagesToKeep, setImagesToKeep] = useState([]);
+
+  useEffect(() => {
+    if (isEditing && editingEvent) {
+      setImagesToKeep(editingEvent.images || []);
+    } else {
+      setImagesToKeep([]);
+    }
+  }, [isEditing, editingEvent]);
+
+  const handleFileChange = (event) => {
+    setSelectedFiles([...selectedFiles, ...event.target.files]);
+  };
 
   const handleCreate = async () => {
     if (!newDate) {
       alert("Please select a date.");
       return;
     }
-    const isoDate = newDate.toISOString(); // Store in ISO format
-    const newEvent = {
-      title: newTitle,
-      date: isoDate, // Use 'date' field instead of 'year'
-      location: newLocation,
-      images: newImages.split(",").map((s) => s.trim()),
-      type: newType,
-    };
+
+    if (selectedFiles.length === 0) {
+      alert("Please upload at least one image.");
+      return;
+    }
+
+    setIsSubmitting(true); // Start loading
+    const formData = new FormData();
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append("images", selectedFiles[i]);
+    }
 
     try {
-      const response = await fetch(`${BASE_URL}/gallery`, {
-        // Use BASE_URL
+      const uploadResponse = await fetch(`${BASE_URL}/upload`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
         },
-        body: JSON.stringify(newEvent),
+        body: formData,
       });
 
-      if (response.ok) {
-        setIsCreating(false);
-        setNewTitle("");
-        setNewDate(null);
-        setNewLocation("");
-        setNewImages("");
-        setNewType("");
-        refetchGalleryEvents();
+      if (uploadResponse.ok) {
+        const uploadedImageUrls = await uploadResponse.json();
+        const isoDate = newDate.toISOString();
+        const newEvent = {
+          title: newTitle,
+          date: isoDate,
+          location: newLocation,
+          images: uploadedImageUrls, // Use the URLs from the upload
+          type: newType,
+        };
+
+        const createResponse = await fetch(`${BASE_URL}/gallery`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: JSON.stringify(newEvent),
+        });
+
+        if (createResponse.ok) {
+          setIsCreating(false);
+          setNewTitle("");
+          setNewDate(null);
+          setNewLocation("");
+          setSelectedFiles([]);
+          setNewType("");
+          refetchGalleryEvents();
+        } else {
+          console.error("Failed to create gallery event");
+        }
       } else {
-        console.error("Failed to create gallery event");
+        console.error("Failed to upload images");
+        const errorData = await uploadResponse.json();
+        alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
       }
     } catch (error) {
       console.error("Error creating gallery event:", error);
+    } finally {
+      setIsSubmitting(false); // End loading
     }
   };
 
@@ -194,26 +239,63 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
     setIsEditing(true);
     setEditingEvent(event);
     setNewTitle(event.title);
-    setNewDate(event.date ? new Date(event.date) : null); // Create Date object from ISO string
+    setNewDate(event.date ? new Date(event.date) : null);
     setNewLocation(event.location);
-    setNewImages(event.images ? event.images.join(", ") : "");
     setNewType(event.type);
+    setSelectedFiles([]); // Reset selected files for new uploads in edit
+  };
+
+  const handleRemoveExistingImage = (imageUrlToRemove) => {
+    setImagesToKeep(imagesToKeep.filter((url) => url !== imageUrlToRemove));
   };
 
   const handleUpdate = async () => {
     if (!editingEvent || !newDate) return;
-    const isoDate = newDate.toISOString(); // Store in ISO format
+
+    setIsSubmitting(true); // Start loading
+    const formData = new FormData();
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append("images", selectedFiles[i]);
+    }
+
+    let newImageUrls = [];
+    if (selectedFiles.length > 0) {
+      try {
+        const uploadResponse = await fetch(`${BASE_URL}/upload`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: formData,
+        });
+
+        if (uploadResponse.ok) {
+          newImageUrls = await uploadResponse.json();
+        } else {
+          console.error("Failed to upload new images");
+          const errorData = await uploadResponse.json();
+          alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
+          setIsSubmitting(false);
+          return;
+        }
+      } catch (error) {
+        console.error("Error uploading new images:", error);
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    const isoDate = newDate.toISOString();
     const updatedEvent = {
       title: newTitle,
-      date: isoDate, // Use 'date' field instead of 'year'
+      date: isoDate,
       location: newLocation,
-      images: newImages.split(",").map((s) => s.trim()),
+      images: [...imagesToKeep, ...newImageUrls], // Combine kept and newly uploaded images
       type: newType,
     };
 
     try {
       const response = await fetch(`${BASE_URL}/gallery/${editingEvent._id}`, {
-        // Use BASE_URL
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -228,22 +310,25 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
         setNewTitle("");
         setNewDate(null);
         setNewLocation("");
-        setNewImages("");
+        setSelectedFiles([]);
         setNewType("");
+        setImagesToKeep([]); // Reset images to keep
         refetchGalleryEvents();
       } else {
         console.error("Failed to update gallery event");
       }
     } catch (error) {
       console.error("Error updating gallery event:", error);
+    } finally {
+      setIsSubmitting(false); // End loading
     }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
+      setDeletingId(id); // Set the ID of the item being deleted
       try {
         const response = await fetch(`${BASE_URL}/gallery/${id}`, {
-          // Use BASE_URL
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${adminToken}`,
@@ -257,90 +342,53 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
         }
       } catch (error) {
         console.error("Error deleting gallery event:", error);
+      } finally {
+        setDeletingId(null); // Reset deleting ID
       }
     }
   };
 
-  if (isEditing && editingEvent) {
-    return (
-      <div className="p-4 border rounded">
-        <h3>Edit Gallery Event</h3>
-        <input
-          type="text"
-          placeholder="Title"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          className="w-full p-2 mb-2 border rounded"
-        />
-        <div className="mb-2">
-          <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="date">
-            Date
-          </label>
-          <DatePicker
-            id="date"
-            selected={newDate}
-            onChange={(date) => setNewDate(date)}
-            dateFormat="yyyy-MM-dd" // Display format
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <input
-          type="text"
-          placeholder="Location"
-          value={newLocation}
-          onChange={(e) => setNewLocation(e.target.value)}
-          className="w-full p-2 mb-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Image URLs (comma-separated)"
-          value={newImages}
-          onChange={(e) => setNewImages(e.target.value)}
-          className="w-full p-2 mb-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Type (Conferences, Lab Events, etc.)"
-          value={newType}
-          onChange={(e) => setNewType(e.target.value)}
-          className="w-full p-2 mb-2 border rounded"
-        />
-        <button onClick={handleUpdate} className="bg-blue-500 text-white p-2 rounded">
-          Update
-        </button>
-        <button onClick={() => setIsEditing(false)} className="ml-2 text-gray-600">
-          Cancel
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className="p-4">
+      {(isSubmitting || deletingId) && (
+        <LoadingSpinner
+          message={
+            isSubmitting
+              ? isCreating
+                ? "Creating Event..."
+                : "Updating Event..."
+              : "Deleting Event..."
+          }
+        />
+      )}
+
       {!isCreating && !isEditing && (
         <button
           onClick={() => setIsCreating(true)}
           className="bg-green-500 text-white p-2 rounded mb-4"
+          disabled={isSubmitting || deletingId}
         >
           Add New Event
         </button>
       )}
       {events.map((event) => (
-        <div key={event._id} className="border rounded p-2 mb-2">
+        <div key={event._id} className="border rounded p-2 mb-2 relative">
           <p>
             <strong>{event.title}</strong> ({new Date(event.date).getFullYear()})
           </p>
           <button
             onClick={() => handleEdit(event)}
             className="bg-yellow-500 text-white p-1 rounded mr-2 text-xs"
+            disabled={isSubmitting || deletingId}
           >
             Edit
           </button>
           <button
             onClick={() => handleDelete(event._id)}
             className="bg-red-500 text-white p-1 rounded text-xs"
+            disabled={isSubmitting || deletingId === event._id}
           >
-            Delete
+            {deletingId === event._id ? "Deleting..." : "Delete"}
           </button>
         </div>
       ))}
@@ -362,7 +410,7 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
               id="date"
               selected={newDate}
               onChange={(date) => setNewDate(date)}
-              dateFormat="yyyy-MM-dd" // Display format
+              dateFormat="yyyy-MM-dd"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
@@ -373,13 +421,18 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
             onChange={(e) => setNewLocation(e.target.value)}
             className="w-full p-2 mb-2 border rounded"
           />
-          <input
-            type="text"
-            placeholder="Image URLs (comma-separated)"
-            value={newImages}
-            onChange={(e) => setNewImages(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-          />
+          <div className="mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="images">
+              Images
+            </label>
+            <input
+              type="file"
+              id="images"
+              multiple
+              onChange={handleFileChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
           <input
             type="text"
             placeholder="Type (Conferences, Lab Events, etc.)"
@@ -387,10 +440,117 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
             onChange={(e) => setNewType(e.target.value)}
             className="w-full p-2 mb-2 border rounded"
           />
-          <button onClick={handleCreate} className="bg-blue-500 text-white p-2 rounded">
+          <button
+            onClick={handleCreate}
+            className="bg-blue-500 text-white p-2 rounded"
+            disabled={isSubmitting}
+          >
             Create
           </button>
-          <button onClick={() => setIsCreating(false)} className="ml-2 text-gray-600">
+          <button
+            onClick={() => setIsCreating(false)}
+            className="ml-2 text-gray-600"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {isEditing && editingEvent && (
+        <div className="p-4 border rounded">
+          <h3>Edit Gallery Event</h3>
+          {isSubmitting && <LoadingSpinner message="Updating Event..." />}
+          <input
+            type="text"
+            placeholder="Title"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            className="w-full p-2 mb-2 border rounded"
+            disabled={isSubmitting}
+          />
+          <div className="mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="date">
+              Date
+            </label>
+            <DatePicker
+              id="date"
+              selected={newDate}
+              onChange={(date) => setNewDate(date)}
+              dateFormat="yyyy-MM-dd"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              disabled={isSubmitting}
+            />
+          </div>
+          <input
+            type="text"
+            placeholder="Location"
+            value={newLocation}
+            onChange={(e) => setNewLocation(e.target.value)}
+            className="w-full p-2 mb-2 border rounded"
+            disabled={isSubmitting}
+          />
+          <input
+            type="text"
+            placeholder="Type (Conferences, Lab Events, etc.)"
+            value={newType}
+            onChange={(e) => setNewType(e.target.value)}
+            className="w-full p-2 mb-2 border rounded"
+            disabled={isSubmitting}
+          />
+
+          {/* Preview Existing Images */}
+          {editingEvent.images && editingEvent.images.length > 0 && (
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-1">Existing Images</label>
+              <div className="flex gap-2">
+                {imagesToKeep.map((imageUrl, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={imageUrl}
+                      alt={`Existing Image ${index}`}
+                      className="w-32 h-24 object-cover rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveExistingImage(imageUrl)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs focus:outline-none"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Add New Images */}
+          <div className="mb-2">
+            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="newImages">
+              Add New Images
+            </label>
+            <input
+              type="file"
+              id="newImages"
+              multiple
+              onChange={handleFileChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              disabled={isSubmitting}
+            />
+          </div>
+
+          <button
+            onClick={handleUpdate}
+            className="bg-blue-500 text-white p-2 rounded"
+            disabled={isSubmitting}
+          >
+            Update
+          </button>
+          <button
+            onClick={() => setIsEditing(false)}
+            className="ml-2 text-gray-600"
+            disabled={isSubmitting}
+          >
             Cancel
           </button>
         </div>
