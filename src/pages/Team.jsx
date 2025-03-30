@@ -38,7 +38,7 @@ export const Team = () => {
   const fetchProfData = useCallback(async () => {
     try {
       setProfLoading(true);
-      const response = await fetch(`${BASE_URL}/professor`);
+      const response = await fetch(`${BASE_URL}/professors`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -796,7 +796,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     };
 
     try {
-      const response = await fetch(`${BASE_URL}/professor`, {
+      const response = await fetch(`${BASE_URL}/professors`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -833,7 +833,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     };
 
     try {
-      const response = await fetch(`${BASE_URL}/professor/${editingProfessor._id}`, {
+      const response = await fetch(`${BASE_URL}/professors/${editingProfessor._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -862,7 +862,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     if (window.confirm("Are you sure you want to delete the professor?")) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`${BASE_URL}/professor/${editingProfessor._id}`, {
+        const response = await fetch(`${BASE_URL}/professors/${editingProfessor._id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${adminToken}`,
