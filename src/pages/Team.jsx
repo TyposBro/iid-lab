@@ -1,19 +1,48 @@
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
 import { AccordionCard, GoTo, LoadingSpinner } from "@/components/"; // Import LoadingSpinner
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { HashLink } from "react-router-hash-link";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
 
 export const Team = () => {
   const { isAdmin } = useAdmin();
+  const [teamData, setTeamData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // This function will be passed down to child components
+  const fetchTeamData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${BASE_URL}/team`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTeamData(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  }, []);
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchTeamData();
+  }, [fetchTeamData]);
+
+  // Filter data for current team and alumni
+  const currentTeamMembers = teamData.filter((member) => member.type !== "alumni");
+  const alumniMembers = teamData.filter((member) => member.type === "alumni");
 
   return (
     <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full h-dvh overflow-y-scroll">
-      {isAdmin && <AdminTeamControls />}
+      {isAdmin && <AdminTeamControls refreshData={fetchTeamData} />}
       <TeamProf />
-      <CurrentTeam />
-      <Alumni />
+      <CurrentTeam members={currentTeamMembers} loading={loading} error={error} />
+      <Alumni members={alumniMembers} loading={loading} error={error} />
       {window.innerWidth <= 640 ? (
         <GoTo title="Projects Gallery" link="/gallery" />
       ) : (
@@ -87,33 +116,16 @@ const TeamProf = () => {
   );
 };
 
-const CurrentTeam = () => {
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selected, setSetselected] = useState("All");
-  const [derivedRoles, setDerivedRoles] = useState([]);
+// Updated CurrentTeam component to accept members as props
+const CurrentTeam = ({ members, loading, error }) => {
+  const [selected, setSelected] = useState("All");
+  const [derivedRoles, setDerivedRoles] = useState(["All"]);
 
   useEffect(() => {
-    const fetchTeamMembers = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/team`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        const currentMembers = data.filter((member) => member.type !== "alumni"); // Assuming you might have a 'type' field
-        setMembers(currentMembers);
-        setDerivedRoles(["All", ...new Set(currentMembers.map((member) => member.role))]);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchTeamMembers();
-  }, []);
+    if (members.length > 0) {
+      setDerivedRoles(["All", ...new Set(members.map((member) => member.role))]);
+    }
+  }, [members]);
 
   if (loading) return <div>Loading Current Team...</div>;
   if (error) return <div>Error loading Current Team: {error}</div>;
@@ -140,7 +152,7 @@ const CurrentTeam = () => {
               role === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
             }`}
             key={role}
-            onClick={() => setSetselected(role)}
+            onClick={() => setSelected(role)}
           >
             {role}
           </button>
@@ -152,7 +164,7 @@ const CurrentTeam = () => {
           .filter((elem) => (selected === "All" ? true : elem.role === selected))
           .map((member) => (
             <AccordionCard
-              key={member.name}
+              key={member._id}
               title={member.name}
               subtitle={member.role}
               bg={member.img}
@@ -164,33 +176,16 @@ const CurrentTeam = () => {
   );
 };
 
-const Alumni = () => {
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selected, setSetselected] = useState("All");
-  const [derivedRoles, setDerivedRoles] = useState([]);
+// Updated Alumni component to accept members as props
+const Alumni = ({ members, loading, error }) => {
+  const [selected, setSelected] = useState("All");
+  const [derivedRoles, setDerivedRoles] = useState(["All"]);
 
   useEffect(() => {
-    const fetchAlumniMembers = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/team`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        const alumniMembers = data.filter((member) => member.type === "alumni"); // Assuming you might have a 'type' field
-        setMembers(alumniMembers);
-        setDerivedRoles(["All", ...new Set(alumniMembers.map((member) => member.role))]);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchAlumniMembers();
-  }, []);
+    if (members.length > 0) {
+      setDerivedRoles(["All", ...new Set(members.map((member) => member.role))]);
+    }
+  }, [members]);
 
   if (loading) return <div>Loading Alumni...</div>;
   if (error) return <div>Error loading Alumni: {error}</div>;
@@ -210,7 +205,7 @@ const Alumni = () => {
               role === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
             }`}
             key={role}
-            onClick={() => setSetselected(role)}
+            onClick={() => setSelected(role)}
           >
             {role}
           </button>
@@ -222,7 +217,7 @@ const Alumni = () => {
           .filter((elem) => (selected === "All" ? true : elem.role === selected))
           .map((member) => (
             <AccordionCard
-              key={member.name}
+              key={member._id}
               title={member.name}
               subtitle={member.role}
               bg={member.img}
@@ -238,15 +233,15 @@ const Alumni = () => {
   );
 };
 
-// --- Admin UI Component for Team ---
-const AdminTeamControls = () => {
+// Updated AdminTeamControls component to handle immediate data refresh
+const AdminTeamControls = ({ refreshData }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [newName, setNewName] = useState("");
   const [newRole, setNewRole] = useState("");
   const [newType, setNewType] = useState("current");
-  const [newBio, setNewBio] = useState(""); // New state for bio
+  const [newBio, setNewBio] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [members, setMembers] = useState([]);
@@ -254,37 +249,39 @@ const AdminTeamControls = () => {
   const [error, setError] = useState(null);
   const { adminToken } = useAdmin();
   const [deletingId, setDeletingId] = useState(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState(""); // To store the uploaded image URL
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   const roles = ["PhD", "Masters", "Intern"];
   const types = ["current", "alumni"];
 
-  useEffect(() => {
-    const fetchTeamMembers = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/team`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setMembers(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
+  // Fetch team members for the admin panel
+  const fetchAdminTeamMembers = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${BASE_URL}/team`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
+      const data = await response.json();
+      setMembers(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  }, []);
 
-    fetchTeamMembers();
-  }, [isCreating, isEditing]); // Refetch on create/edit close
+  useEffect(() => {
+    fetchAdminTeamMembers();
+  }, [fetchAdminTeamMembers]);
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
     if (file) {
-      setIsSubmitting(true); // Start loading for image upload
+      setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("images", file); // Use the same field name as in Gallery
+      formData.append("images", file);
 
       try {
         const response = await fetch(`${BASE_URL}/upload`, {
@@ -297,7 +294,7 @@ const AdminTeamControls = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setUploadedImageUrl(data[0]); // Assuming single file upload
+          setUploadedImageUrl(data[0]);
         } else {
           console.error("Failed to upload image");
           const errorData = await response.json();
@@ -308,7 +305,7 @@ const AdminTeamControls = () => {
         console.error("Error uploading image:", error);
         setUploadedImageUrl("");
       } finally {
-        setIsSubmitting(false); // End loading after image upload
+        setIsSubmitting(false);
       }
     } else {
       setUploadedImageUrl("");
@@ -321,7 +318,7 @@ const AdminTeamControls = () => {
       return;
     }
 
-    setIsSubmitting(true); // Start loading for creating member
+    setIsSubmitting(true);
     const newMember = {
       name: newName,
       role: newRole,
@@ -348,7 +345,10 @@ const AdminTeamControls = () => {
         setNewBio("");
         setSelectedFile(null);
         setUploadedImageUrl("");
-        // refetchTeamMembers(); // Trigger refetch through useEffect dependency
+
+        // Refresh data in both admin panel and main components
+        await fetchAdminTeamMembers();
+        await refreshData();
       } else {
         console.error("Failed to create team member");
         const errorData = await response.json();
@@ -357,7 +357,7 @@ const AdminTeamControls = () => {
     } catch (error) {
       console.error("Error creating team member:", error);
     } finally {
-      setIsSubmitting(false); // End loading after creating member
+      setIsSubmitting(false);
     }
   };
 
@@ -366,22 +366,22 @@ const AdminTeamControls = () => {
     setEditingMember(member);
     setNewName(member.name);
     setNewRole(member.role);
-    setNewType(member.type);
+    setNewType(member.type || "current");
     setNewBio(member.bio || "");
-    setUploadedImageUrl(member.img); // Set existing image URL for preview
-    setSelectedFile(null); // Reset selected file
+    setUploadedImageUrl(member.img);
+    setSelectedFile(null);
   };
 
   const handleUpdate = async () => {
     if (!editingMember) return;
 
-    setIsSubmitting(true); // Start loading for updating member
+    setIsSubmitting(true);
     const updatedMember = {
       name: newName,
       role: newRole,
       type: newType,
       bio: newBio,
-      img: uploadedImageUrl, // Use the current uploaded URL (could be the old one if no new file selected)
+      img: uploadedImageUrl,
     };
 
     try {
@@ -403,7 +403,10 @@ const AdminTeamControls = () => {
         setNewBio("");
         setSelectedFile(null);
         setUploadedImageUrl("");
-        // refetchTeamMembers(); // Trigger refetch through useEffect dependency
+
+        // Refresh data in both admin panel and main components
+        await fetchAdminTeamMembers();
+        await refreshData();
       } else {
         console.error("Failed to update team member");
         const errorData = await response.json();
@@ -412,7 +415,7 @@ const AdminTeamControls = () => {
     } catch (error) {
       console.error("Error updating team member:", error);
     } finally {
-      setIsSubmitting(false); // End loading after updating member
+      setIsSubmitting(false);
     }
   };
 
@@ -428,7 +431,9 @@ const AdminTeamControls = () => {
         });
 
         if (response.ok) {
-          // refetchTeamMembers(); // Trigger refetch through useEffect dependency
+          // Refresh data in both admin panel and main components
+          await fetchAdminTeamMembers();
+          await refreshData();
         } else {
           console.error("Failed to delete team member");
         }
@@ -470,7 +475,7 @@ const AdminTeamControls = () => {
       {members.map((member) => (
         <div key={member._id} className="border rounded p-2 mb-2 relative">
           <p>
-            <strong>{member.name}</strong> ({member.role}) - {member.type}
+            <strong>{member.name}</strong> ({member.role}) - {member.type || "current"}
           </p>
           <button
             onClick={() => handleEdit(member)}
