@@ -163,7 +163,7 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
   }, [isEditing, editingEvent]);
 
   const handleFileChange = (event) => {
-    setSelectedFiles([...selectedFiles, ...event.target.files]);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...Array.from(event.target.files)]);
   };
 
   const handleCreate = async () => {
