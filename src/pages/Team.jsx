@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
 import { AccordionCard, GoTo, LoadingSpinner } from "@/components/"; // Import LoadingSpinner
 import { useState, useEffect, useCallback } from "react";
@@ -10,8 +13,11 @@ export const Team = () => {
   const [teamData, setTeamData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profData, setProfData] = useState(null);
+  const [profLoading, setProfLoading] = useState(true);
+  const [profError, setProfError] = useState(null);
 
-  // This function will be passed down to child components
+  // This function will be passed down to child components for team members
   const fetchTeamData = useCallback(async () => {
     try {
       setLoading(true);
@@ -28,10 +34,32 @@ export const Team = () => {
     }
   }, []);
 
-  // Initial data fetch
+  // This function will be passed down to child components for professor
+  const fetchProfData = useCallback(async () => {
+    try {
+      setProfLoading(true);
+      const response = await fetch(`${BASE_URL}/professor`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setProfData(data && data.length > 0 ? data[0] : null); // Assuming only one professor entry
+      setProfLoading(false);
+    } catch (err) {
+      setProfError(err.message);
+      setProfLoading(false);
+    }
+  }, []);
+
+  // Initial data fetch for team members
   useEffect(() => {
     fetchTeamData();
   }, [fetchTeamData]);
+
+  // Initial data fetch for professor
+  useEffect(() => {
+    fetchProfData();
+  }, [fetchProfData]);
 
   // Filter data for current team and alumni
   const currentTeamMembers = teamData.filter((member) => member.type !== "alumni");
@@ -40,7 +68,8 @@ export const Team = () => {
   return (
     <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full h-dvh overflow-y-scroll">
       {isAdmin && <AdminTeamControls refreshData={fetchTeamData} />}
-      <TeamProf />
+      {isAdmin && <AdminProfessorControls professor={profData} refreshData={fetchProfData} />}
+      <TeamProf prof={profData} loading={profLoading} error={profError} />
       <CurrentTeam members={currentTeamMembers} loading={loading} error={error} />
       <Alumni members={alumniMembers} loading={loading} error={error} />
       {window.innerWidth <= 640 ? (
@@ -57,30 +86,7 @@ export const Team = () => {
 
 export default Team;
 
-const TeamProf = () => {
-  const [prof, setProf] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchProfData = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/professor`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setProf(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchProfData();
-  }, []);
-
+const TeamProf = ({ prof, loading, error }) => {
   if (loading) return <div>Loading Professor...</div>;
   if (error) return <div>Error loading Professor: {error}</div>;
   if (!prof) return <div>Professor data not found.</div>;
@@ -269,7 +275,7 @@ const AdminTeamControls = ({ refreshData }) => {
       setError(err.message);
       setLoading(false);
     }
-  }, []);
+  }, [adminToken]); // Added adminToken to dependency array
 
   useEffect(() => {
     fetchAdminTeamMembers();
@@ -681,6 +687,335 @@ const AdminTeamControls = ({ refreshData }) => {
           </button>
         </div>
       )}
+    </div>
+  );
+};
+
+// New component for Professor CRUD
+const AdminProfessorControls = ({ professor, refreshData }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingProfessor, setEditingProfessor] = useState(null);
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [desc, setDesc] = useState("");
+  const [cvLink, setCvLink] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { adminToken } = useAdmin();
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (professor) {
+      setEditingProfessor(professor);
+      setName(professor.name || "");
+      setRole(professor.role || "");
+      setDesc(professor.desc || "");
+      setCvLink(professor.cvLink || "");
+      setUploadedImageUrl(professor.img || "");
+      setIsCreating(false);
+    } else {
+      setEditingProfessor(null);
+      setName("");
+      setRole("");
+      setDesc("");
+      setCvLink("");
+      setUploadedImageUrl("");
+      setIsEditing(false);
+    }
+  }, [professor]);
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    if (file) {
+      setIsSubmitting(true);
+      const formData = new FormData();
+      formData.append("images", file);
+
+      try {
+        const response = await fetch(`${BASE_URL}/upload`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUploadedImageUrl(data[0]);
+        } else {
+          console.error("Failed to upload image");
+          const errorData = await response.json();
+          alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
+          setUploadedImageUrl("");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setUploadedImageUrl("");
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      setUploadedImageUrl("");
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setIsCreating(false);
+  };
+
+  const handleCreateButtonClick = () => {
+    setIsCreating(true);
+    setIsEditing(false);
+    setEditingProfessor(null);
+    setName("");
+    setRole("");
+    setDesc("");
+    setCvLink("");
+    setUploadedImageUrl("");
+    setSelectedFile(null);
+  };
+
+  const handleCreate = async () => {
+    if (!uploadedImageUrl) {
+      alert("Please upload an image.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const newProfessorData = {
+      name,
+      role,
+      img: uploadedImageUrl,
+      desc,
+      cvLink,
+    };
+
+    try {
+      const response = await fetch(`${BASE_URL}/professor`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify(newProfessorData),
+      });
+
+      if (response.ok) {
+        setIsCreating(false);
+        await refreshData(); // Refresh to get the newly created professor
+      } else {
+        console.error("Failed to create professor");
+        const errorData = await response.json();
+        alert(`Failed to create professor: ${errorData?.message || "An error occurred"}`);
+      }
+    } catch (error) {
+      console.error("Error creating professor:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!editingProfessor) return;
+
+    setIsSubmitting(true);
+    const updatedProfessorData = {
+      name,
+      role,
+      img: uploadedImageUrl,
+      desc,
+      cvLink,
+    };
+
+    try {
+      const response = await fetch(`${BASE_URL}/professor/${editingProfessor._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify(updatedProfessorData),
+      });
+
+      if (response.ok) {
+        setIsEditing(false);
+        await refreshData(); // Refresh professor data
+      } else {
+        console.error("Failed to update professor");
+        const errorData = await response.json();
+        alert(`Failed to update professor: ${errorData?.message || "An error occurred"}`);
+      }
+    } catch (error) {
+      console.error("Error updating professor:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!editingProfessor) return;
+    if (window.confirm("Are you sure you want to delete the professor?")) {
+      setIsDeleting(true);
+      try {
+        const response = await fetch(`${BASE_URL}/professor/${editingProfessor._id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        });
+
+        if (response.ok) {
+          await refreshData(); // Refresh to indicate no professor exists
+        } else {
+          console.error("Failed to delete professor");
+          const errorData = await response.json();
+          alert(`Failed to delete professor: ${errorData?.message || "An error occurred"}`);
+        }
+      } catch (error) {
+        console.error("Error deleting professor:", error);
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
+  const renderForm = () => (
+    <div className="mt-4">
+      <input
+        type="text"
+        placeholder="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="w-full p-2 mb-2 border rounded"
+        disabled={isSubmitting}
+      />
+      <input
+        type="text"
+        placeholder="Role"
+        value={role}
+        onChange={(e) => setRole(e.target.value)}
+        className="w-full p-2 mb-2 border rounded"
+        disabled={isSubmitting}
+      />
+      <div className="mb-2">
+        <label htmlFor="desc" className="block text-gray-700 text-sm font-bold mb-1">
+          Description
+        </label>
+        <textarea
+          id="desc"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+          rows="3"
+          placeholder="Enter description"
+          disabled={isSubmitting}
+        ></textarea>
+      </div>
+      <input
+        type="text"
+        placeholder="CV Link"
+        value={cvLink}
+        onChange={(e) => setCvLink(e.target.value)}
+        className="w-full p-2 mb-2 border rounded"
+        disabled={isSubmitting}
+      />
+      <div className="mb-2">
+        <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="image">
+          Image (Upload new)
+        </label>
+        <input
+          type="file"
+          id="image"
+          onChange={handleFileChange}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          disabled={isSubmitting}
+        />
+        {(uploadedImageUrl || (editingProfessor && editingProfessor.img)) && (
+          <div className="mt-2">
+            <img
+              src={uploadedImageUrl || (editingProfessor && editingProfessor.img)}
+              alt="Professor Image Preview"
+              className="w-32 h-32 object-cover rounded"
+            />
+            <p className="text-xs text-gray-500">
+              {uploadedImageUrl ? "New Image Preview" : "Current Image"}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {isCreating && (
+        <button
+          onClick={handleCreate}
+          className="bg-green-500 text-white p-2 rounded"
+          disabled={isSubmitting || !uploadedImageUrl}
+        >
+          {isSubmitting ? "Creating..." : "Create Professor"}
+        </button>
+      )}
+      {isEditing && (
+        <button
+          onClick={handleUpdate}
+          className="bg-blue-500 text-white p-2 rounded"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Updating..." : "Update Professor"}
+        </button>
+      )}
+      {(isCreating || isEditing) && (
+        <button
+          onClick={() => {
+            setIsCreating(false);
+            setIsEditing(false);
+          }}
+          className="ml-2 text-gray-600"
+          disabled={isSubmitting}
+        >
+          Cancel
+        </button>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="p-4 mb-4 border rounded">
+      <h3>Professor Controls</h3>
+      {isSubmitting && (
+        <LoadingSpinner
+          message={
+            isCreating
+              ? "Creating Professor..."
+              : isEditing
+              ? "Updating Professor..."
+              : "Loading..."
+          }
+        />
+      )}
+      {isDeleting && <LoadingSpinner message="Deleting Professor..." />}
+
+      {!professor && !isCreating && (
+        <button onClick={handleCreateButtonClick} className="bg-green-500 text-white p-2 rounded">
+          Create Professor
+        </button>
+      )}
+
+      {professor && !isEditing && !isCreating && (
+        <div className="flex gap-2">
+          <button onClick={handleEdit} className="bg-yellow-500 text-white p-2 rounded">
+            Edit Professor
+          </button>
+          <button onClick={handleDelete} className="bg-red-500 text-white p-2 rounded">
+            Delete Professor
+          </button>
+        </div>
+      )}
+
+      {(isCreating || isEditing) && renderForm()}
     </div>
   );
 };
