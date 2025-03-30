@@ -3,7 +3,7 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "@/config/api";
 
-const AdminLogin = () => {
+const AdminAuth = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -27,7 +27,7 @@ const AdminLogin = () => {
         const data = await response.json();
         localStorage.setItem("adminToken", data.token);
         loginAdmin(data.token);
-        navigate("/admin-dashboard"); // Adjust as needed
+        navigate("/admin/nav"); // Adjust as needed
       } else {
         const errorData = await response.json();
         setLoginError(errorData.message || "Login failed");
@@ -82,4 +82,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default AdminAuth;

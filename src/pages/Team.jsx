@@ -134,15 +134,6 @@ const CurrentTeam = () => {
         </h3>
       </div>
       <div className="flex gap-[10px] sm:w-1/2 lg:w-1/3">
-        <button
-          className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
-            "All" === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
-          }`}
-          key="All"
-          onClick={() => setSetselected("All")}
-        >
-          All
-        </button>
         {derivedRoles.map((role) => (
           <button
             className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
@@ -213,15 +204,6 @@ const Alumni = () => {
         <Down_left_dark_arrow className="size-[46px]" />
       </div>
       <div className="flex gap-[10px] sm:w-1/2 lg:w-1/3">
-        <button
-          className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary ${
-            "All" === selected ? "bg-primary_main text-text_white_primary" : "text-primary_main"
-          }`}
-          key={"All"}
-          onClick={() => setSetselected("All")}
-        >
-          All
-        </button>
         {derivedRoles.map((role) => (
           <button
             className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full w-full h-[30px] text-primary_main active:text-text_white_primary  ${
@@ -263,6 +245,8 @@ const AdminTeamControls = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [newName, setNewName] = useState("");
   const [newRole, setNewRole] = useState("");
+  const [newType, setNewType] = useState("current");
+  const [newBio, setNewBio] = useState(""); // New state for bio
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [members, setMembers] = useState([]);
@@ -270,6 +254,10 @@ const AdminTeamControls = () => {
   const [error, setError] = useState(null);
   const { adminToken } = useAdmin();
   const [deletingId, setDeletingId] = useState(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(""); // To store the uploaded image URL
+
+  const roles = ["PhD", "Masters", "Intern"];
+  const types = ["current", "alumni"];
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -290,33 +278,76 @@ const AdminTeamControls = () => {
     fetchTeamMembers();
   }, [isCreating, isEditing]); // Refetch on create/edit close
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    if (file) {
+      setIsSubmitting(true); // Start loading for image upload
+      const formData = new FormData();
+      formData.append("images", file); // Use the same field name as in Gallery
+
+      try {
+        const response = await fetch(`${BASE_URL}/upload`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUploadedImageUrl(data[0]); // Assuming single file upload
+        } else {
+          console.error("Failed to upload image");
+          const errorData = await response.json();
+          alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
+          setUploadedImageUrl("");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setUploadedImageUrl("");
+      } finally {
+        setIsSubmitting(false); // End loading after image upload
+      }
+    } else {
+      setUploadedImageUrl("");
+    }
   };
 
   const handleCreate = async () => {
-    setIsSubmitting(true);
-    const formData = new FormData();
-    formData.append("name", newName);
-    formData.append("role", newRole);
-    if (selectedFile) {
-      formData.append("image", selectedFile);
+    if (!uploadedImageUrl) {
+      alert("Please upload an image.");
+      return;
     }
+
+    setIsSubmitting(true); // Start loading for creating member
+    const newMember = {
+      name: newName,
+      role: newRole,
+      type: newType,
+      bio: newBio,
+      img: uploadedImageUrl,
+    };
 
     try {
       const response = await fetch(`${BASE_URL}/team`, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
         },
-        body: formData,
+        body: JSON.stringify(newMember),
       });
 
       if (response.ok) {
         setIsCreating(false);
         setNewName("");
         setNewRole("");
+        setNewType("current");
+        setNewBio("");
         setSelectedFile(null);
+        setUploadedImageUrl("");
         // refetchTeamMembers(); // Trigger refetch through useEffect dependency
       } else {
         console.error("Failed to create team member");
@@ -326,7 +357,7 @@ const AdminTeamControls = () => {
     } catch (error) {
       console.error("Error creating team member:", error);
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // End loading after creating member
     }
   };
 
@@ -335,27 +366,32 @@ const AdminTeamControls = () => {
     setEditingMember(member);
     setNewName(member.name);
     setNewRole(member.role);
+    setNewType(member.type);
+    setNewBio(member.bio || "");
+    setUploadedImageUrl(member.img); // Set existing image URL for preview
     setSelectedFile(null); // Reset selected file
   };
 
   const handleUpdate = async () => {
     if (!editingMember) return;
 
-    setIsSubmitting(true);
-    const formData = new FormData();
-    formData.append("name", newName);
-    formData.append("role", newRole);
-    if (selectedFile) {
-      formData.append("image", selectedFile);
-    }
+    setIsSubmitting(true); // Start loading for updating member
+    const updatedMember = {
+      name: newName,
+      role: newRole,
+      type: newType,
+      bio: newBio,
+      img: uploadedImageUrl, // Use the current uploaded URL (could be the old one if no new file selected)
+    };
 
     try {
       const response = await fetch(`${BASE_URL}/team/${editingMember._id}`, {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
         },
-        body: formData,
+        body: JSON.stringify(updatedMember),
       });
 
       if (response.ok) {
@@ -363,7 +399,10 @@ const AdminTeamControls = () => {
         setEditingMember(null);
         setNewName("");
         setNewRole("");
+        setNewType("current");
+        setNewBio("");
         setSelectedFile(null);
+        setUploadedImageUrl("");
         // refetchTeamMembers(); // Trigger refetch through useEffect dependency
       } else {
         console.error("Failed to update team member");
@@ -373,7 +412,7 @@ const AdminTeamControls = () => {
     } catch (error) {
       console.error("Error updating team member:", error);
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // End loading after updating member
     }
   };
 
@@ -431,7 +470,7 @@ const AdminTeamControls = () => {
       {members.map((member) => (
         <div key={member._id} className="border rounded p-2 mb-2 relative">
           <p>
-            <strong>{member.name}</strong> ({member.role})
+            <strong>{member.name}</strong> ({member.role}) - {member.type}
           </p>
           <button
             onClick={() => handleEdit(member)}
@@ -459,14 +498,52 @@ const AdminTeamControls = () => {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             className="w-full p-2 mb-2 border rounded"
+            disabled={isSubmitting}
           />
-          <input
-            type="text"
-            placeholder="Role"
+          <label htmlFor="role" className="block text-gray-700 text-sm font-bold mb-1">
+            Role
+          </label>
+          <select
+            id="role"
             value={newRole}
             onChange={(e) => setNewRole(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-          />
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+            disabled={isSubmitting}
+          >
+            <option value="">Select Role</option>
+            {roles.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="type" className="block text-gray-700 text-sm font-bold mb-1">
+            Type
+          </label>
+          <select
+            id="type"
+            value={newType}
+            onChange={(e) => setNewType(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+            disabled={isSubmitting}
+          >
+            <option value="current">Current</option>
+            <option value="alumni">Alumni</option>
+          </select>
+          <div className="mb-2">
+            <label htmlFor="bio" className="block text-gray-700 text-sm font-bold mb-1">
+              Bio
+            </label>
+            <textarea
+              id="bio"
+              value={newBio}
+              onChange={(e) => setNewBio(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+              rows="3"
+              placeholder="Enter bio"
+              disabled={isSubmitting}
+            ></textarea>
+          </div>
           <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="image">
               Image
@@ -476,12 +553,20 @@ const AdminTeamControls = () => {
               id="image"
               onChange={handleFileChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              disabled={isSubmitting}
             />
+            {uploadedImageUrl && isCreating && (
+              <img
+                src={uploadedImageUrl}
+                alt="Uploaded Image"
+                className="w-32 h-32 object-cover rounded mt-2"
+              />
+            )}
           </div>
           <button
             onClick={handleCreate}
             className="bg-blue-500 text-white p-2 rounded"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !uploadedImageUrl}
           >
             {isSubmitting ? "Creating..." : "Create"}
           </button>
@@ -507,14 +592,50 @@ const AdminTeamControls = () => {
             className="w-full p-2 mb-2 border rounded"
             disabled={isSubmitting}
           />
-          <input
-            type="text"
-            placeholder="Role"
+          <label htmlFor="role" className="block text-gray-700 text-sm font-bold mb-1">
+            Role
+          </label>
+          <select
+            id="role"
             value={newRole}
             onChange={(e) => setNewRole(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
             disabled={isSubmitting}
-          />
+          >
+            <option value="">Select Role</option>
+            {roles.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="type" className="block text-gray-700 text-sm font-bold mb-1">
+            Type
+          </label>
+          <select
+            id="type"
+            value={newType}
+            onChange={(e) => setNewType(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+            disabled={isSubmitting}
+          >
+            <option value="current">Current</option>
+            <option value="alumni">Alumni</option>
+          </select>
+          <div className="mb-2">
+            <label htmlFor="bio" className="block text-gray-700 text-sm font-bold mb-1">
+              Bio
+            </label>
+            <textarea
+              id="bio"
+              value={newBio}
+              onChange={(e) => setNewBio(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+              rows="3"
+              placeholder="Enter bio"
+              disabled={isSubmitting}
+            ></textarea>
+          </div>
           <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="image">
               Image (Upload new to replace)
@@ -526,14 +647,16 @@ const AdminTeamControls = () => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               disabled={isSubmitting}
             />
-            {editingMember.img && (
+            {(uploadedImageUrl || editingMember.img) && (
               <div className="mt-2">
                 <img
-                  src={editingMember.img}
+                  src={uploadedImageUrl || editingMember.img}
                   alt="Current Team Member Image"
                   className="w-32 h-32 object-cover rounded"
                 />
-                <p className="text-xs text-gray-500">Current Image</p>
+                <p className="text-xs text-gray-500">
+                  {uploadedImageUrl ? "New Image Preview" : "Current Image"}
+                </p>
               </div>
             )}
           </div>

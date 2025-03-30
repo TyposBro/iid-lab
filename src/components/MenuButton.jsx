@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import PropTypes from "prop-types";
 
-export const MenuButton = ({ navigate }) => {
+export const MenuButton = ({ navigate, defaultChecked = false }) => {
   const ref = useRef(null);
 
   const handleNavigation = (path) => {
@@ -17,6 +17,7 @@ export const MenuButton = ({ navigate }) => {
         name="navigation"
         id="nav-toggle"
         className="nav__checkbox"
+        defaultChecked={defaultChecked}
       />
       <label htmlFor="nav-toggle" className="nav__btn">
         <span className="nav__icon"> &nbsp; </span>
@@ -66,4 +67,5 @@ export default MenuButton;
 
 MenuButton.propTypes = {
   navigate: PropTypes.func.isRequired,
+  defaultChecked: PropTypes.bool,
 };

@@ -1,11 +1,8 @@
-// router.js
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-
 import { AdminProvider } from "@/contexts/AdminContext";
-
 import { Home, About, Projects, Publications, Team, News, Gallery, Prof } from "@/pages/";
 import { Navbar, Footer } from "@/components/";
-import AdminLogin from "@/components/AdminLogin"; // Import the AdminLogin component
+import { AdminNav, AdminAuth } from "@/admin/";
 
 const router = createBrowserRouter([
   {
@@ -29,21 +26,18 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/admin/login", // Define the route for the login page
+    path: "/admin",
     element: (
       <AdminProvider>
-        <AdminLogin />
+        <AdminAuth />
       </AdminProvider>
     ),
   },
   {
-    path: "/admin-dashboard", // Example route for a protected admin dashboard
+    path: "/admin/nav",
     element: (
       <AdminProvider>
-        <div>
-          <h1>Admin Dashboard</h1>
-          {/* Add your admin dashboard components here */}
-        </div>
+        <AdminNav />
       </AdminProvider>
     ),
   },
