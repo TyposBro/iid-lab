@@ -1,3 +1,5 @@
+// {PATH_TO_THE_PROJECT}/frontend/vite.config.js
+
 import path from "path";
 import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
@@ -13,15 +15,15 @@ export default defineConfig({
   plugins: [
     svgr(),
     react(),
-    VitePWA({
-      registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-      },
-    }),
+    // VitePWA({
+    //   registerType: "autoUpdate",
+    //   devOptions: {
+    //     enabled: true,
+    //   },
+    //   workbox: {
+    //     globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+    //   },
+    // }),
   ],
 
   svg: {

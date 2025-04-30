@@ -4,7 +4,7 @@ import "./styles/nav.scss";
 
 export const App = () => {
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="mx-auto">
       <Router />
     </div>
   );

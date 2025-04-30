@@ -1,0 +1,25 @@
+/* Example: Make DatePicker input blend better with Tailwind forms */
+.react-datepicker-wrapper {
+  display: block; /* Ensure it takes full width if wrapper has w-full */
+}
+
+.react-datepicker__input-container input {
+  /* Apply Tailwind-like styles if needed, or rely on the className prop */
+  /* Example: */
+  /* box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); */
+  /* border-color: #d1d5db; /* Tailwind gray-300 */
+}
+
+/* You might need to adjust calendar popup styles too */
+.react-datepicker {
+  font-family: inherit; /* Use website font */
+  border-color: #d1d5db; /* Tailwind gray-300 */
+  border-radius: 0.375rem; /* Tailwind rounded-md */
+}
+
+.react-datepicker__header {
+  background-color: #f3f4f6; /* Tailwind gray-100 */
+  border-bottom-color: #d1d5db; /* Tailwind gray-300 */
+}
+
+/* etc. - Inspect the DatePicker elements to find classes to override */

@@ -1,0 +1,32 @@
+# {PATH_TO_THE_PROJECT}/frontend/.dockerignore
+
+# Ignore Node dependencies
+node_modules
+
+# Ignore build output (we build it inside the container)
+dist
+build
+
+# Ignore Vite cache
+.vite
+
+# Ignore general development stuff
+.env
+.env.*
+*.local
+*.log
+.git
+.gitignore
+.dockerignore
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore specific config files if not needed in image
+# vite.config.js # Keep if needed by build, ignore if not
+# postcss.config.js
+# tailwind.config.js
+
+# OS generated files
+.DS_Store
+Thumbs.db
