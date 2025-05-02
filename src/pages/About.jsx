@@ -2,93 +2,67 @@
 
 import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css"; // Ensure this import is relevant if used elsewhere
-import { Down_left_dark_arrow } from "@/assets/";
-import { MainCarousel, LoadingSpinner } from "@/components";
+import { MainCarousel, LoadingSpinner, Markdown } from "@/components"; // Added Markdown
 import { BASE_URL } from "@/config/api";
 import { useAdmin } from "@/contexts/AdminContext";
+// Removed Down_left_dark_arrow as it's not used in the new structure's components
 
-// Helper to create a default structure if no data exists, matching the schema
+// Helper to create default data structure matching the NEW schema
 const createDefaultAboutData = () => ({
-  intro: { heading: "", description: "" }, // Schema: intro.heading, intro.description
-  tracks: { title: "Research Tracks", buttons: [] }, // Schema: tracks.title, tracks.buttons (array)
-  details: [{ title: "", description: "", image: "" }], // Schema: details is array of objects
+  head: { title: "", description: "" },
+  body: { title: "Research Tracks", list: [{ title: "", text: [], img: [] }] }, // Start with one empty track
 });
 
 // --- Main About Component ---
 export const About = () => {
-  // State for data from different sources
-  const [aboutData, setAboutData] = useState(null); // Holds fetched /about content
-  const [carouselSlides, setCarouselSlides] = useState([]); // Holds combined image URLs
-
-  // Loading and error states
-  const [loadingAbout, setLoadingAbout] = useState(true); // Loading state for /about content
-  const [loadingImages, setLoadingImages] = useState(true); // Loading state for /news & /gallery images
-  const [error, setError] = useState(null); // General error state
-
-  // Admin related state
+  const [aboutData, setAboutData] = useState(null);
+  const [carouselSlides, setCarouselSlides] = useState([]);
+  const [loadingAbout, setLoadingAbout] = useState(true);
+  const [loadingImages, setLoadingImages] = useState(true);
+  const [error, setError] = useState(null);
   const { isAdmin, adminToken } = useAdmin();
-  const [isEditing, setIsEditing] = useState(false); // Is the admin currently editing?
-  const [editedData, setEditedData] = useState(null); // Holds temporary form data during edit
-  const [isSaving, setIsSaving] = useState(false); // Is a save operation in progress?
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedData, setEditedData] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // --- Fetching Logic ---
-
-  // Fetch content specifically for the /about page
   const fetchAboutContent = useCallback(async () => {
     setLoadingAbout(true);
-    // Don't reset global error here unless it's critical
+    setError(null); // Reset error on fetch
     try {
       const response = await fetch(`${BASE_URL}/about`);
       if (response.status === 404) {
-        setAboutData(null); // Content doesn't exist yet
-        return; // Successfully handled 404
-      }
-      if (!response.ok) {
-        // Throw error only if it's not a 404
-        throw new Error(`About fetch failed: ${response.status} ${await response.text()}`);
-      }
+        setAboutData(null);
+        return;
+      } // Handle not found
+      if (!response.ok) throw new Error(`About fetch failed: ${response.status}`);
       const data = await response.json();
-      setAboutData(data); // Store fetched data
+      setAboutData(data);
     } catch (err) {
       console.error("Failed to fetch about data:", err);
-      // Set error state only if it wasn't a 404 (handled above)
-      setError("Failed to load about page content. Please try again later.");
+      setError("Failed to load about page content.");
     } finally {
       setLoadingAbout(false);
     }
-  }, []); // Empty dependency array means this function reference is stable
+  }, []);
 
-  // Fetch images for the carousel from /news and /gallery
   const fetchCarouselImages = useCallback(async () => {
+    // Carousel logic remains separate
     setLoadingImages(true);
-    // Don't reset global error here
     try {
-      // Fetch concurrently, resolve to empty array on failure to avoid breaking carousel
+      /* ... (same as before, fetching news/gallery) ... */
       const results = await Promise.allSettled([
         fetch(`${BASE_URL}/news`).then((res) => (res.ok ? res.json() : Promise.resolve([]))),
         fetch(`${BASE_URL}/gallery`).then((res) => (res.ok ? res.json() : Promise.resolve([]))),
       ]);
-
       const [newsResult, galleryResult] = results;
-
-      let fetchedNews = [];
-      let fetchedGallery = [];
-
-      // Process successful fetches
-      if (newsResult.status === "fulfilled") {
-        // Sort news by date if needed (descending)
-        fetchedNews = newsResult.value.sort((a, b) => new Date(b.date) - new Date(a.date));
-      } else {
-        console.error("Failed to fetch news data for carousel:", newsResult.reason);
-      }
-      if (galleryResult.status === "fulfilled") {
-        fetchedGallery = galleryResult.value; // Assuming gallery is pre-sorted or order doesn't matter
-      } else {
-        console.error("Failed to fetch gallery data for carousel:", galleryResult.reason);
-      }
-
-      // Extract images, limit, and combine
+      let fetchedNews = newsResult.status === "fulfilled" ? newsResult.value : [];
+      let fetchedGallery = galleryResult.status === "fulfilled" ? galleryResult.value : [];
+      if (newsResult.status !== "fulfilled") console.error("News fetch failed:", newsResult.reason);
+      if (galleryResult.status !== "fulfilled")
+        console.error("Gallery fetch failed:", galleryResult.reason);
+      fetchedNews.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort news
       const newsImages = fetchedNews
         .flatMap((item) => item.images || [])
         .filter(Boolean)
@@ -97,538 +71,431 @@ export const About = () => {
         .flatMap((item) => item.images || [])
         .filter(Boolean)
         .slice(0, 5);
-      setCarouselSlides([...newsImages, ...galleryImages]); // Update carousel state
+      setCarouselSlides([...newsImages, ...galleryImages]);
     } catch (err) {
-      console.error("Unexpected error fetching carousel images:", err);
-      // Optionally set a specific error for images
-      // setError("Failed to load images for carousel.");
+      console.error("Carousel image fetch error:", err);
     } finally {
       setLoadingImages(false);
     }
-  }, []); // Empty dependency array, stable reference
+  }, []);
 
-  // Fetch data on component mount
   useEffect(() => {
     fetchAboutContent();
     fetchCarouselImages();
-  }, [fetchAboutContent, fetchCarouselImages]); // Dependencies ensure fetch runs once
+  }, [fetchAboutContent, fetchCarouselImages]);
 
-  // --- Admin Action Handlers ---
-
-  // Toggle edit mode on/off
+  // --- Admin Actions ---
   const handleEditToggle = () => {
     if (!isEditing) {
-      // Entering edit mode: Prepare data for the form
-      // Use existing data or create default if none exists
       const dataToEdit = aboutData
         ? JSON.parse(JSON.stringify(aboutData))
         : createDefaultAboutData();
-
-      // Ensure details array exists and has at least one item for the form
-      if (!dataToEdit.details || dataToEdit.details.length === 0) {
-        dataToEdit.details = [{ title: "", description: "", image: "" }];
+      // Ensure body.list exists and has at least one item for the form
+      if (!dataToEdit.body) dataToEdit.body = { title: "Research Tracks", list: [] }; // Add body if missing
+      if (!dataToEdit.body.list || dataToEdit.body.list.length === 0) {
+        dataToEdit.body.list = [{ title: "", text: [], img: [] }];
       }
-      // Convert tracks.buttons array to comma-separated string for textarea
-      if (dataToEdit.tracks && Array.isArray(dataToEdit.tracks.buttons)) {
-        dataToEdit.tracks.buttons = dataToEdit.tracks.buttons.join(", ");
-      } else if (dataToEdit.tracks) {
-        dataToEdit.tracks.buttons = ""; // Ensure it's a string if undefined/null
-      }
-
-      setEditedData(dataToEdit); // Set the form's state
+      // Convert text/img arrays to strings for textareas
+      dataToEdit.body.list.forEach((item) => {
+        item.text = Array.isArray(item.text) ? item.text.join("\n\n") : ""; // Join paragraphs with double newline
+        item.img = Array.isArray(item.img) ? item.img.join(", ") : ""; // Join URLs with comma+space
+      });
+      setEditedData(dataToEdit);
     } else {
-      // Cancelling edit mode: Clear temporary edits
       setEditedData(null);
-    }
-    setIsEditing(!isEditing); // Toggle the mode flag
-    setError(null); // Clear any previous errors when toggling mode
+    } // Clear edits on cancel
+    setIsEditing(!isEditing);
+    setError(null);
   };
 
-  // Generic handler to update nested state in editedData
+  // --- Generic Input Handler (Handles nested structure including body.list[index].field) ---
   const handleInputChange = (path, value) => {
     setEditedData((prevData) => {
-      // Using JSON parse/stringify for a deep copy is simple but can have limitations (e.g., Date objects, functions)
-      const newData = JSON.parse(JSON.stringify(prevData));
+      const newData = JSON.parse(JSON.stringify(prevData)); // Deep copy
       const keys = path.split(".");
       let current = newData;
-
       try {
         for (let i = 0; i < keys.length - 1; i++) {
           const key = keys[i];
-          // Basic handling for array index like 'details[0]'
-          const arrayMatch = key.match(/^(\w+)\[(\d+)\]$/);
+          const arrayMatch = key.match(/^(\w+)\[(\d+)\]$/); // e.g., list[0]
           if (arrayMatch) {
             const arrayKey = arrayMatch[1];
             const index = parseInt(arrayMatch[2], 10);
-            if (!current[arrayKey]) current[arrayKey] = []; // Ensure array exists
-            if (!current[arrayKey][index]) current[arrayKey][index] = {}; // Ensure object at index exists
+            if (!current[arrayKey]) current[arrayKey] = [];
+            if (!current[arrayKey][index]) current[arrayKey][index] = {}; // Ensure object exists at index
             current = current[arrayKey][index];
           } else {
-            if (typeof current[key] === "undefined" || current[key] === null) {
-              current[key] = {}; // Ensure nested object exists
-            }
+            if (typeof current[key] === "undefined" || current[key] === null) current[key] = {};
             current = current[key];
           }
         }
-
-        // Assign the value to the final key
+        // Handle the final key assignment
         const finalKey = keys[keys.length - 1];
         const finalArrayMatch = finalKey.match(/^(\w+)\[(\d+)\]$/);
         if (finalArrayMatch) {
           const arrayKey = finalArrayMatch[1];
           const index = parseInt(finalArrayMatch[2], 10);
           if (!current[arrayKey]) current[arrayKey] = [];
-          current[arrayKey][index] = value; // Might overwrite if it was an object
+          current[arrayKey][index] = value;
         } else {
           current[finalKey] = value;
         }
       } catch (e) {
         console.error("Error updating state path:", path, e);
-        // Return previous data to avoid breaking state on error
         return prevData;
       }
-
       return newData;
     });
   };
 
-  // Specific handlers for sub-components, calling the generic one
-  const handleDetailsChange = (field, value) => handleInputChange(`details.0.${field}`, value);
-  const handleTracksChange = (field, value) => handleInputChange(`tracks.${field}`, value);
-  const handleIntroChange = (field, value) => handleInputChange(`intro.${field}`, value);
+  // --- Handlers for adding/removing items in body.list ---
+  const addTrack = () => {
+    setEditedData((prevData) => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      if (!newData.body) newData.body = { title: "Research Tracks", list: [] };
+      if (!newData.body.list) newData.body.list = [];
+      // Add new empty track (textarea format)
+      newData.body.list.push({ title: "", text: "", img: "" });
+      return newData;
+    });
+  };
 
-  // Handle saving the edited data (create or update)
+  const removeTrack = (indexToRemove) => {
+    if (!window.confirm("Are you sure you want to remove this track?")) return;
+    setEditedData((prevData) => {
+      const newData = JSON.parse(JSON.stringify(prevData));
+      if (newData.body && newData.body.list) {
+        newData.body.list.splice(indexToRemove, 1); // Remove item at index
+      }
+      // If last item removed, add a default empty one back? Optional.
+      if (newData.body.list.length === 0) {
+        newData.body.list.push({ title: "", text: "", img: "" });
+      }
+      return newData;
+    });
+  };
+
+  // --- Save Handler (Adapts editedData to match Schema) ---
   const handleSave = async () => {
-    if (!editedData) return; // Should not happen if button is enabled
+    if (!editedData) return;
     setIsSaving(true);
-    setError(null); // Clear previous save errors
+    setError(null);
 
-    // Prepare data payload for API: deep copy and format adjustments
+    // Deep copy and prepare payload
     const dataToSave = JSON.parse(JSON.stringify(editedData));
 
-    // Convert tracks.buttons comma-separated string back to array
-    if (dataToSave.tracks && typeof dataToSave.tracks.buttons === "string") {
-      dataToSave.tracks.buttons = dataToSave.tracks.buttons
-        .split(",")
-        .map((s) => s.trim()) // Trim whitespace
-        .filter(Boolean); // Remove empty strings resulting from extra commas
-    } else if (dataToSave.tracks) {
-      dataToSave.tracks.buttons = []; // Ensure it's an array if it wasn't a string
+    // Convert text/img textareas back to arrays
+    if (dataToSave.body && dataToSave.body.list) {
+      dataToSave.body.list.forEach((item) => {
+        // Split text by double newline, trim, filter empty
+        item.text =
+          typeof item.text === "string"
+            ? item.text
+                .split(/\n\s*\n/)
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : [];
+        // Split img URLs by comma, trim, filter empty
+        item.img =
+          typeof item.img === "string"
+            ? item.img
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : [];
+      });
+    } else if (dataToSave.body) {
+      dataToSave.body.list = []; // Ensure list is an array if body exists
     }
 
-    // Ensure 'intro.slides' is not sent if it exists (managed separately)
-    if (dataToSave.intro) {
-      delete dataToSave.intro.slides;
+    // Basic validation before sending
+    if (!dataToSave.head?.title || !dataToSave.head?.description || !dataToSave.body?.title) {
+      alert("Please fill in the required fields (Head Title, Head Description, Body Title).");
+      setIsSaving(false);
+      return;
     }
 
     try {
       const response = await fetch(`${BASE_URL}/about`, {
-        method: "PUT", // API uses PUT with upsert:true for create/update
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSave),
+        method: "PUT",
+        headers: { Authorization: `Bearer ${adminToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSave), // Send the structured data
       });
-
-      if (!response.ok) {
-        // Throw detailed error
-        throw new Error(`Failed to save: ${response.status} ${await response.text()}`);
-      }
-
-      const savedData = await response.json(); // Get the saved/updated data
-      setAboutData(savedData); // Update the canonical state
-      setIsEditing(false); // Exit edit mode
-      setEditedData(null); // Clear temporary edit state
-      alert("About page content saved successfully!");
+      if (!response.ok) throw new Error(`Save failed: ${response.status} ${await response.text()}`);
+      const savedData = await response.json();
+      setAboutData(savedData); // Update canonical data
+      setIsEditing(false);
+      setEditedData(null); // Exit edit mode
+      alert("About page saved successfully!");
     } catch (err) {
-      console.error("Error saving about data:", err);
-      setError(`Save failed: ${err.message}`);
-      alert(`Save failed: ${err.message}`); // Show error to user
+      console.error("Save error:", err);
+      setError(err.message);
+      alert(`Save failed: ${err.message}`);
     } finally {
-      setIsSaving(false); // Reset saving indicator
+      setIsSaving(false);
     }
   };
 
   // --- Render Logic ---
-
-  // Determine which data source to use for display (live data or editing data)
   const displayData = isEditing ? editedData : aboutData;
-  // Determine if the about content section can be shown
   const canShowAboutContent = !loadingAbout && (isEditing || aboutData);
 
   return (
-    // Main container for the page
-    <div className="flex flex-col justify-start items-center px-4 sm:px-6 lg:px-8 pt-24 pb-12 w-full min-h-screen">
-      {/* === Carousel Section === */}
-      {/* Always occupies space, shows loading, images, or placeholder */}
+    <div className="flex flex-col items-center px-4 sm:px-6 lg:px-8 pt-24 pb-12 w-full min-h-screen">
+      {/* Carousel (Unaffected by About content) */}
       <div className="w-full max-w-4xl mb-6">
-        {loadingImages && (
-          <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg text-gray-500 animate-pulse">
-            <LoadingSpinner message="Loading images..." />
-          </div>
-        )}
+        {loadingImages && <LoadingSpinner message="Loading images..." />}
         {!loadingImages && carouselSlides.length > 0 && <MainCarousel slides={carouselSlides} />}
-        {/* Placeholder if no images loaded and not loading */}
         {!loadingImages && carouselSlides.length === 0 && (
-          <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg text-gray-500">
-            No images available for carousel.
-          </div>
+          <div className="text-center text-gray-500 py-10">No carousel images.</div>
         )}
       </div>
 
-      {/* === Admin Control Header (Edit/Cancel buttons) === */}
-      {/* Positioned below carousel, above content */}
-      {isAdmin && !isEditing && (
+      {/* Admin Controls */}
+      {isAdmin && (
         <div className="w-full max-w-4xl mb-6 flex justify-center gap-4">
-          {/* Main Edit/Save button */}
+          {isEditing && (
+            <button className="btn-secondary" onClick={handleEditToggle} disabled={isSaving}>
+              Cancel
+            </button>
+          )}
           <button
-            className={`${
-              isEditing
-                ? "bg-green-600 hover:bg-green-700" // Save button style
-                : "bg-blue-600 hover:bg-blue-700" // Edit button style
-            } text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 disabled:opacity-50`}
-            onClick={isEditing ? handleSave : handleEditToggle} // Action: Save or Enter Edit
-            disabled={isSaving} // Disable while saving
+            className={`btn ${isEditing ? "btn-primary" : "btn-secondary"}`}
+            onClick={isEditing ? handleSave : handleEditToggle}
+            disabled={isSaving}
           >
-            Edit Page
+            {isSaving ? "Saving..." : isEditing ? "Save Changes" : "Edit Page"}
           </button>
         </div>
       )}
 
-      {/* === About Page Content Section === */}
-
-      {/* Loading state for the About content */}
-      {loadingAbout && (
-        <div className="flex justify-center items-center flex-grow mt-8">
-          <LoadingSpinner message="Loading content..." />
-        </div>
-      )}
-
-      {/* Error state display */}
+      {/* Loading/Error States for About Content */}
+      {loadingAbout && <LoadingSpinner message="Loading content..." />}
       {!loadingAbout && error && (
-        <div className="flex justify-center items-center flex-grow px-4 mt-8 text-center text-red-600">
-          Error: {error}
-        </div>
+        <div className="text-red-600 text-center mt-6">Error: {error}</div>
       )}
 
-      {/* Display content or edit form if not loading and no error */}
-      {!loadingAbout && !error && canShowAboutContent && (
+      {/* Main Content Area */}
+      {!loadingAbout && !error && (
         <div className="w-full max-w-4xl">
-          {" "}
-          {/* Container for form/display sections */}
-          {/* Intro Section */}
-          <Intro
-            introData={displayData?.intro} // Pass intro part of data
-            isEditing={isEditing}
-            onIntroChange={handleIntroChange} // Pass handler
-          />
-          {/* Tracks Section */}
-          <Tracks
-            tracksData={displayData?.tracks} // Pass tracks part of data
-            isEditing={isEditing}
-            onTracksChange={handleTracksChange} // Pass handler
-          />
-          {/* Details Section (handling first item) */}
-          <Details
-            detailsItem={displayData?.details?.[0]} // Pass first details item
-            isEditing={isEditing}
-            onDetailsChange={handleDetailsChange} // Pass handler
-          />
-          {/* Bottom Save/Cancel buttons (visible only during editing) */}
-          {isAdmin && isEditing && (
-            <div className="mt-8 flex justify-center gap-4">
-              <button
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 disabled:opacity-50"
-                onClick={handleEditToggle} // Action: Cancel Edit
-                disabled={isSaving}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200 disabled:opacity-50"
-                onClick={handleSave} // Action: Save
-                disabled={isSaving}
-              >
-                {isSaving ? "Saving..." : "Save Changes"}
-              </button>
+          {canShowAboutContent ? (
+            // Display Form or Rendered Content based on isEditing
+            isEditing ? (
+              // --- EDITING FORM ---
+              <div className="space-y-8">
+                {/* Head Section Form */}
+                <section className="p-4 border rounded shadow-sm bg-white">
+                  <h2 className="text-xl font-semibold mb-3 border-b pb-2">Header Section</h2>
+                  <div className="space-y-3">
+                    <InputField
+                      label="Title"
+                      path="head.title"
+                      value={displayData?.head?.title || ""}
+                      onChange={handleInputChange}
+                    />
+                    <TextareaField
+                      label="Description"
+                      path="head.description"
+                      value={displayData?.head?.description || ""}
+                      onChange={handleInputChange}
+                      rows={4}
+                    />
+                  </div>
+                </section>
+
+                {/* Body Section Form */}
+                <section className="p-4 border rounded shadow-sm bg-white">
+                  <h2 className="text-xl font-semibold mb-3 border-b pb-2">Body Section</h2>
+                  <div className="mb-4">
+                    <InputField
+                      label="Title"
+                      path="body.title"
+                      value={displayData?.body?.title || ""}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <h3 className="text-lg font-medium mb-3">Research Tracks</h3>
+                  <div className="space-y-6">
+                    {/* Map over the list items for the form */}
+                    {displayData?.body?.list?.map((item, index) => (
+                      <div
+                        key={`track-edit-${index}`}
+                        className="p-3 border rounded bg-gray-50 relative"
+                      >
+                        {/* Remove button for tracks (only if more than one) */}
+                        {displayData.body.list.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeTrack(index)}
+                            className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-bold"
+                            title="Remove Track"
+                          >
+                            × REMOVE
+                          </button>
+                        )}
+                        <InputField
+                          label={`Track ${index + 1}: Title`}
+                          path={`body.list[${index}].title`}
+                          value={item.title || ""}
+                          onChange={handleInputChange}
+                        />
+                        <TextareaField
+                          label={`Track ${index + 1}: Text (Paragraphs separated by blank lines)`}
+                          path={`body.list[${index}].text`}
+                          value={item.text || ""}
+                          onChange={handleInputChange}
+                          rows={6}
+                        />
+                        <TextareaField
+                          label={`Track ${index + 1}: Image URLs (comma-separated)`}
+                          path={`body.list[${index}].img`}
+                          value={item.img || ""}
+                          onChange={handleInputChange}
+                          rows={2}
+                          placeholder="e.g., /url1.jpg, /url2.png"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {/* Add Track Button */}
+                  <div className="mt-4">
+                    <button type="button" onClick={addTrack} className="btn-secondary btn-sm">
+                      + Add Another Track
+                    </button>
+                  </div>
+                </section>
+                {/* Bottom Save/Cancel for convenience */}
+                <div className="mt-8 flex justify-center gap-4">
+                  <button className="btn-secondary" onClick={handleEditToggle} disabled={isSaving}>
+                    Cancel
+                  </button>
+                  <button className="btn-primary" onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // --- DISPLAY MODE ---
+              <div className="space-y-8">
+                {/* Head Section Display */}
+                <section>
+                  <h1 className="text-3xl sm:text-4xl font-bold text-text_black_primary mb-3">
+                    {displayData?.head?.title}
+                  </h1>
+                  <p className="text-base sm:text-lg text-text_black_secondary leading-relaxed">
+                    {displayData?.head?.description}
+                  </p>
+                </section>
+
+                {/* Body Section Display */}
+                <section className="border-t pt-8">
+                  <h2 className="text-2xl sm:text-3xl font-light text-text_black_primary mb-6">
+                    {displayData?.body?.title}
+                  </h2>
+                  <div className="space-y-10">
+                    {displayData?.body?.list?.map((item, index) => (
+                      <div
+                        key={`track-display-${index}`}
+                        className="flex flex-col md:flex-row gap-6 md:gap-8 items-start"
+                      >
+                        {/* Text Content */}
+                        <div className="flex-1 space-y-4">
+                          <h3 className="text-xl font-semibold text-primary_main">{item.title}</h3>
+                          {/* Render paragraphs from text array */}
+                          {item.text?.map((paragraph, pIndex) => (
+                            <p key={pIndex} className="text-text_black_secondary leading-relaxed">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                        {/* Image Gallery for the track */}
+                        {item.img && item.img.length > 0 && (
+                          <div className="w-full md:w-1/3 grid grid-cols-2 gap-2 mt-2 md:mt-0">
+                            {item.img.map((url, iIndex) => (
+                              <img
+                                key={iIndex}
+                                src={url}
+                                alt={`${item.title} image ${iIndex + 1}`}
+                                className="w-full h-auto object-cover rounded shadow-sm aspect-square"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    {(!displayData?.body?.list || displayData.body.list.length === 0) && (
+                      <p className="text-gray-500 italic">No tracks defined.</p>
+                    )}
+                  </div>
+                </section>
+              </div>
+            )
+          ) : (
+            // Message when content doesn't exist and not editing
+            <div className="text-center text-gray-500 mt-10">
+              About page content has not been created yet.
+              {isAdmin ? " Click 'Edit Page' above to add content." : ""}
             </div>
           )}
-        </div> // End content container
-      )}
-
-      {/* Message shown if content doesn't exist and not in edit mode */}
-      {!loadingAbout && !error && !isEditing && !aboutData && (
-        <div className="flex justify-center items-center flex-grow px-4 mt-8 text-center text-gray-500">
-          About page content has not been created yet.
-          {/* Prompt admin to start editing */}
-          {isAdmin ? " Click 'Edit Page' above to add content." : ""}
         </div>
       )}
     </div> // End main page container
   );
 };
 
-// --- Intro Sub-Component ---
-// Displays/Edits intro.heading and intro.description
-const Intro = ({ introData, isEditing, onIntroChange }) => {
-  // Safely destructure with default values
-  const { heading = "", description = "" } = introData || {};
-
-  return (
-    // w-full ensures it takes the width of the parent container (max-w-4xl)
-    <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full border-t border-gray-200 mt-6">
-      {/* Heading Field/Display */}
-      {isEditing ? (
-        <div>
-          <label htmlFor="introHeading" className="block text-sm font-medium text-gray-700 mb-1">
-            Intro Heading
-          </label>
-          <input
-            id="introHeading"
-            type="text"
-            value={heading}
-            onChange={(e) => onIntroChange("heading", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-            placeholder="Enter intro heading"
-          />
-        </div>
-      ) : (
-        // Only render if heading has content
-        heading && (
-          <h2 className="text-xl sm:text-2xl font-semibold text-text_black_primary">{heading}</h2>
-        )
-      )}
-      {/* Description Field/Display */}
-      {isEditing ? (
-        <div>
-          <label
-            htmlFor="introDescription"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Intro Description
-          </label>
-          <textarea
-            id="introDescription"
-            value={description}
-            onChange={(e) => onIntroChange("description", e.target.value)}
-            className="border border-gray-300 p-2 w-full rounded text-base shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-            rows="5"
-            placeholder="Enter introduction description"
-          />
-        </div>
-      ) : (
-        // Display description or placeholder if empty
-        <h3 className="text-base sm:text-lg text-text_black_secondary leading-relaxed">
-          {description ||
-            (isAdmin && !isEditing ? (
-              <span className="italic text-gray-400">No description provided.</span>
-            ) : (
-              ""
-            ))}
-        </h3>
-      )}
-    </div>
-  );
-};
-// PropTypes for Intro component
-Intro.propTypes = {
-  introData: PropTypes.shape({
-    heading: PropTypes.string,
-    description: PropTypes.string,
-  }), // introData can be null or undefined initially
-  isEditing: PropTypes.bool.isRequired,
-  onIntroChange: PropTypes.func.isRequired,
+// --- Reusable Form Field Components ---
+const InputField = ({ label, path, value, onChange, placeholder = "" }) => (
+  <div>
+    <label htmlFor={path} className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    <input
+      type="text"
+      id={path}
+      name={path}
+      value={value}
+      onChange={(e) => onChange(path, e.target.value)}
+      className="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+      placeholder={placeholder || label}
+    />
+  </div>
+);
+InputField.propTypes = {
+  label: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
 };
 
-// --- Tracks Sub-Component ---
-// Displays/Edits tracks.title and tracks.buttons
-const Tracks = ({ tracksData, isEditing, onTracksChange }) => {
-  // Safely destructure with defaults
-  const { title = "Research Tracks", buttons = "" } = tracksData || {};
-  // Prepare button array for display mode
-  const displayButtons =
-    typeof buttons === "string"
-      ? buttons
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : [];
-
-  return (
-    <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full border-t border-gray-200">
-      {/* Section Title Field/Display */}
-      <div className="flex items-end justify-between">
-        {isEditing ? (
-          <div className="flex-grow mr-4">
-            <label htmlFor="tracksTitle" className="block text-sm font-medium text-gray-700 mb-1">
-              Tracks Section Title
-            </label>
-            <input
-              id="tracksTitle"
-              type="text"
-              value={title}
-              onChange={(e) => onTracksChange("title", e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-              placeholder="Enter tracks title"
-            />
-          </div>
-        ) : (
-          // Render title if it exists
-          <h2 className="text-2xl sm:text-3xl font-light text-text_black_primary">{title}</h2>
-        )}
-        {/* Icon */}
-        <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
-      </div>
-
-      {/* Track Buttons Field/Display */}
-      {isEditing ? (
-        <div>
-          <label htmlFor="tracksButtons" className="block text-sm font-medium text-gray-700 mb-1">
-            Track Buttons (comma-separated)
-          </label>
-          <textarea
-            id="tracksButtons"
-            value={buttons} // Edit the comma-separated string
-            onChange={(e) => onTracksChange("buttons", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded text-base shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-            rows="3"
-            placeholder="Enter track names, separated by commas"
-          />
-        </div>
-      ) : (
-        // Display parsed buttons or placeholder
-        <div className="flex flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm">
-          {displayButtons.length > 0
-            ? displayButtons.map((track) => (
-                <button
-                  key={track}
-                  className="border border-primary_main text-primary_main px-4 py-1 sm:px-5 sm:py-1.5 rounded-full hover:bg-primary_main hover:text-white transition-colors duration-200 cursor-default" // Non-interactive in display mode
-                  disabled // Explicitly disable interaction
-                >
-                  {track}
-                </button>
-              ))
-            : // Show placeholder only if not editing
-              !isEditing && <p className="text-gray-500 italic w-full">No tracks defined.</p>}
-        </div>
-      )}
-    </div>
-  );
-};
-// PropTypes for Tracks component
-Tracks.propTypes = {
-  tracksData: PropTypes.shape({
-    title: PropTypes.string,
-    // Buttons can be string during edit, array otherwise (though API expects array)
-    buttons: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-  }), // tracksData can be null/undefined
-  isEditing: PropTypes.bool.isRequired,
-  onTracksChange: PropTypes.func.isRequired,
+const TextareaField = ({ label, path, value, onChange, rows = 3, placeholder = "" }) => (
+  <div>
+    <label htmlFor={path} className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    <textarea
+      id={path}
+      name={path}
+      value={value}
+      onChange={(e) => onChange(path, e.target.value)}
+      rows={rows}
+      className="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none text-base"
+      placeholder={placeholder || label}
+    />
+  </div>
+);
+TextareaField.propTypes = {
+  label: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  rows: PropTypes.number,
+  placeholder: PropTypes.string,
 };
 
-// --- Details Sub-Component ---
-// Displays/Edits fields for the first item in the details array
-const Details = ({ detailsItem, isEditing, onDetailsChange }) => {
-  // Safely destructure first item with defaults
-  const { title = "", description = "", image = "" } = detailsItem || {};
+// --- Main Component PropTypes (Optional but Recommended) ---
+// Since structure is complex, defining detailed PropTypes can be verbose.
+// Basic check for isAdmin might suffice if context provides it reliably.
 
-  return (
-    <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full border-t border-gray-200">
-      {/* Background Image Display (only when not editing) */}
-      {!isEditing && image && (
-        <div
-          className="w-full h-48 sm:h-64 bg-cover bg-center rounded-lg mb-4 shadow"
-          style={{ backgroundImage: `url(${image})` }}
-          aria-label={`Background for ${title || "Details Section"}`}
-        ></div>
-      )}
-
-      {/* Title Field/Display */}
-      {isEditing ? (
-        <div>
-          <label htmlFor="detailsTitle" className="block text-sm font-medium text-gray-700 mb-1">
-            Details Section Title
-          </label>
-          <input
-            id="detailsTitle"
-            type="text"
-            value={title}
-            onChange={(e) => onDetailsChange("title", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-            placeholder="Enter details section title"
-          />
-        </div>
-      ) : (
-        // Render title if it exists
-        <h1 className="text-2xl sm:text-3xl font-bold text-text_black_primary">
-          {title ||
-            (isAdmin && !isEditing ? (
-              <span className="italic text-gray-400">No Title Provided</span>
-            ) : (
-              ""
-            ))}
-        </h1>
-      )}
-
-      {/* Description Field/Display */}
-      {isEditing ? (
-        <div>
-          <label
-            htmlFor="detailsDescription"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Details Section Description
-          </label>
-          <textarea
-            id="detailsDescription"
-            value={description}
-            onChange={(e) => onDetailsChange("description", e.target.value)}
-            className="border border-gray-300 p-2 w-full rounded text-base shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-            rows="8"
-            placeholder="Enter details description"
-          />
-        </div>
-      ) : (
-        // Display description or placeholder
-        <h3 className="text-base sm:text-lg text-text_black_secondary leading-relaxed">
-          {description ||
-            (isAdmin && !isEditing ? (
-              <span className="italic text-gray-400">No description provided.</span>
-            ) : (
-              ""
-            ))}
-        </h3>
-      )}
-
-      {/* Image URL Field (only in edit mode) */}
-      {isEditing && (
-        <div>
-          <label htmlFor="detailsImage" className="block text-sm font-medium text-gray-700 mb-1">
-            Details Section Background Image URL
-          </label>
-          <input
-            id="detailsImage"
-            type="text"
-            value={image}
-            onChange={(e) => onDetailsChange("image", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-            placeholder="Enter image URL (e.g., https://...)"
-          />
-        </div>
-      )}
-    </div>
-  );
-};
-// PropTypes for Details component
-Details.propTypes = {
-  detailsItem: PropTypes.shape({
-    title: PropTypes.string,
-    description: PropTypes.string,
-    image: PropTypes.string,
-  }), // detailsItem can be null or undefined
-  isEditing: PropTypes.bool.isRequired,
-  onDetailsChange: PropTypes.func.isRequired,
-};
-
-export default About; // Export the main component
+export default About;

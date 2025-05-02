@@ -1,0 +1,29 @@
+{
+  "head": {
+    "title": "Integration & Innovation Design",
+    "description": "Integration + Innovation Design Lab (IIDL) focuses on the design of innovative products and services through multi-disciplinary approaches among industrial design, ergonomics, and engineering design. IIDL seeks to establish integrated and innovative design methodologies, develop human-centered design factors and concepts, and investigate the design engineering and mechanical aspects of a whole product. This is achieved by actively collaborating with experts in engineering design, human factors engineering, business, and applied fields."
+  },
+  "body": {
+    "title": "Research tracks",
+    "list": [
+      {
+        "title": "Pervasive Design",
+        "text": [
+          "With the development of agent-based systems and pervasive technologies, the intelligence of living and working spaces has changed and influenced behaviors such as recycling, preserving sustainability, and energy saving. These systems provide technology-mediated interaction and other ICT services to mobile users and their inhabitants with apparent experience.",
+          "The pervasive design research track explores theories and methods for efficient management of user-oriented information through pervasive and ubiquitous environments to enhance communication with the real world. Through this track, IIDL seeks to provide guidelines and tools to understand everyday design work, human behavior representations, ways of thinking and concept generation, and various aspects of human interaction with technology. This includes usage representation, sensory experience, and processing for Users, Information, and the Thing.",
+          "This track also determines various contexts of interaction, such as place and location, virtual spaces, and stories that embody design tools. It also deals with persuasive design, which aims to change users' behavior and attitudes through persuasion and social influence."
+        ],
+        "img": ["/track1.jpg", "/track2.jpg", "/track3.jpg"]
+      },
+      {
+        "title": "Engineering Design",
+        "text": [
+          "We believe that design cannot be limited to imagination or sketches. It should be expressed in some material form, showing palpability and structure through proper analysis and synthesis. Through research and engineering approaches, we design products and services with an emphasis on creativity and practicality.",
+          "Currently, energy consumption is rapidly increasing in South Korea, with domestic energy dependency at 98 percent. Annual electricity demand is surging by 5.9%, and the average yearly growth rate of energy consumption is 2.5 percent. Authorities have endorsed several energy-saving campaigns, such as setting indoor AC use to 18°C and 26°C, and the green campaign. However, these have failed due to slow energy-saving output and challenges in convincing users to adopt effective self-learning behavioral changes.",
+          "In the coming renewable energy era, new energy paradigms will affect human life. People will transition from being mere users or consumers to roles involving producing, preserving, distributing, and consuming energy. This shift will result in more complex and extended roles compared to current users. The current theme explores theories and methods for innovative and sustainable ways to design and engineer new energy paradigms for leading energy-related products and product-service systems."
+        ],
+        "img": ["/track1.jpg", "/track2.jpg", "/track3.jpg"]
+      }
+    ]
+  }
+}
