@@ -1,3 +1,5 @@
+// {PATH_TO_THE_PROJECT}/frontend/src/pages/News.jsx
+
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Filter, MainCarousel, Markdown, LoadingSpinner } from "@/components/"; // Assume Filter & MainCarousel are responsive

@@ -1,3 +1,5 @@
+// {PATH_TO_THE_PROJECT}/frontend/src/pages/Gallery.jsx
+
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";

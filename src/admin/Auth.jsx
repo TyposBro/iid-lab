@@ -1,3 +1,5 @@
+// {PATH_TO_THE_PROJECT}/frontend/src/admin/Auth.jsx
+
 import { useState } from "react";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useNavigate } from "react-router-dom";
