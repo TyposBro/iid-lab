@@ -66,7 +66,7 @@ export const Team = () => {
   const alumniMembers = teamData.filter((member) => member.type === "alumni");
 
   return (
-    <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full h-dvh overflow-y-scroll">
+    <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full">
       {isAdmin && <AdminTeamControls refreshData={fetchTeamData} />}
       {isAdmin && <AdminProfessorControls professor={profData} refreshData={fetchProfData} />}
       <TeamProf prof={profData} loading={profLoading} error={profError} />

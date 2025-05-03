@@ -22,7 +22,7 @@ export const Projects = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-start items-center pt-16 md:pt-[95px] w-full min-h-dvh overflow-y-scroll no-scrollbar">
+    <div className="flex flex-col justify-start items-center pt-16 md:pt-[95px] w-full">
       {/* Intro Section */}
       <div className="flex flex-col gap-[10px] px-4 md:px-[25px] py-8 w-full">
         <h2 className="font-bold text-5xl md:text-[48px] text-black leading-tight md:leading-[48px]">

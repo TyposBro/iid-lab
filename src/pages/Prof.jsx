@@ -37,7 +37,7 @@ const Prof = () => {
   if (error) return <div>Error loading professor: {error}</div>;
 
   return (
-    <div className="flex flex-col justify-start items-center pt-[95px] px-[25px] w-full h-dvh overflow-y-scroll no-scrollbart gap-6">
+    <div className="flex flex-col justify-start items-center pt-[95px] px-[25px] w-full gap-6">
       {prof ? (
         <>
           <Intro prof={prof} />

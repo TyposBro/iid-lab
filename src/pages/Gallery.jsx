@@ -62,7 +62,7 @@ export const Gallery = () => {
   console.log("Unique Types:", uniqueTypes);
 
   return (
-    <div className="flex flex-col justify-start items-center pt-16 w-full h-dvh overflow-y-scroll no-scrollbar">
+    <div className="flex flex-col justify-start items-center pt-16 w-full">
       <Intro slides={slides} />
 
       {isAdmin && (
