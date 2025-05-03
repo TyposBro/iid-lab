@@ -745,148 +745,152 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
   );
 
   return (
-    <div className="p-4 border-t border-b my-8 w-full bg-gray-50">
-      <h3 className="text-xl font-semibold mb-4">Admin: Manage Publications</h3>
+    <div className="w-full p-4">
+      <div className="flex flex-wrap justify-between items-center w-full p-4 border my-8 bg-gray-50">
+        <h3 className="text-xl font-semibold mb-4">Admin: Manage Publications</h3>
 
-      {(isSubmitting || deletingId || isLoadingList) && (
-        <LoadingSpinner
-          message={
-            isLoadingList
-              ? "Loading list..."
-              : isSubmitting
-              ? isCreating
-                ? "Creating..."
-                : "Updating..."
-              : "Deleting..."
-          }
-        />
-      )}
+        {(isSubmitting || deletingId || isLoadingList) && (
+          <LoadingSpinner
+            message={
+              isLoadingList
+                ? "Loading list..."
+                : isSubmitting
+                ? isCreating
+                  ? "Creating..."
+                  : "Updating..."
+                : "Deleting..."
+            }
+          />
+        )}
 
-      {/* Add New Button */}
-      {!isCreating && !isEditing && (
-        <button
-          onClick={() => {
-            resetForm();
-            setIsCreating(true);
-          }}
-          className="bg-green-500 hover:bg-green-600 text-white p-2 rounded mb-4 transition-colors duration-200 disabled:opacity-50"
-          disabled={isSubmitting || !!deletingId || isLoadingList}
-        >
-          + Add New Publication
-        </button>
-      )}
+        {/* Add New Button */}
+        {!isCreating && !isEditing && (
+          <button
+            onClick={() => {
+              resetForm();
+              setIsCreating(true);
+            }}
+            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded mb-4 transition-colors duration-200 disabled:opacity-50"
+            disabled={isSubmitting || !!deletingId || isLoadingList}
+          >
+            + Add New Publication
+          </button>
+        )}
 
-      {/* List Publications */}
-      {!isCreating && !isEditing && (
-        <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
-          {" "}
-          {/* Added scroll for long lists */}
-          {listError && (
-            <div className="p-2 text-red-700 bg-red-100 border border-red-300 rounded">
-              Error loading list: {listError}
-            </div>
-          )}
-          {isLoadingList && !publications.length && <div>Loading publication list...</div>}
-          {publications.map((pub) => (
-            <div
-              key={pub._id}
-              className="border rounded p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 bg-white shadow-sm"
-            >
-              <div className="flex items-start gap-3 flex-grow">
-                {pub.image && (
-                  <img
-                    src={pub.image}
-                    alt=""
-                    className="w-16 h-16 object-cover rounded flex-shrink-0"
-                  />
-                )}
-                <div className="flex-grow">
-                  <p className="font-semibold">{truncateText(pub.title, 100)}</p>
-                  <p className="text-xs text-gray-500">
-                    {pub.authors.slice(0, 2).join(", ")}
-                    {pub.authors.length > 2 ? " et al." : ""} ({pub.year}, {pub.type})
-                  </p>
+        {/* List Publications */}
+        {!isCreating && !isEditing && (
+          <div className="w-full  space-y-2 max-h-96 overflow-y-auto pr-2">
+            {" "}
+            {/* Added scroll for long lists */}
+            {listError && (
+              <div className="p-2 text-red-700 bg-red-100 border border-red-300 rounded">
+                Error loading list: {listError}
+              </div>
+            )}
+            {isLoadingList && !publications.length && (
+              <div className="w-full">Loading publication list...</div>
+            )}
+            {publications.map((pub) => (
+              <div
+                key={pub._id}
+                className="border rounded p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 bg-white shadow-sm"
+              >
+                <div className="flex items-start gap-3 flex-grow">
+                  {pub.image && (
+                    <img
+                      src={pub.image}
+                      alt=""
+                      className="w-16 h-16 object-cover rounded flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-grow">
+                    <p className="font-semibold">{truncateText(pub.title, 100)}</p>
+                    <p className="text-xs text-gray-500">
+                      {pub.authors.slice(0, 2).join(", ")}
+                      {pub.authors.length > 2 ? " et al." : ""} ({pub.year}, {pub.type})
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-shrink-0 self-end md:self-center">
+                  <button
+                    onClick={() => handleEdit(pub)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white p-1 px-2 rounded text transition-colors duration-200 disabled:opacity-50"
+                    disabled={isSubmitting || !!deletingId || isLoadingList}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(pub._id)}
+                    className={`bg-red-500 hover:bg-red-600 text-white p-1 px-2 rounded text transition-colors duration-200 ${
+                      deletingId === pub._id ? "opacity-50 cursor-wait" : ""
+                    } disabled:opacity-50`}
+                    disabled={isSubmitting || !!deletingId || isLoadingList}
+                  >
+                    {deletingId === pub._id ? "Deleting..." : "Delete"}
+                  </button>
                 </div>
               </div>
-              <div className="flex gap-2 flex-shrink-0 self-end md:self-center">
+            ))}
+            {!isLoadingList && !listError && publications.length === 0 && (
+              <p className="text-gray-500">No publications found.</p>
+            )}
+          </div>
+        )}
+
+        {/* Create Form */}
+        {isCreating && (
+          <div className="p-4 border rounded mt-4 bg-white shadow-md">
+            <h4 className="text-lg font-medium mb-3">Create New Publication</h4>
+            <form onSubmit={handleCreate}>
+              {publicationFormFields}
+              <div className="flex gap-4 mt-4">
                 <button
-                  onClick={() => handleEdit(pub)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white p-1 px-2 rounded text-xs transition-colors duration-200 disabled:opacity-50"
-                  disabled={isSubmitting || !!deletingId || isLoadingList}
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200 disabled:opacity-50"
+                  disabled={isSubmitting}
                 >
-                  Edit
+                  {isSubmitting ? "Creating..." : "Create Publication"}
                 </button>
                 <button
-                  onClick={() => handleDelete(pub._id)}
-                  className={`bg-red-500 hover:bg-red-600 text-white p-1 px-2 rounded text-xs transition-colors duration-200 ${
-                    deletingId === pub._id ? "opacity-50 cursor-wait" : ""
-                  } disabled:opacity-50`}
-                  disabled={isSubmitting || !!deletingId || isLoadingList}
+                  type="button"
+                  onClick={resetForm}
+                  className="text-gray-600 hover:text-gray-800 p-2 disabled:opacity-50"
+                  disabled={isSubmitting}
                 >
-                  {deletingId === pub._id ? "Deleting..." : "Delete"}
+                  Cancel
                 </button>
               </div>
-            </div>
-          ))}
-          {!isLoadingList && !listError && publications.length === 0 && (
-            <p className="text-gray-500">No publications found.</p>
-          )}
-        </div>
-      )}
+            </form>
+          </div>
+        )}
 
-      {/* Create Form */}
-      {isCreating && (
-        <div className="p-4 border rounded mt-4 bg-white shadow-md">
-          <h4 className="text-lg font-medium mb-3">Create New Publication</h4>
-          <form onSubmit={handleCreate}>
-            {publicationFormFields}
-            <div className="flex gap-4 mt-4">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200 disabled:opacity-50"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Creating..." : "Create Publication"}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="text-gray-600 hover:text-gray-800 p-2 disabled:opacity-50"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Edit Form */}
-      {isEditing && editingPublication && (
-        <div className="p-4 border rounded mt-4 bg-white shadow-md">
-          <h4 className="text-lg font-medium mb-3">Edit Publication</h4>
-          <form onSubmit={handleUpdate}>
-            {publicationFormFields}
-            <div className="flex gap-4 mt-4">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200 disabled:opacity-50"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Updating..." : "Update Publication"}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="text-gray-600 hover:text-gray-800 p-2 disabled:opacity-50"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+        {/* Edit Form */}
+        {isEditing && editingPublication && (
+          <div className="p-4 border rounded mt-4 bg-white shadow-md">
+            <h4 className="text-lg font-medium mb-3">Edit Publication</h4>
+            <form onSubmit={handleUpdate}>
+              {publicationFormFields}
+              <div className="flex gap-4 mt-4">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200 disabled:opacity-50"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Updating..." : "Update Publication"}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="text-gray-600 hover:text-gray-800 p-2 disabled:opacity-50"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

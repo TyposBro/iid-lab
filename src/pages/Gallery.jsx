@@ -62,7 +62,7 @@ export const Gallery = () => {
   console.log("Unique Types:", uniqueTypes);
 
   return (
-    <div className="flex flex-col justify-start items-center pt-16 w-full">
+    <div className="flex flex-col justify-start items-center pt-16 min-h-screen w-full">
       <Intro slides={slides} />
 
       {isAdmin && (
@@ -351,212 +351,226 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
   };
 
   return (
-    <div className="p-4">
-      {(isSubmitting || deletingId) && (
-        <LoadingSpinner
-          message={
-            isSubmitting
-              ? isCreating
-                ? "Creating Event..."
-                : "Updating Event..."
-              : "Deleting Event..."
-          }
-        />
-      )}
+    <div className="w-full p-6">
+      <div className="w-full flex flex-wrap justify-between items-center border-black border p-4">
+        <h3 className="text-xl font-semibold mb-4">Admin: Manage Gallery</h3>
 
-      {!isCreating && !isEditing && (
-        <button
-          onClick={() => setIsCreating(true)}
-          className="bg-green-500 text-white p-2 rounded mb-4"
-          disabled={isSubmitting || deletingId}
-        >
-          Add New Event
-        </button>
-      )}
-      {events.map((event) => (
-        <div key={event._id} className="border rounded p-2 mb-2 relative">
-          <p>
-            <strong>{event.title}</strong> ({new Date(event.date).getFullYear()})
-          </p>
+        {(isSubmitting || deletingId) && (
+          <LoadingSpinner
+            message={
+              isSubmitting
+                ? isCreating
+                  ? "Creating Event..."
+                  : "Updating Event..."
+                : "Deleting Event..."
+            }
+          />
+        )}
+
+        {!isCreating && !isEditing && (
           <button
-            onClick={() => handleEdit(event)}
-            className="bg-yellow-500 text-white p-1 rounded mr-2 text-xs"
+            onClick={() => setIsCreating(true)}
+            className="bg-green-500 text-white p-2 rounded mb-4"
             disabled={isSubmitting || deletingId}
           >
-            Edit
+            + Add New Event
           </button>
-          <button
-            onClick={() => handleDelete(event._id)}
-            className="bg-red-500 text-white p-1 rounded text-xs"
-            disabled={isSubmitting || deletingId === event._id}
+        )}
+        {events.map((event) => (
+          <div
+            key={event._id}
+            className="w-full flex items-center justify-between border rounded p-2 mb-2 relative"
           >
-            {deletingId === event._id ? "Deleting..." : "Delete"}
-          </button>
-        </div>
-      ))}
-      {isCreating && (
-        <div className="p-4 border rounded mt-4">
-          <h3>Create New Gallery Event</h3>
-          <input
-            type="text"
-            placeholder="Title"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="date">
-              Date
-            </label>
-            <DatePicker
-              id="date"
-              selected={newDate}
-              onChange={(date) => setNewDate(date)}
-              dateFormat="yyyy-MM-dd"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-          </div>
-          <input
-            type="text"
-            placeholder="Location"
-            value={newLocation}
-            onChange={(e) => setNewLocation(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="images">
-              Images
-            </label>
-            <input
-              type="file"
-              id="images"
-              multiple
-              onChange={handleFileChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-          </div>
-          <input
-            type="text"
-            placeholder="Type (Conferences, Lab Events, etc.)"
-            value={newType}
-            onChange={(e) => setNewType(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <button
-            onClick={handleCreate}
-            className="bg-blue-500 text-white p-2 rounded"
-            disabled={isSubmitting}
-          >
-            Create
-          </button>
-          <button
-            onClick={() => setIsCreating(false)}
-            className="ml-2 text-gray-600"
-            disabled={isSubmitting}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
-
-      {isEditing && editingEvent && (
-        <div className="p-4 border rounded">
-          <h3>Edit Gallery Event</h3>
-          {isSubmitting && <LoadingSpinner message="Updating Event..." />}
-          <input
-            type="text"
-            placeholder="Title"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-            disabled={isSubmitting}
-          />
-          <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="date">
-              Date
-            </label>
-            <DatePicker
-              id="date"
-              selected={newDate}
-              onChange={(date) => setNewDate(date)}
-              dateFormat="yyyy-MM-dd"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              disabled={isSubmitting}
-            />
-          </div>
-          <input
-            type="text"
-            placeholder="Location"
-            value={newLocation}
-            onChange={(e) => setNewLocation(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-            disabled={isSubmitting}
-          />
-          <input
-            type="text"
-            placeholder="Type (Conferences, Lab Events, etc.)"
-            value={newType}
-            onChange={(e) => setNewType(e.target.value)}
-            className="w-full p-2 mb-2 border rounded"
-            disabled={isSubmitting}
-          />
-
-          {/* Preview Existing Images */}
-          {editingEvent.images && editingEvent.images.length > 0 && (
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-1">Existing Images</label>
-              <div className="flex gap-2">
-                {imagesToKeep.map((imageUrl, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={imageUrl}
-                      alt={`Existing Image ${index}`}
-                      className="w-32 h-24 object-cover rounded"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveExistingImage(imageUrl)}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs focus:outline-none"
-                    >
-                      &times;
-                    </button>
-                  </div>
-                ))}
-              </div>
+            <p className="text-base">
+              <strong>
+                {event.title} ({new Date(event.date).getFullYear()}),{" "}
+              </strong>
+              {event.location}
+            </p>
+            <div>
+              <button
+                onClick={() => handleEdit(event)}
+                className="bg-yellow-500 text-white py-2 px-4 rounded mr-2"
+                disabled={isSubmitting || deletingId}
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(event._id)}
+                className="bg-red-500 text-white py-2 px-4 rounded text-base"
+                disabled={isSubmitting || deletingId === event._id}
+              >
+                {deletingId === event._id ? "Deleting..." : "Delete"}
+              </button>
             </div>
-          )}
-
-          {/* Add New Images */}
-          <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="newImages">
-              Add New Images
-            </label>
+          </div>
+        ))}
+        {isCreating && (
+          <div className="p-4 border rounded mt-4">
+            <h3>Create New Gallery Event</h3>
             <input
-              type="file"
-              id="newImages"
-              multiple
-              onChange={handleFileChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="Title"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <div className="mb-2">
+              <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="date">
+                Date
+              </label>
+              <DatePicker
+                id="date"
+                selected={newDate}
+                onChange={(date) => setNewDate(date)}
+                dateFormat="yyyy-MM-dd"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <input
+              type="text"
+              placeholder="Location"
+              value={newLocation}
+              onChange={(e) => setNewLocation(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <div className="mb-2">
+              <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="images">
+                Images
+              </label>
+              <input
+                type="file"
+                id="images"
+                multiple
+                onChange={handleFileChange}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <input
+              type="text"
+              placeholder="Type (Conferences, Lab Events, etc.)"
+              value={newType}
+              onChange={(e) => setNewType(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <button
+              onClick={handleCreate}
+              className="bg-blue-500 text-white p-2 rounded"
+              disabled={isSubmitting}
+            >
+              Create
+            </button>
+            <button
+              onClick={() => setIsCreating(false)}
+              className="ml-2 text-gray-600"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
+        {isEditing && editingEvent && (
+          <div className="p-4 border rounded">
+            <h3>Edit Gallery Event</h3>
+            {isSubmitting && <LoadingSpinner message="Updating Event..." />}
+            <input
+              type="text"
+              placeholder="Title"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
               disabled={isSubmitting}
             />
-          </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="date">
+                Date
+              </label>
+              <DatePicker
+                id="date"
+                selected={newDate}
+                onChange={(date) => setNewDate(date)}
+                dateFormat="yyyy-MM-dd"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                disabled={isSubmitting}
+              />
+            </div>
+            <input
+              type="text"
+              placeholder="Location"
+              value={newLocation}
+              onChange={(e) => setNewLocation(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
+              disabled={isSubmitting}
+            />
+            <input
+              type="text"
+              placeholder="Type (Conferences, Lab Events, etc.)"
+              value={newType}
+              onChange={(e) => setNewType(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
+              disabled={isSubmitting}
+            />
 
-          <button
-            onClick={handleUpdate}
-            className="bg-blue-500 text-white p-2 rounded"
-            disabled={isSubmitting}
-          >
-            Update
-          </button>
-          <button
-            onClick={() => setIsEditing(false)}
-            className="ml-2 text-gray-600"
-            disabled={isSubmitting}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
+            {/* Preview Existing Images */}
+            {editingEvent.images && editingEvent.images.length > 0 && (
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-1">
+                  Existing Images
+                </label>
+                <div className="flex gap-2">
+                  {imagesToKeep.map((imageUrl, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={imageUrl}
+                        alt={`Existing Image ${index}`}
+                        className="w-32 h-24 object-cover rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExistingImage(imageUrl)}
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs focus:outline-none"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add New Images */}
+            <div className="mb-2">
+              <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="newImages">
+                Add New Images
+              </label>
+              <input
+                type="file"
+                id="newImages"
+                multiple
+                onChange={handleFileChange}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <button
+              onClick={handleUpdate}
+              className="bg-blue-500 text-white p-2 rounded"
+              disabled={isSubmitting}
+            >
+              Update
+            </button>
+            <button
+              onClick={() => setIsEditing(false)}
+              className="ml-2 text-gray-600"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

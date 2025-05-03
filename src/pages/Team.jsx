@@ -38,12 +38,12 @@ export const Team = () => {
   const fetchProfData = useCallback(async () => {
     try {
       setProfLoading(true);
-      const response = await fetch(`${BASE_URL}/professors`);
+      const response = await fetch(`${BASE_URL}/prof`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setProfData(data && data.length > 0 ? data[0] : null); // Assuming only one professor entry
+      setProfData(data); // Assuming only one professor entry
       setProfLoading(false);
     } catch (err) {
       setProfError(err.message);
@@ -67,8 +67,8 @@ export const Team = () => {
 
   return (
     <div className="flex flex-col justify-start items-center px-[25px] pt-[95px] w-full">
-      {isAdmin && <AdminTeamControls refreshData={fetchTeamData} />}
       {isAdmin && <AdminProfessorControls professor={profData} refreshData={fetchProfData} />}
+      {isAdmin && <AdminTeamControls refreshData={fetchTeamData} />}
       <TeamProf prof={profData} loading={profLoading} error={profError} />
       <CurrentTeam members={currentTeamMembers} loading={loading} error={error} />
       <Alumni members={alumniMembers} loading={loading} error={error} />
@@ -455,7 +455,9 @@ const AdminTeamControls = ({ refreshData }) => {
   if (error) return <div>Error loading Team Members: {error}</div>;
 
   return (
-    <div className="p-4">
+    <div className="p-4 border rounded w-full flex justify-between items-center flex-wrap">
+      <h3 className="text-xl font-semibold mb-4">Admin: Manage Members</h3>
+
       {(isSubmitting || deletingId) && (
         <LoadingSpinner
           message={
@@ -474,34 +476,39 @@ const AdminTeamControls = ({ refreshData }) => {
           className="bg-green-500 text-white p-2 rounded mb-4"
           disabled={isSubmitting || deletingId}
         >
-          Add New Member
+          + Add New Member
         </button>
       )}
 
       {members.map((member) => (
-        <div key={member._id} className="border rounded p-2 mb-2 relative">
+        <div
+          key={member._id}
+          className="w-full border rounded p-2 mb-2 relative flex items-center justify-between"
+        >
           <p>
             <strong>{member.name}</strong> ({member.role}) - {member.type || "current"}
           </p>
-          <button
-            onClick={() => handleEdit(member)}
-            className="bg-yellow-500 text-white p-1 rounded mr-2 text-xs"
-            disabled={isSubmitting || deletingId}
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleDelete(member._id)}
-            className="bg-red-500 text-white p-1 rounded text-xs"
-            disabled={isSubmitting || deletingId === member._id}
-          >
-            {deletingId === member._id ? "Deleting..." : "Delete"}
-          </button>
+          <div>
+            <button
+              onClick={() => handleEdit(member)}
+              className="bg-yellow-500 text-white p-1 px-2 rounded mr-2 text"
+              disabled={isSubmitting || deletingId}
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(member._id)}
+              className="bg-red-500 text-white p-1 px-2 rounded"
+              disabled={isSubmitting || deletingId === member._id}
+            >
+              {deletingId === member._id ? "Deleting..." : "Delete"}
+            </button>
+          </div>
         </div>
       ))}
 
       {isCreating && (
-        <div className="p-4 border rounded mt-4">
+        <div className="w-full p-4 border rounded mt-4">
           <h3>Create New Team Member</h3>
           <input
             type="text"
@@ -796,7 +803,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     };
 
     try {
-      const response = await fetch(`${BASE_URL}/professors`, {
+      const response = await fetch(`${BASE_URL}/prof`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -833,7 +840,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     };
 
     try {
-      const response = await fetch(`${BASE_URL}/professors/${editingProfessor._id}`, {
+      const response = await fetch(`${BASE_URL}/prof/${editingProfessor._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -862,7 +869,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     if (window.confirm("Are you sure you want to delete the professor?")) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`${BASE_URL}/professors/${editingProfessor._id}`, {
+        const response = await fetch(`${BASE_URL}/prof/${editingProfessor._id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${adminToken}`,
@@ -983,37 +990,39 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
   );
 
   return (
-    <div className="p-4 mb-4 border rounded">
-      <h3>Professor Controls</h3>
-      {isSubmitting && (
-        <LoadingSpinner
-          message={
-            isCreating
-              ? "Creating Professor..."
-              : isEditing
-              ? "Updating Professor..."
-              : "Loading..."
-          }
-        />
-      )}
-      {isDeleting && <LoadingSpinner message="Deleting Professor..." />}
+    <div className="p-4 mb-4 border rounded w-full">
+      <div className="flex flex-wrap justify-between items-center">
+        <h3 className="text-xl font-semibold mb-4">Admin: Manage Professor Info</h3>
 
-      {!professor && !isCreating && (
-        <button onClick={handleCreateButtonClick} className="bg-green-500 text-white p-2 rounded">
-          Create Professor
-        </button>
-      )}
+        {isSubmitting && (
+          <LoadingSpinner
+            message={
+              isCreating
+                ? "Creating Professor..."
+                : isEditing
+                ? "Updating Professor..."
+                : "Loading..."
+            }
+          />
+        )}
+        {isDeleting && <LoadingSpinner message="Deleting Professor..." />}
 
-      {professor && !isEditing && !isCreating && (
-        <div className="flex gap-2">
-          <button onClick={handleEdit} className="bg-yellow-500 text-white p-2 rounded">
-            Edit Professor
+        {!professor && !isCreating && (
+          <button onClick={handleCreateButtonClick} className="bg-green-500 text-white p-2 rounded">
+            Create Professor Info
           </button>
-          <button onClick={handleDelete} className="bg-red-500 text-white p-2 rounded">
-            Delete Professor
-          </button>
-        </div>
-      )}
+        )}
+        {professor && !isEditing && !isCreating && (
+          <div className="flex gap-2">
+            <button onClick={handleEdit} className="bg-yellow-500 text-white p-2 rounded">
+              Edit
+            </button>
+            <button onClick={handleDelete} className="bg-red-500 text-white p-2 rounded">
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
 
       {(isCreating || isEditing) && renderForm()}
     </div>

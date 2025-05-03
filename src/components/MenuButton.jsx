@@ -57,6 +57,11 @@ export const MenuButton = ({ navigate, defaultChecked = false }) => {
               Gallery
             </a>
           </li>
+          <li className="nav__item" onClick={() => handleNavigation("/admin")}>
+            <a href="#admin" className="nav__link">
+              Admin
+            </a>
+          </li>
         </ul>
       </nav>
     </>

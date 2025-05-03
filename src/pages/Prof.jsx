@@ -20,10 +20,10 @@ const Prof = () => {
   useEffect(() => {
     const fetchProfessor = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/professors`);
+        const response = await fetch(`${BASE_URL}/prof`);
         if (!response.ok) throw new Error("Failed to fetch professor");
         const data = await response.json();
-        setProf(data[0]); // Assuming only one professor exists
+        setProf(data);
       } catch (err) {
         setError(err.message);
       } finally {

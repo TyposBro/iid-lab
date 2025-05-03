@@ -77,6 +77,12 @@ const DesktopMenu = ({ navigate }) => {
       >
         Gallery
       </div>
+      <div
+        className={`cursor-pointer ${isActive("/admin")}`}
+        onClick={() => handleNavigation("/admin")}
+      >
+        Admin
+      </div>
     </nav>
   );
 };

@@ -978,147 +978,149 @@ const AdminProjectControls = ({ onProjectsUpdated }) => {
   );
 
   return (
-    <div className="p-4 border-t border-b my-8 w-full bg-gray-50">
-      <h3 className="text-xl font-semibold mb-4">Admin: Manage Projects</h3>
+    <div className="w-full p-4">
+      <div className="p-4 border rounded my-8 w-full bg-gray-50 flex flex-wrap items-center justify-between">
+        <h3 className="text-xl font-semibold mb-4">Admin: Manage Projects</h3>
 
-      {(isSubmitting || deletingId || isLoadingList) && (
-        <LoadingSpinner
-          message={
-            isLoadingList
-              ? "Loading projects..."
-              : isSubmitting
-              ? isCreating
-                ? "Creating Project..."
-                : "Updating Project..."
-              : deletingId
-              ? "Deleting Project..."
-              : "Processing..."
-          }
-        />
-      )}
+        {(isSubmitting || deletingId || isLoadingList) && (
+          <LoadingSpinner
+            message={
+              isLoadingList
+                ? "Loading projects..."
+                : isSubmitting
+                ? isCreating
+                  ? "Creating Project..."
+                  : "Updating Project..."
+                : deletingId
+                ? "Deleting Project..."
+                : "Processing..."
+            }
+          />
+        )}
 
-      {!isCreating && !isEditing && (
-        <button
-          onClick={() => {
-            resetForm();
-            setIsCreating(true);
-          }}
-          className="bg-green-500 hover:bg-green-600 text-white p-2 rounded mb-4 transition-colors duration-200"
-          disabled={isSubmitting || deletingId || isLoadingList}
-        >
-          + Add New Project
-        </button>
-      )}
+        {!isCreating && !isEditing && (
+          <button
+            onClick={() => {
+              resetForm();
+              setIsCreating(true);
+            }}
+            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded mb-4 transition-colors duration-200"
+            disabled={isSubmitting || deletingId || isLoadingList}
+          >
+            + Add New Project
+          </button>
+        )}
 
-      {/* List Projects for Editing/Deleting */}
-      {!isCreating && !isEditing && (
-        <div className="space-y-2">
-          {listError && (
-            <div className="p-2 text-red-700 bg-red-100 border border-red-300 rounded">
-              Error loading list: {listError}
-            </div>
-          )}
-          {isLoadingList && !projects.length && <div>Loading project list...</div>}
-          {projects.map((project) => (
-            <div
-              key={project._id}
-              className="border rounded p-3 flex justify-between items-center bg-white shadow-sm"
-            >
-              <div>
-                <p>
-                  <strong>{project.title}</strong>
-                  <span className="text-sm text-gray-500 ml-2">
-                    ({project.status}
-                    {project.year ? `, ${project.year}` : ""})
-                  </span>
-                </p>
-                {project.image && (
-                  <img
-                    src={project.image}
-                    alt=""
-                    className="w-16 h-10 object-cover rounded inline-block mr-2 my-1"
-                  />
-                )}
+        {/* List Projects for Editing/Deleting */}
+        {!isCreating && !isEditing && (
+          <div className="space-y-2 w-full">
+            {listError && (
+              <div className="p-2 text-red-700 bg-red-100 border border-red-300 rounded">
+                Error loading list: {listError}
               </div>
-              <div className="flex gap-2 flex-shrink-0">
+            )}
+            {isLoadingList && !projects.length && <div>Loading project list...</div>}
+            {projects.map((project) => (
+              <div
+                key={project._id}
+                className="border rounded p-3 flex justify-between items-center bg-white shadow-sm"
+              >
+                <div>
+                  <p>
+                    <strong>{project.title}</strong>
+                    <span className="text-sm text-gray-500 ml-2">
+                      ({project.status}
+                      {project.year ? `, ${project.year}` : ""})
+                    </span>
+                  </p>
+                  {project.image && (
+                    <img
+                      src={project.image}
+                      alt=""
+                      className="w-16 h-10 object-cover rounded inline-block mr-2 my-1"
+                    />
+                  )}
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => handleEdit(project)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 px-4 rounded text transition-colors duration-200"
+                    disabled={isSubmitting || deletingId || isLoadingList}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(project._id)}
+                    className={`bg-red-500 hover:bg-red-600 text-white p-2 px-4 rounded text transition-colors duration-200 ${
+                      deletingId === project._id ? "opacity-50 cursor-wait" : ""
+                    }`}
+                    disabled={isSubmitting || !!deletingId || isLoadingList}
+                  >
+                    {deletingId === project._id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
+              </div>
+            ))}
+            {!isLoadingList && !listError && projects.length === 0 && (
+              <p className="text-gray-500">No projects found.</p>
+            )}
+          </div>
+        )}
+
+        {/* Create Form */}
+        {isCreating && (
+          <div className="p-4 border rounded mt-4 bg-white shadow-md w-full">
+            <h4 className="text-lg font-medium mb-3">Create New Project</h4>
+            <form onSubmit={handleCreate}>
+              {projectFormFields}
+              <div className="flex gap-4 mt-4">
                 <button
-                  onClick={() => handleEdit(project)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white p-1 px-2 rounded text-xs transition-colors duration-200"
-                  disabled={isSubmitting || deletingId || isLoadingList}
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200"
+                  disabled={isSubmitting}
                 >
-                  Edit
+                  {isSubmitting ? "Creating..." : "Create Project"}
                 </button>
                 <button
-                  onClick={() => handleDelete(project._id)}
-                  className={`bg-red-500 hover:bg-red-600 text-white p-1 px-2 rounded text-xs transition-colors duration-200 ${
-                    deletingId === project._id ? "opacity-50 cursor-wait" : ""
-                  }`}
-                  disabled={isSubmitting || !!deletingId || isLoadingList}
+                  type="button"
+                  onClick={resetForm}
+                  className="text-gray-600 hover:text-gray-800 p-2"
+                  disabled={isSubmitting}
                 >
-                  {deletingId === project._id ? "Deleting..." : "Delete"}
+                  Cancel
                 </button>
               </div>
-            </div>
-          ))}
-          {!isLoadingList && !listError && projects.length === 0 && (
-            <p className="text-gray-500">No projects found.</p>
-          )}
-        </div>
-      )}
+            </form>
+          </div>
+        )}
 
-      {/* Create Form */}
-      {isCreating && (
-        <div className="p-4 border rounded mt-4 bg-white shadow-md">
-          <h4 className="text-lg font-medium mb-3">Create New Project</h4>
-          <form onSubmit={handleCreate}>
-            {projectFormFields}
-            <div className="flex gap-4 mt-4">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Creating..." : "Create Project"}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="text-gray-600 hover:text-gray-800 p-2"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Edit Form */}
-      {isEditing && editingProject && (
-        <div className="p-4 border rounded mt-4 bg-white shadow-md">
-          <h4 className="text-lg font-medium mb-3">Edit Project: {editingProject.title}</h4>
-          <form onSubmit={handleUpdate}>
-            {projectFormFields}
-            <div className="flex gap-4 mt-4">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Updating..." : "Update Project"}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="text-gray-600 hover:text-gray-800 p-2"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+        {/* Edit Form */}
+        {isEditing && editingProject && (
+          <div className="p-4 border rounded mt-4 bg-white shadow-md">
+            <h4 className="text-lg font-medium mb-3">Edit Project: {editingProject.title}</h4>
+            <form onSubmit={handleUpdate}>
+              {projectFormFields}
+              <div className="flex gap-4 mt-4">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 px-4 rounded transition-colors duration-200"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Updating..." : "Update Project"}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="text-gray-600 hover:text-gray-800 p-2"
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

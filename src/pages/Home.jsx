@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 
 import { Down_left_dark_arrow, Link, Up_right_neutral_arrow } from "@/assets/";
 import { truncateText } from "@/utils/text";
+import { BASE_URL } from "@/config/api";
 
 // Main Home Component
 export const Home = () => {
@@ -108,9 +109,10 @@ const Prof = ({ navigate }) => {
   useEffect(() => {
     const fetchProfessorData = async () => {
       try {
-        const response = await fetch("/api/professor"); // Ensure this endpoint exists
+        const response = await fetch(`${BASE_URL}/prof`); // Ensure this endpoint exists
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
+        console.log("Fetched professor data:", data);
         setProf(data);
       } catch (err) {
         setError(err.message);
@@ -181,7 +183,7 @@ const Members = () => {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch("/api/team"); // Ensure this endpoint exists
+        const response = await fetch(`${BASE_URL}/team`); // Ensure this endpoint exists
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setMembers(data);
@@ -265,9 +267,10 @@ const Projects = () => {
     const fetchCurrentProjects = async () => {
       try {
         // Fetch only 'current' projects - ensure API supports this or filter client-side
-        const response = await fetch("/api/projects/current"); // Ensure endpoint exists
+        const response = await fetch(`${BASE_URL}/projects/status/current`); // Ensure endpoint exists
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
+        console.log("Fetched current projects:", data);
         setProjects(data.slice(0, 4)); // Keep limiting to 4 for home page
       } catch (err) {
         setError(err.message);
@@ -315,7 +318,7 @@ const Projects = () => {
               {/* Background Image */}
               <div
                 className="relative bg-gray-700 rounded-[20px] w-full aspect-video lg:h-[270px] bg-cover bg-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                style={{ backgroundImage: `url(${project.img || "/img/placeholder.png"})` }} // Added placeholder
+                style={{ backgroundImage: `url(${project.image || "/img/placeholder.png"})` }} // Added placeholder
               >
                 {/* Dark Overlay */}
                 <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-opacity duration-300 rounded-[20px]"></div>
@@ -362,7 +365,7 @@ const Journal = () => {
   useEffect(() => {
     const fetchJournalPapers = async () => {
       try {
-        const response = await fetch("/api/publications/journals"); // Ensure endpoint exists
+        const response = await fetch(`${BASE_URL}/publications/type/journal`); // Ensure endpoint exists
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setAllPapers(data); // Store all fetched papers
@@ -512,7 +515,7 @@ const Conference = () => {
   useEffect(() => {
     const fetchConferencePapers = async () => {
       try {
-        const response = await fetch("/api/publications/conferences"); // Ensure endpoint exists
+        const response = await fetch(`${BASE_URL}/publications/type/conference`); // Ensure endpoint exists
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setAllPapers(data); // Store all

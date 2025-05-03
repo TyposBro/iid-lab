@@ -484,7 +484,9 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
 
   return (
     // Add border, padding, max-width for admin section clarity
-    <div className="p-4 border rounded-lg shadow-md w-full max-w-4xl bg-gray-50 mb-6">
+    <div className="p-4 border rounded-lg shadow-md w-full flex flex-wrap justify-between items-center bg-gray-50 mb-6">
+      <h3 className="text-xl font-semibold mb-4">Admin: Manage News</h3>
+
       {/* Loading overlay for submitting/deleting */}
       {(isSubmitting || deletingId) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -504,42 +506,81 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
           className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 transition-colors duration-200 disabled:opacity-50"
           disabled={isSubmitting || deletingId}
         >
-          Add New News Item
+          + Add News
         </button>
       )}
 
       {/* List of existing items for editing/deleting - Only show when not creating/editing */}
       {!isCreating && !isEditing && (
-        <div className="space-y-2">
+        <div className="w-full space-y-2">
           {events.map((event) => (
             <div
               key={event._id}
-              className="border rounded p-2 sm:p-3 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+              className="border rounded p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 bg-white shadow-sm"
             >
-              <p className="flex-grow">
-                <strong className="block sm:inline">{event.title}</strong>
-                <span className="text-sm text-gray-600 ml-0 sm:ml-2">
-                  ({event.date ? new Date(event.date).toLocaleDateString() : "No Date"}) -{" "}
-                  {event.type}
-                </span>
-              </p>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex items-start gap-3 flex-grow">
+                {event.images.length > 0 && (
+                  <img
+                    src={event.images[0]}
+                    alt=""
+                    className="w-16 h-16 object-cover rounded flex-shrink-0"
+                  />
+                )}
+                <div className="flex-grow">
+                  <p className="font-semibold">{event.title}</p>
+                  <p className="text-xs text-gray-500">
+                    ({event.date ? new Date(event.date).toLocaleDateString() : "No Date"}) -{" "}
+                    {event.type}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 flex-shrink-0 self-end md:self-center">
                 <button
                   onClick={() => handleEdit(event)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs sm:text-sm transition-colors duration-200 disabled:opacity-50"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white p-1 px-2 rounded text transition-colors duration-200 disabled:opacity-50"
                   disabled={isSubmitting || deletingId}
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(event._id)}
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs sm:text-sm transition-colors duration-200 disabled:opacity-50"
+                  className={`bg-red-500 hover:bg-red-600 text-white p-1 px-2 rounded text transition-colors duration-200 ${
+                    deletingId === event._id ? "opacity-50 cursor-wait" : ""
+                  } disabled:opacity-50`}
                   disabled={isSubmitting || deletingId === event._id}
                 >
                   {deletingId === event._id ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>
+            // <div
+            //   key={event._id}
+            //   className="border rounded p-2 sm:p-3 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+            // >
+            //   <p className="flex-grow">
+            //     <strong className="block sm:inline">{event.title}</strong>
+            //     <span className="text-sm text-gray-600 ml-0 sm:ml-2">
+            //       ({event.date ? new Date(event.date).toLocaleDateString() : "No Date"}) -{" "}
+            //       {event.type}
+            //     </span>
+            //   </p>
+            //   <div className="flex gap-2 shrink-0">
+            //     <button
+            //       onClick={() => handleEdit(event)}
+            //       className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs sm:text-sm transition-colors duration-200 disabled:opacity-50"
+            //       disabled={isSubmitting || deletingId}
+            //     >
+            //       Edit
+            //     </button>
+            //     <button
+            //       onClick={() => handleDelete(event._id)}
+            //       className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs sm:text-sm transition-colors duration-200 disabled:opacity-50"
+            //       disabled={isSubmitting || deletingId === event._id}
+            //     >
+            //       {deletingId === event._id ? "Deleting..." : "Delete"}
+            //     </button>
+            //   </div>
+            // </div>
           ))}
           {events.length === 0 && <p className="text-gray-500 italic">No news items yet.</p>}
         </div>

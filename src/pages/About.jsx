@@ -351,27 +351,16 @@ export const About = () => {
       </section>
 
       {/* Admin Controls */}
-      {isAdmin && (
+      {isAdmin && !isEditing && (
         <div className="w-full max-w-4xl px-4 md:px-0 mb-6 flex justify-center gap-4">
-          {/* Cancel button shown only when editing */}
-          {isEditing && (
-            <button
-              className="px-4 py-2 rounded shadow-md bg-gray-500 text-white hover:bg-gray-600 disabled:opacity-50"
-              onClick={handleEditToggle}
-              disabled={isSaving}
-            >
-              Cancel
-            </button>
-          )}
-          {/* Edit / Save Changes button */}
+          {/* Edit button */}
           <button
             className={`px-4 py-2 rounded shadow-md text-white ${
               isEditing ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
             } disabled:opacity-50`}
-            onClick={isEditing ? handleSave : handleEditToggle}
-            disabled={isSaving}
+            onClick={handleEditToggle}
           >
-            {isSaving ? "Saving..." : isEditing ? "Save Changes" : "Edit Page"}
+            Edit Page
           </button>
         </div>
       )}
