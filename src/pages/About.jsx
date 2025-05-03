@@ -322,7 +322,7 @@ export const About = () => {
   // Tailwind classes inspired by Figma (adjust breakpoints sm/md/lg as needed)
   return (
     // Main container
-    <div className="flex flex-col items-center w-full min-h-screen bg-white">
+    <div className="flex flex-col items-center w-full min-h-screen  pt-[95px] bg-white">
       {/* Top Carousel Section */}
       <section className="w-full px-4 md:px-[50px] pt-6 md:pt-0">
         {" "}
