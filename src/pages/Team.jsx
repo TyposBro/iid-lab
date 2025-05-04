@@ -130,14 +130,12 @@ const CurrentTeam = ({ members, loading, error }) => {
 
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full">
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <h2 className="font-light text-[48px] text-text_black_primary leading-[48px]">
-            Current Team
-          </h2>
-          <Down_left_dark_arrow className="size-[58px]" />
+          <h2 className="font-semibold text-5xl text-text_black_primary">Current Team</h2>
+          <Down_left_dark_arrow className="size-14" style={{ strokeWidth: 1 }} />
         </div>
-        <h3 className="font-light text-[12px] text-text_black_secondary">
+        <h3 className="text-sm text-text_black_secondary">
           Our lab is a vibrant hub of international and Korean researchers from diverse backgrounds,
           creating a dynamic and inclusive environment. Working here is not just productive but also
           a lot of fun, thanks to our enthusiastic and collaborative team!
@@ -190,11 +188,9 @@ const Alumni = ({ members, loading, error }) => {
 
   return (
     <div className="flex flex-col gap-[30px] py-[30px] w-full" id="alumni">
-      <div className="flex justify-between items-center">
-        <h2 className="font-extralight text-[48px] text-text_black_primary leading-[48px]">
-          Alumni
-        </h2>
-        <Down_left_dark_arrow className="size-[46px]" />
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold text-5xl text-text_black_primary">Alumni</h2>
+        <Down_left_dark_arrow className="size-12" style={{ strokeWidth: 1 }} />
       </div>
       <div className="flex gap-[10px] sm:w-1/2 lg:w-1/3">
         {derivedRoles.map((role) => (

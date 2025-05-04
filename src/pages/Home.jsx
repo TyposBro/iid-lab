@@ -260,9 +260,11 @@ const Members = () => {
                 <h3 className="text-xs sm:text-sm text-text_black_primary truncate">
                   {member.role}
                 </h3>
-                <a href={member.linkedin} target="_blank" rel="noreferrer noopener">
-                  <LinkedIn className="text-text_black_primary hover:text-blue-400 size-5 sm:size-[25px]" />
-                </a>
+                {member.linkedin && (
+                  <a href={member.linkedin} target="_blank" rel="noreferrer noopener">
+                    <LinkedIn className="text-text_black_primary hover:text-blue-400 size-5 sm:size-[25px]" />
+                  </a>
+                )}
               </div>
             </div>
           ))}
