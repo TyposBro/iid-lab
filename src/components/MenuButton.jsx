@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import PropTypes from "prop-types";
 
-export const MenuButton = ({ navigate, defaultChecked = false }) => {
+export const MenuButton = ({ navigate, defaultChecked = false, isAdmin = false }) => {
   const ref = useRef(null);
 
   const handleNavigation = (path) => {
@@ -19,9 +19,11 @@ export const MenuButton = ({ navigate, defaultChecked = false }) => {
         className="nav__checkbox"
         defaultChecked={defaultChecked}
       />
-      <label htmlFor="nav-toggle" className="nav__btn">
-        <span className="nav__icon"> &nbsp; </span>
-      </label>
+      {!isAdmin && (
+        <label htmlFor="nav-toggle" className="nav__btn">
+          <span className="nav__icon"> &nbsp; </span>
+        </label>
+      )}
 
       <div className="nav__background">&nbsp;</div>
 
@@ -57,11 +59,13 @@ export const MenuButton = ({ navigate, defaultChecked = false }) => {
               Gallery
             </a>
           </li>
-          <li className="nav__item" onClick={() => handleNavigation("/admin")}>
-            <a href="#admin" className="nav__link">
-              Admin
-            </a>
-          </li>
+          {!isAdmin && (
+            <li className="nav__item" onClick={() => handleNavigation("/admin")}>
+              <a href="#admin" className="nav__link">
+                Admin
+              </a>
+            </li>
+          )}
         </ul>
       </nav>
     </>
@@ -73,4 +77,5 @@ export default MenuButton;
 MenuButton.propTypes = {
   navigate: PropTypes.func.isRequired,
   defaultChecked: PropTypes.bool,
+  isAdmin: PropTypes.bool,
 };
