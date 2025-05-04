@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {},
     fontFamily: {
-      sans: ["-apple-system", "BlinkMacSystemFont", "Inter", "sans-serif"],
+      sans: ["Inter", "sans-serif"],
     },
     colors: {
       text_white_primary: "#fffffff2",

@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode"; // Correct named import for v4+
 
-function isTokenExpired(token) {
+export function isTokenExpired(token) {
   if (!token) {
     return true; // No token means expired or not logged in
   }
@@ -20,23 +20,9 @@ function isTokenExpired(token) {
     // return expirationTime < (currentTime + bufferSeconds);
 
     return expirationTime < currentTime;
-
   } catch (error) {
     // If decoding fails, the token is likely invalid or malformed
     console.error("Error decoding token:", error);
     return true; // Treat decoding errors as expired/invalid
   }
-}
-
-// --- Usage Example ---
-const myToken = localStorage.getItem('authToken'); // Or wherever you store it
-
-if (isTokenExpired(myToken)) {
-  console.log("Token is expired or invalid. Redirecting to login...");
-  // Handle expiration: e.g., clear token, redirect to login page
-  // localStorage.removeItem('authToken');
-  // window.location.href = '/login';
-} else {
-  console.log("Token is still valid.");
-  // Proceed with using the token for API calls, etc.
 }
