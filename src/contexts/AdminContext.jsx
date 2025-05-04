@@ -44,7 +44,7 @@ export const AdminProvider = ({ children }) => {
     } else {
       setIsAdmin(false);
     }
-  }, [adminToken]);
+  }, [adminToken, navigate]);
 
   const loginAdmin = (token) => {
     setAdminToken(token);

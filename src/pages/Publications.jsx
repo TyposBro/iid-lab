@@ -34,7 +34,7 @@ export const Publications = () => {
       </div>
 
       {/* Admin Controls */}
-      {isAdmin && <AdminPublicationControls onPublicationsUpdated={refetchPublications} />}
+      {isAdmin && <AdminControls onPublicationsUpdated={refetchPublications} />}
 
       {/* Publication Lists */}
       <PublicationList
@@ -275,7 +275,7 @@ PublicationList.propTypes = {
 };
 
 // --- Admin Controls Component ---
-const AdminPublicationControls = ({ onPublicationsUpdated }) => {
+const AdminControls = ({ onPublicationsUpdated }) => {
   const { adminToken } = useAdmin();
   const [publications, setPublications] = useState([]); // List for editing/deleting
   const [isLoadingList, setIsLoadingList] = useState(false);
@@ -293,6 +293,7 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
   const [doi, setDoi] = useState("");
   const [link, setLink] = useState("");
   const [abstract, setAbstract] = useState("");
+  const [location, setLocation] = useState("");
   const [type, setType] = useState("journal"); // Default type
   const [selectedFile, setSelectedFile] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState(null);
@@ -343,6 +344,7 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
     setDoi("");
     setLink("");
     setAbstract("");
+    setLocation("");
     setType("journal");
     setSelectedFile(null);
     setCurrentImageUrl(null);
@@ -433,6 +435,7 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
       link,
       abstract,
       type,
+      location,
       image: imageUrl,
     };
 
@@ -471,6 +474,7 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
     setDoi(pub.doi || "");
     setLink(pub.link || "");
     setAbstract(pub.abstract || "");
+    setLocation(pub.location || "");
     setType(pub.type);
     setCurrentImageUrl(pub.image || null);
     setSelectedFile(null);
@@ -516,6 +520,7 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
       link,
       abstract,
       type,
+      location,
       image: imageUrl, // Send final URL (new, old, or undefined)
     };
     // Remove undefined keys to avoid overwriting with nothing
@@ -699,7 +704,21 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
           rows="4"
           className="w-full p-2 border border-gray-300 rounded shadow-sm"
           disabled={isSubmitting}
-        ></textarea>
+        />
+      </div>
+      <div>
+        <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
+          Location (City, Country)
+        </label>
+        <input
+          type="text"
+          id="location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded shadow-sm"
+          disabled={isSubmitting}
+          placeholder="Seoul, South Korea"
+        />
       </div>
       {/* Image Upload */}
       <div className="mb-4">
@@ -895,6 +914,6 @@ const AdminPublicationControls = ({ onPublicationsUpdated }) => {
   );
 };
 
-AdminPublicationControls.propTypes = {
+AdminControls.propTypes = {
   onPublicationsUpdated: PropTypes.func.isRequired,
 };
