@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import { Down_left_dark_arrow, Link, Up_right_neutral_arrow } from "@/assets/";
 import { truncateText } from "@/utils/text";
 import { BASE_URL } from "@/config/api";
+import { LinkedIn } from "@mui/icons-material";
 
 // Main Home Component
 export const Home = () => {
@@ -52,18 +53,42 @@ export const Home = () => {
 
 // Intro Component
 const Intro = ({ navigate }) => {
-  const slides = [
-    "/img/home/home_intro.png",
-    "/img/gallery/jeju-2024/1.png",
-    "/img/gallery/croatia-2024/1.png",
-    "/img/gallery/unist-2024/1.png",
-    "/img/gallery/gyeongju-2023/1.png",
-  ];
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchGalleryEvents();
+  }, []);
+
+  const fetchGalleryEvents = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${BASE_URL}/gallery`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      const slides = data
+        .map((event) => event.images[0])
+        .filter(Boolean)
+        .slice(0, 7); // Limit to 7 images
+      setEvents(slides);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div>Loading Gallery...</div>;
+  if (error) return <div>Error loading Gallery: {error}</div>;
 
   return (
     // Responsive padding and gap
     <div className="flex flex-col px-4 sm:px-6 lg:px-[25px] w-full gap-6 sm:gap-8">
-      <MainCarousel slides={slides} /> {/* Assume MainCarousel is responsive */}
+      <MainCarousel slides={events} /> {/* Assume MainCarousel is responsive */}
       <div className="flex flex-col gap-6 sm:gap-[30px] w-full sm:flex-row sm:justify-between">
         {/* Text Content */}
         <div className="flex flex-col gap-2 sm:gap-[8px]">
@@ -82,13 +107,13 @@ const Intro = ({ navigate }) => {
         <div className="flex flex-col gap-3 sm:gap-[10px] font-semibold text-base sm:text-[18px]">
           {/* Responsive buttons */}
           <button
-            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full sm:w-64 h-12 sm:h-14 text-primary_main active:text-white no-underline transition-colors duration-200 hover:bg-primary_main hover:text-white"
+            className="place-content-center border-2 border-border_dark active:border-border_dark grid active:bg-border_dark border-solid rounded-[15px] w-full sm:w-64 h-12 sm:h-14 text-border_dark active:text-white no-underline transition-colors duration-200 hover:bg-border_dark hover:text-white"
             onClick={() => navigate("/projects")}
           >
             Projects
           </button>
           <button
-            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full sm:w-64 h-12 sm:h-14 text-primary_main active:text-white no-underline transition-colors duration-200 hover:bg-primary_main hover:text-white"
+            className="place-content-center border-2 border-border_dark active:border-border_dark grid active:bg-border_dark border-solid rounded-[15px] w-full sm:w-64 h-12 sm:h-14 text-border_dark active:text-white no-underline transition-colors duration-200 hover:bg-border_dark hover:text-white"
             onClick={() => navigate("/publications")}
           >
             Publications
@@ -205,8 +230,8 @@ const Members = () => {
       {/* Title Section */}
       <div className="flex flex-col gap-2 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px]">
         {/* Responsive title */}
-        <h1 className="font-light text-3xl sm:text-[42px] text-text_black_primary leading-tight sm:leading-[46px]">
-          Team Members
+        <h1 className="font-semibold text-5xl sm:text-[42px] text-text_black_primary leading-tight sm:leading-[46px]">
+          Current Team
         </h1>
         {/* Optional: Add description text here if needed */}
       </div>
@@ -226,16 +251,19 @@ const Members = () => {
                 style={{ backgroundImage: `url(${member.img || "/img/placeholder.png"})` }} // Added placeholder
               ></div>
               {/* Member Card Text */}
-              <div className="flex flex-col gap-1 sm:gap-[4px] w-[170px]">
+              <div className="flex flex-col sm:gap-1 w-[170px]">
                 {" "}
                 {/* Match width */}
                 {/* Responsive text */}
-                <h2 className="font-bold text-base sm:text-[18px] text-text_black_primary truncate">
+                <h2 className="font-bold text-base sm:text-lg text-text_black_primary truncate">
                   {member.name}
                 </h2>
-                <h3 className="text-xs sm:text-[12px] text-text_black_primary truncate">
+                <h3 className="text-xs sm:text-sm text-text_black_primary truncate">
                   {member.role}
                 </h3>
+                <a href={member.linkedin} target="_blank" rel="noreferrer noopener">
+                  <LinkedIn className="text-text_black_primary hover:text-blue-400 size-5 sm:size-[25px]" />
+                </a>
               </div>
             </div>
           ))}
@@ -286,18 +314,22 @@ const Projects = () => {
 
   return (
     // Responsive padding, background, gap
-    <div className="flex flex-col gap-6 sm:gap-[30px] bg-black text-white px-4 sm:px-6 lg:px-[25px] py-6 sm:py-[30px] w-full">
+    <div className="flex flex-col gap-6 sm:gap-[30px] bg-text_black_primary text-white px-4 sm:px-6 lg:px-[25px] py-6 sm:py-[30px] w-full">
       {/* Title and Description Section */}
       <div className="flex flex-col gap-4 sm:gap-6 lg:gap-10 sm:items-center sm:flex-row">
         {/* Responsive title */}
-        <h2 className="font-extralight text-4xl sm:text-5xl lg:text-[80px] leading-tight text-text_white_primary sm:shrink-0">
+        <h2
+          className="font-semibold
+         text-5xl sm:text-5xl lg:text-[80px] leading-tight text-text_white_primary sm:shrink-0"
+        >
           Current Projects
         </h2>
         {/* Responsive description */}
-        <h3 className="font-light text-sm sm:text-base lg:text-lg text-text_white_secondary">
+        <h3 className="text-sm sm:text-base lg:text-lg text-text_white_secondary">
           We create innovative design concepts through systematic, human-centered methods,
           developing them into products and services using engineering design. Our focus is on
-          elderly care, rehabilitation, healthcare, and safety... {/* Truncated for brevity */}
+          elderly care, rehabilitation, healthcare, and safety, and we collaborate closely with
+          experts in medicine, geriatrics, physical therapy, materials, and production.
         </h3>
       </div>
 
@@ -314,24 +346,24 @@ const Projects = () => {
         {!loading &&
           !error &&
           projects.map((project) => (
-            <div key={project._id} className="relative w-full group overflow-hidden rounded-[20px]">
-              {/* Background Image */}
-              <div
-                className="relative bg-gray-700 rounded-[20px] w-full aspect-video lg:h-[270px] bg-cover bg-center transition-transform duration-300 ease-in-out group-hover:scale-105"
-                style={{ backgroundImage: `url(${project.image || "/img/placeholder.png"})` }} // Added placeholder
-              >
-                {/* Dark Overlay */}
-                <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-opacity duration-300 rounded-[20px]"></div>
-              </div>
-              {/* Text Overlay */}
-              <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-5 right-3 pointer-events-none">
-                {/* Responsive text */}
-                <h2 className="font-bold text-lg sm:text-xl lg:text-[24px] text-text_white_primary">
-                  {project.title}
-                </h2>
-                <h3 className="text-xs sm:text-sm lg:text-[12px] text-text_white_secondary mt-1">
-                  {project.desc}
-                </h3>
+            <div key={project._id} className="relative w-full rounded-3xl">
+              <img
+                className="absolute rounded-3xl w-full h-60 object-cover z-10"
+                src={`${project.image || "/img/placeholder.png"}`}
+                alt={project.title}
+              />
+              <div className="w-full h-full rounded-3xl flex flex-col items-end gap-4 border border-[#282828f2]">
+                <div className="w-full h-60 bg-transparent" />
+                <div className="w-full flex flex-col gap-2 px-5 pt-4">
+                  <h2 className="font-bold text-base sm:text-xl lg:text-[24px] text-text_white_primary">
+                    {project.title}
+                  </h2>
+                  <h3 className="text-sm text-text_white_primary">{project.subtitle}</h3>
+                </div>
+
+                <button className="mb-5 mr-5 px-4 py-2 border-2 border-primary_main rounded-md font-semibold text-sm text-primary_main">
+                  Learn More
+                </button>
               </div>
             </div>
           ))}
