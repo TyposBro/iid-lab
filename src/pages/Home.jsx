@@ -1,12 +1,12 @@
 import { useRef, useState, useEffect } from "react";
-import { GoTo, MainCarousel } from "@/components/"; // Assume these are responsive
+import { MainCarousel } from "@/components/"; // Assume these are responsive
 import { useNavigate } from "react-router";
 import { HashLink } from "react-router-hash-link";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import PropTypes from "prop-types";
 
-import { Down_left_dark_arrow, Link, Up_right_neutral_arrow } from "@/assets/";
+import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
 import { truncateText } from "@/utils/text";
 import { BASE_URL } from "@/config/api";
 import { LinkedIn } from "@mui/icons-material";
@@ -46,7 +46,6 @@ export const Home = () => {
       <Projects />
       <Journal />
       <Conference />
-      <GoTo title="Projects Gallery" link="/gallery" /> {/* Assume GoTo is responsive */}
     </div>
   );
 };
@@ -388,144 +387,95 @@ const Projects = () => {
 
 // Journal Component
 const Journal = () => {
-  const [journalPapers, setJournalPapers] = useState([]);
-  const [allPapers, setAllPapers] = useState([]); // Store all fetched papers
+  const [list, setList] = useState([]); // Store all fetched papers
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedType, setSelectedType] = useState(""); // Default to empty or first type
+
+  const fetchJournalPapers = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/publications/type/journal`); // Ensure endpoint exists
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      setList(data.slice(0, 5));
+    } catch (err) {
+      setError(err.message);
+      console.error("Failed to fetch journal papers:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchJournalPapers = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/publications/type/journal`); // Ensure endpoint exists
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        setAllPapers(data); // Store all fetched papers
-        setJournalPapers(data.slice(0, 5)); // Show initial slice
-        // Set initial filter type if data exists
-        if (data.length > 0) {
-          const types = [...new Set(data.map((p) => p.type))];
-          if (types.length > 0) {
-            setSelectedType(types[0]);
-          }
-        }
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch journal papers:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchJournalPapers();
   }, []);
-
-  const filters = [...new Set(allPapers.map((item) => item.type))]; // Derive filters from all papers
-
-  // Filter papers based on selected type for display
-  const filteredPapers = selectedType
-    ? allPapers.filter((paper) => paper.type === selectedType).slice(0, 5) // Show max 5 of selected type
-    : journalPapers; // Show initial slice if no type selected
-
-  // NOTE: Loading/Error states removed for brevity here, add them back like in Prof component if needed
 
   return (
     // Responsive padding, background, gap
     <div className="flex flex-col gap-6 sm:gap-[30px] bg-primary_main text-white py-6 sm:py-[30px] w-full">
       {/* Title and Filters Section */}
-      <div className="flex flex-col gap-4 sm:gap-5 px-4 sm:px-6 lg:px-[25px]">
+      <div className="flex flex-col gap-4 sm:gap-5 px-5 sm:px-6 lg:px-[25px]">
         {/* Responsive title */}
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl text-text_white_primary leading-tight lg:leading-[48px] tracking-normal">
+        <h2 className="text-5xl text-text_black_primary tracking-normal font-semibold">
           Journal Papers
         </h2>
         {/* Filter Buttons - Allow wrapping */}
         <div className="flex gap-2 sm:gap-[10px] flex-wrap">
           {loading && <div className="text-sm text-text_white_secondary">Loading filters...</div>}
-          {!loading &&
-            filters.map((item) => (
-              <button
-                key={item}
-                className={`place-content-center border-2 grid px-4 py-1 sm:px-5 sm:py-[6px] border-solid rounded-full font-medium text-sm sm:text-[16px] transition-colors duration-200 ${
-                  selectedType === item
-                    ? "bg-white text-primary_main border-white" // Active state
-                    : "bg-transparent text-white border-white hover:bg-white hover:text-primary_main" // Inactive state
-                }`}
-                onClick={() => setSelectedType(item)}
-              >
-                {item}
-              </button>
-            ))}
-          {!loading && filters.length === 0 && (
+
+          {!loading && list.length === 0 && (
             <div className="text-sm text-text_white_secondary">No paper types found.</div>
           )}
         </div>
       </div>
 
       {/* Horizontal Scrolling List */}
-      <div className="flex gap-3 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px] overflow-x-scroll no-scrollbar min-h-[320px] sm:min-h-[340px]">
-        {" "}
-        {/* Added min-height */}
+      <div className="flex gap-2.5 overflow-x-scroll no-scrollbar min-h-60">
+        <div className="w-3" />
         {loading && <div className="py-10 text-center w-full">Loading papers...</div>}
         {error && (
           <div className="py-10 text-center text-red-600 w-full">Error loading papers.</div>
         )}
         {!loading &&
           !error &&
-          filteredPapers.map((paper) => (
+          list.map((paper) => (
             <div
               key={paper._id}
               // Responsive width, min-height instead of fixed height
-              className="flex flex-col justify-between bg-black bg-opacity-80 p-4 sm:p-[20px] rounded-[20px] w-[280px] sm:w-[310px] lg:w-96 min-h-[300px] sm:min-h-[300px] shrink-0"
+              className="flex flex-col justify-between bg-black bg-opacity-80 p-4 rounded-2xl w-80 shrink-0"
             >
               {/* Paper Title */}
-              <span className="text-sm sm:text-[16px] text-text_white_primary break-words">
+              <a
+                href={paper.link}
+                target="_blank"
+                className="text-sm underline sm:text-[16px] text-text_white_primary break-words"
+              >
                 {truncateText(paper.title, 130)} {/* Slightly less truncation */}
-              </span>
+              </a>
               {/* Paper Details & Link */}
               <div className="flex justify-between items-end mt-4">
-                <div className="flex flex-col gap-1 overflow-hidden mr-2">
-                  {" "}
-                  {/* Added gap and overflow */}
-                  <div className="flex flex-col text-base sm:text-[18px] lg:text-[20px]">
-                    <div className="font-bold text-text_white_primary break-words truncate">
-                      {paper.conference}
-                    </div>
-                    <div className="text-text_white_tertiary text-sm sm:text-base">
-                      {paper.year}
-                    </div>
-                  </div>
-                  <div
-                    className="font-semibold text-xs sm:text-[14px] truncate"
-                    style={{ color: paper.color || "#FFFFFF" }}
-                  >
-                    {" "}
-                    {/* Default color */}
-                    {paper.authors.join(", ")}
-                  </div>
+                <div className="flex flex-col text-sm text-[#08DBE9] truncate">
+                  {paper.authors.map((author, index) => (
+                    <span key={index}>{author}</span>
+                  ))}
                 </div>
-                {paper.link && ( // Conditionally render link
-                  <a
-                    href={paper.link}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="ml-auto shrink-0"
-                  >
-                    <Link className="text-text_white_primary hover:text-gray-300 size-5 sm:size-[25px]" />
-                  </a>
-                )}
+                <div className="flex flex-col items-end gap-1">
+                  {paper.year && (
+                    <div className="text-text_white_tertiary text-base">{paper.year}</div>
+                  )}
+                  {paper.venue && (
+                    <div className="text-text_white_primary font-bold text-base">{paper.venue}</div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
-        {!loading && !error && filteredPapers.length === 0 && (
-          <div className="py-10 text-center w-full text-text_white_secondary">
-            No papers found for this type.
-          </div>
-        )}
+        <div className="w-3" />
       </div>
 
       {/* Link to All Papers */}
       <div className="px-4 sm:px-6 lg:px-[25px] mt-4">
         <HashLink
-          className="flex justify-center items-center gap-[10px] border-2 border-white border-solid rounded-[15px] w-full h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-text_white_primary hover:bg-white hover:text-primary_main transition-colors duration-200"
+          className="flex justify-center items-center gap-[10px] border-2 border-text_black_primary border-solid rounded-[15px] w-full h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-text_black_primary hover:bg-text_black_primary hover:text-primary_main transition-colors duration-200"
           to="/publications#journal"
         >
           <span>All Journal Papers</span>
@@ -538,82 +488,38 @@ const Journal = () => {
 
 // Conference Component
 const Conference = () => {
-  const [conferencePapers, setConferencePapers] = useState([]);
-  const [allPapers, setAllPapers] = useState([]); // Store all fetched papers
+  const [list, setList] = useState([]); // Store all fetched papers
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedType, setSelectedType] = useState(""); // Default to empty or first type
 
+  const fetchConferencePapers = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/publications/type/conference`); // Ensure endpoint exists
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      setList(data.slice(0, 5)); // Store all
+    } catch (err) {
+      setError(err.message);
+      console.error("Failed to fetch conference papers:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchConferencePapers = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/publications/type/conference`); // Ensure endpoint exists
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        setAllPapers(data); // Store all
-        setConferencePapers(data.slice(0, 5)); // Initial slice
-        // Set initial filter type if data exists
-        if (data.length > 0) {
-          const types = [...new Set(data.map((p) => p.type))];
-          if (types.length > 0) {
-            setSelectedType(types[0]);
-          }
-        }
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch conference papers:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchConferencePapers();
   }, []);
-
-  const filters = [...new Set(allPapers.map((item) => item.type))]; // Derive filters from all papers
-
-  // Filter papers based on selected type for display
-  const filteredPapers = selectedType
-    ? allPapers.filter((paper) => paper.type === selectedType).slice(0, 5) // Show max 5 of selected type
-    : conferencePapers; // Show initial slice if no type selected
-
-  // NOTE: Loading/Error states removed for brevity here, add them back like in Prof component if needed
 
   return (
     // Responsive padding, margin, gap
     <div className="flex flex-col gap-6 sm:gap-[30px] py-6 sm:py-[30px] w-full">
-      {/* Title and Filters Section */}
-      <div className="flex flex-col gap-4 sm:gap-5 px-4 sm:px-6 lg:px-[25px]">
-        {/* Responsive title with icon */}
-        <h2 className="flex items-end text-3xl sm:text-4xl lg:text-5xl text-text_black_primary leading-tight lg:leading-[48px] tracking-normal">
-          <span>Conference Papers</span>
-          <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] ml-1" />
-        </h2>
-        {/* Filter Buttons - Allow wrapping */}
-        <div className="flex gap-2 sm:gap-[10px] flex-wrap">
-          {loading && <div className="text-sm text-gray-600">Loading filters...</div>}
-          {!loading &&
-            filters.map((item) => (
-              <button
-                key={item}
-                className={`place-content-center border-2 grid px-4 py-1 sm:px-5 sm:py-[6px] border-solid rounded-full font-medium text-sm sm:text-[16px] transition-colors duration-200 ${
-                  selectedType === item
-                    ? "bg-primary_main text-white border-primary_main" // Active state
-                    : "bg-transparent text-primary_main border-primary_main hover:bg-primary_main hover:text-white" // Inactive state
-                }`}
-                onClick={() => setSelectedType(item)}
-              >
-                {item}
-              </button>
-            ))}
-          {!loading && filters.length === 0 && (
-            <div className="text-sm text-gray-600">No paper types found.</div>
-          )}
-        </div>
-      </div>
+      <h2 className="flex justify-between items-end px-4 text-5xl font-semibold text-text_black_primary tracking-normal">
+        <span>Conference Papers</span>
+        <Down_left_dark_arrow className="size-12 lg:size-14" style={{ strokeWidth: 1 }} />
+      </h2>
 
       {/* Horizontal Scrolling List */}
-      <div className="flex gap-3 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px] overflow-x-scroll no-scrollbar min-h-[320px] sm:min-h-[340px]">
-        {" "}
+      <div className="flex gap-2 overflow-x-scroll no-scrollbar min-h-60">
+        <div className="w-2" />
         {/* Added min-height */}
         {loading && <div className="py-10 text-center w-full">Loading papers...</div>}
         {error && (
@@ -621,62 +527,40 @@ const Conference = () => {
         )}
         {!loading &&
           !error &&
-          filteredPapers.map((paper) => (
+          list.map((item) => (
             <div
-              key={paper._id}
-              // Responsive width, min-height
-              className="flex flex-col justify-between bg-[#C1EDFF] p-4 sm:p-[20px] rounded-[20px] w-[280px] sm:w-[310px] lg:w-96 min-h-[300px] sm:min-h-[300px] shrink-0"
+              key={item._id}
+              // Responsive width, min-height instead of fixed height
+              className="flex flex-col justify-between bg-[#C1EDFF] p-4 rounded-2xl w-80 shrink-0"
             >
               {/* Paper Title */}
-              <span className="text-base sm:text-[18px] text-text_black_primary break-words">
-                {truncateText(paper.title, 130)}
-              </span>
+              <a
+                href={item.link}
+                target="_blank"
+                className="text-sm underline sm:text-[16px] text-text_black_primary break-words"
+              >
+                {truncateText(item.title, 130)} {/* Slightly less truncation */}
+              </a>
               {/* Paper Details & Link */}
               <div className="flex justify-between items-end mt-4">
-                <div className="flex flex-col gap-1 overflow-hidden mr-2">
-                  {" "}
-                  {/* Added gap and overflow */}
-                  <div className="flex flex-col text-base sm:text-[18px] lg:text-[20px]">
-                    <span className="font-bold text-text_black_primary truncate">
-                      {" "}
-                      {paper.conference}{" "}
-                    </span>
-                    <span className="text-text_black_primary text-sm sm:text-base">
-                      {" "}
-                      {paper.year}{" "}
-                    </span>
-                    <span className="text-text_black_primary text-sm sm:text-base truncate">
-                      {" "}
-                      {paper.location}{" "}
-                    </span>
-                  </div>
-                  <div
-                    className="font-semibold text-xs sm:text-[14px] truncate"
-                    style={{ color: paper.color || "#000000" }}
-                  >
-                    {" "}
-                    {/* Default color */}
-                    {paper.authors.join(", ")}
-                  </div>
+                <div className="flex flex-col text-sm text-[#10719A] truncate">
+                  {item.authors.map((author, index) => (
+                    <span key={index}>{author}</span>
+                  ))}
                 </div>
-                {paper.link && ( // Conditionally render link
-                  <a
-                    href={paper.link}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="ml-auto shrink-0"
-                  >
-                    <Link className="text-text_black_primary hover:text-gray-700 size-5 sm:size-[25px]" />
-                  </a>
-                )}
+                <div className="flex flex-col items-end gap-1">
+                  {item.year && <div className="text-text_black_primary text-xl">{item.year}</div>}
+                  {item.venue && (
+                    <div className="text-text_black_primary font-bold text-base">{item.venue}</div>
+                  )}
+                  {item.location && (
+                    <div className="text-text_black_primary text-xl">{item.location}</div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
-        {!loading && !error && filteredPapers.length === 0 && (
-          <div className="py-10 text-center w-full text-gray-600">
-            No papers found for this type.
-          </div>
-        )}
+        <div className="w-2" />
       </div>
 
       {/* Link to All Papers */}
