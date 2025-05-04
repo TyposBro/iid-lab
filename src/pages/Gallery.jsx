@@ -18,26 +18,10 @@ export const Gallery = () => {
   const { isAdmin, adminToken } = useAdmin();
 
   useEffect(() => {
-    const fetchGalleryEvents = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/gallery`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setEvents(data);
-        console.log("Fetched Events:", data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
     fetchGalleryEvents();
   }, []);
 
-  const refetchGalleryEvents = async () => {
+  const fetchGalleryEvents = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -69,7 +53,7 @@ export const Gallery = () => {
         <AdminGalleryControls
           events={events}
           setEvents={setEvents}
-          refetchGalleryEvents={refetchGalleryEvents}
+          refetchGalleryEvents={fetchGalleryEvents}
         />
       )}
       <div className="flex flex-col gap-[16px] py-8">
