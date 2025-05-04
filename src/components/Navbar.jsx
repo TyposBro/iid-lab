@@ -10,7 +10,7 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-row justify-between px-[30px] py-[25px] bg-white fixed z-10 w-full ">
+    <div className="flex flex-row justify-between px-[30px] py-[25px] bg-white fixed z-20 w-full ">
       <img
         src={Logo}
         alt="IIDL Logo"
