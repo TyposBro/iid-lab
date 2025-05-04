@@ -72,14 +72,6 @@ export const Team = () => {
       <TeamProf prof={profData} loading={profLoading} error={profError} />
       <CurrentTeam members={currentTeamMembers} loading={loading} error={error} />
       <Alumni members={alumniMembers} loading={loading} error={error} />
-      {window.innerWidth <= 640 ? (
-        <GoTo title="Projects Gallery" link="/gallery" />
-      ) : (
-        <div className="w-full flex justify-between">
-          <GoTo title="Projects Gallery" link="/gallery" />
-          <GoTo title="Lab News" link="/news" />
-        </div>
-      )}
     </div>
   );
 };
@@ -197,7 +189,7 @@ const Alumni = ({ members, loading, error }) => {
   if (error) return <div>Error loading Alumni: {error}</div>;
 
   return (
-    <div className="flex flex-col gap-[30px] pt-[30px] w-full" id="alumni">
+    <div className="flex flex-col gap-[30px] py-[30px] w-full" id="alumni">
       <div className="flex justify-between items-center">
         <h2 className="font-extralight text-[48px] text-text_black_primary leading-[48px]">
           Alumni
@@ -248,6 +240,8 @@ const AdminTeamControls = ({ refreshData }) => {
   const [newRole, setNewRole] = useState("");
   const [newType, setNewType] = useState("current");
   const [newBio, setNewBio] = useState("");
+  const [newLinkedIn, setNewLinkedIn] = useState("");
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [members, setMembers] = useState([]);
@@ -257,7 +251,7 @@ const AdminTeamControls = ({ refreshData }) => {
   const [deletingId, setDeletingId] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
-  const roles = ["PhD", "Masters", "Intern"];
+  const roles = ["PhD", "Masters", "Researcher", "Intern"];
   const types = ["current", "alumni"];
 
   // Fetch team members for the admin panel
@@ -349,6 +343,7 @@ const AdminTeamControls = ({ refreshData }) => {
         setNewRole("");
         setNewType("current");
         setNewBio("");
+        setNewLinkedIn("");
         setSelectedFile(null);
         setUploadedImageUrl("");
 
@@ -374,6 +369,7 @@ const AdminTeamControls = ({ refreshData }) => {
     setNewRole(member.role);
     setNewType(member.type || "current");
     setNewBio(member.bio || "");
+    setNewLinkedIn(member.linkedIn || "");
     setUploadedImageUrl(member.img);
     setSelectedFile(null);
   };
@@ -387,6 +383,7 @@ const AdminTeamControls = ({ refreshData }) => {
       role: newRole,
       type: newType,
       bio: newBio,
+      linkedIn: newLinkedIn,
       img: uploadedImageUrl,
     };
 
@@ -407,6 +404,7 @@ const AdminTeamControls = ({ refreshData }) => {
         setNewRole("");
         setNewType("current");
         setNewBio("");
+        setNewLinkedIn("");
         setSelectedFile(null);
         setUploadedImageUrl("");
 
@@ -560,7 +558,15 @@ const AdminTeamControls = ({ refreshData }) => {
               rows="3"
               placeholder="Enter bio"
               disabled={isSubmitting}
-            ></textarea>
+            />
+            <input
+              type="url"
+              placeholder="LinkedIn URL"
+              value={newLinkedIn}
+              onChange={(e) => setNewLinkedIn(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
+              disabled={isSubmitting}
+            />
           </div>
           <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="image">
@@ -652,7 +658,15 @@ const AdminTeamControls = ({ refreshData }) => {
               rows="3"
               placeholder="Enter bio"
               disabled={isSubmitting}
-            ></textarea>
+            />
+            <input
+              type="url"
+              placeholder="LinkedIn URL"
+              value={newLinkedIn}
+              onChange={(e) => setNewLinkedIn(e.target.value)}
+              className="w-full p-2 mb-2 border rounded"
+              disabled={isSubmitting}
+            />
           </div>
           <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="image">
