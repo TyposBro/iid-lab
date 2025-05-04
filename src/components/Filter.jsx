@@ -8,8 +8,8 @@ const Filter = ({ selected, setSelected, list }) => {
       {filters.map((item, index) => (
         <button
           key={index}
-          className={`place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main px-[12px] py-[4px] border-solid rounded-[15px] text-primary_main active:text-white no-underline ${
-            selected === item ? "bg-primary_main text-white" : ""
+          className={`place-content-center border-2 border-text_black_primary active:border-text_black_primary grid active:bg-blpborder-text_black_primary px-[12px] py-[4px] border-solid rounded-[15px] text-blpborder-text_black_primary active:text-white no-underline ${
+            selected === item ? "bg-text_black_primary border-text_black_primary text-white" : ""
           }`}
           onClick={() => setSelected(item)}
         >

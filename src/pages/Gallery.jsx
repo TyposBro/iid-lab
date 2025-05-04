@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Filter, MainCarousel, LoadingSpinner } from "@/components";
-import { Down_left_dark_arrow } from "@/assets";
+import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api"; // Import BASE_URL
 import DatePicker from "react-datepicker"; // Import DatePicker
@@ -56,7 +56,7 @@ export const Gallery = () => {
           refetchGalleryEvents={fetchGalleryEvents}
         />
       )}
-      <div className="flex flex-col gap-[16px] py-8">
+      <div className="w-full flex flex-col gap-[16px] py-8">
         <div className="px-4">
           <Filter selected={selected} setSelected={setSelected} list={uniqueTypes} />
         </div>
@@ -77,9 +77,9 @@ export default Gallery;
 const Intro = ({ slides }) => {
   return (
     <div className="flex flex-col gap-[16px] px-6 py-8 w-full">
-      <h2 className="flex justify-between items-end text-5xl text-text_black_primary leading-[48px] tracking-normal">
+      <h2 className="flex justify-between items-end text-5xl text-text_black_primary tracking-normal">
         <span>Gallery</span>
-        <Down_left_dark_arrow className="size-[51px]" />
+        <Down_left_dark_arrow className="size-12 lg:size-14" style={{ strokeWidth: 2 }} />
       </h2>
       {slides.length > 0 && <MainCarousel slides={slides} />}
     </div>
