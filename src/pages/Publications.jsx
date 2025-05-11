@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */ // Consider adding full PropTypes
 import PropTypes from "prop-types";
-import { Down_straight_neutral_arrow, Link as LinkIcon } from "@/assets/"; // Renamed Link to LinkIcon
+import { Down_left_dark_arrow } from "@/assets/"; // Renamed Link to LinkIcon
 import { truncateText } from "@/utils/text"; // Ensure this utility exists
 import { useState, useEffect, useCallback } from "react";
 import { useAdmin } from "@/contexts/AdminContext"; // Adjust path
@@ -38,20 +38,24 @@ export const Publications = () => {
 
       {/* Publication Lists */}
       <PublicationList
-        title="Journals"
+        title="Journal Publications"
         bg="#ffffff"
         buttonBg="#ffffff"
-        buttonText="#25AAE1" // Blue
+        buttonBorderColor="#231F20" // Blue
         iconColor="#25AAE1"
+        cardBg="#231F20"
+        cartTextColor="#ffffff"
         listType="journal" // Use 'journal' to match schema/API
         refreshKey={refreshKey} // Pass down refresh key
       />
       <PublicationList
-        title="Conferences"
+        title="Conference Publications"
         bg="#25AAE1" // Blue background
         buttonBg="#25AAE1"
-        buttonText="#FFFFFF" // White text/border
+        buttonBorderColor="#231F20" // White text/border
         iconColor="#ffffff"
+        cardBg="#C1EDFF" // White card background
+        cartTextColor="#231F20" // Black text
         listType="conference" // Use 'conference' to match schema/API
         refreshKey={refreshKey} // Pass down refresh key
       />
@@ -62,7 +66,17 @@ export const Publications = () => {
 export default Publications;
 
 // --- Publication List Component ---
-const PublicationList = ({ title, bg, buttonBg, buttonText, iconColor, listType, refreshKey }) => {
+const PublicationList = ({
+  title,
+  bg,
+  buttonBg,
+  buttonBorderColor,
+  iconColor,
+  cardBg,
+  cartTextColor,
+  listType,
+  refreshKey,
+}) => {
   const [publications, setPublications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -132,13 +146,11 @@ const PublicationList = ({ title, bg, buttonBg, buttonText, iconColor, listType,
     >
       {/* Header & Filters */}
       <div className="flex flex-col gap-4 md:gap-[25px] px-4 md:px-[25px]">
-        <div className="flex justify-between items-center">
-          <h2 className="font-extralight text-4xl md:text-[42px] text-black leading-tight md:leading-[48px]">
-            {title}
-          </h2>
-          <Down_straight_neutral_arrow
-            className="size-12 md:size-[56px] rotate-45"
-            style={{ color: iconColor }}
+        <div className="flex justify-between items-end">
+          <h2 className="font-semibold text-5xl text-black ">{title}</h2>
+          <Down_left_dark_arrow
+            className="size-16"
+            style={{ color: iconColor, path: { strokeWidth: 1 } }}
           />
         </div>
         {/* Filter Buttons */}
@@ -149,9 +161,9 @@ const PublicationList = ({ title, bg, buttonBg, buttonText, iconColor, listType,
               className="rounded-full px-4 py-1 md:px-[24px] md:py-[8px] border-2 transition-colors duration-150"
               onClick={() => handleFilterClick(null)}
               style={{
-                borderColor: buttonText,
-                backgroundColor: selectedYear === null ? buttonText : buttonBg,
-                color: selectedYear === null ? buttonBg : buttonText,
+                borderColor: buttonBorderColor,
+                backgroundColor: selectedYear === null ? buttonBorderColor : buttonBg,
+                color: selectedYear === null ? buttonBg : buttonBorderColor,
               }}
             >
               All
@@ -161,9 +173,9 @@ const PublicationList = ({ title, bg, buttonBg, buttonText, iconColor, listType,
               <button
                 className="rounded-full px-4 py-1 md:px-[24px] md:py-[8px] border-2 transition-colors duration-150"
                 style={{
-                  borderColor: buttonText,
-                  backgroundColor: selectedYear === year ? buttonText : buttonBg,
-                  color: selectedYear === year ? buttonBg : buttonText,
+                  borderColor: buttonBorderColor,
+                  backgroundColor: selectedYear === year ? buttonBorderColor : buttonBg,
+                  color: selectedYear === year ? buttonBg : buttonBorderColor,
                 }}
                 key={year}
                 onClick={() => handleFilterClick(year)}
@@ -177,9 +189,9 @@ const PublicationList = ({ title, bg, buttonBg, buttonText, iconColor, listType,
                 className="rounded-full px-4 py-1 md:px-[24px] md:py-[8px] border-2 transition-colors duration-150"
                 onClick={() => handleFilterClick("Archive")}
                 style={{
-                  borderColor: buttonText,
-                  backgroundColor: selectedYear === "Archive" ? buttonText : buttonBg,
-                  color: selectedYear === "Archive" ? buttonBg : buttonText,
+                  borderColor: buttonBorderColor,
+                  backgroundColor: selectedYear === "Archive" ? buttonBorderColor : buttonBg,
+                  color: selectedYear === "Archive" ? buttonBg : buttonBorderColor,
                 }}
               >
                 Archive
@@ -190,7 +202,7 @@ const PublicationList = ({ title, bg, buttonBg, buttonText, iconColor, listType,
       </div>
 
       {/* Publication Items */}
-      <div className="flex flex-col gap-4 md:gap-[15px] px-4 md:px-[25px] w-full">
+      <div className="flex flex-col gap-4 px-4 h-72 w-full">
         {loading && <div className="text-center p-4">Loading {title}...</div>}
         {error && (
           <div className="text-center p-4 text-red-600">
@@ -208,56 +220,45 @@ const PublicationList = ({ title, bg, buttonBg, buttonText, iconColor, listType,
         )}
         {!loading &&
           !error &&
-          filteredList.map((item) => {
-            // Use venue (renamed from journal)
-            const venueText = item.venue ? `${item.venue}, ${item.year}` : `${item.year}`;
-            return (
-              <div
-                // Use unique _id from MongoDB
-                key={item._id}
-                // TODO: Define background color based on type or pass via props if needed
-                className="flex flex-col md:flex-row justify-between gap-4 md:gap-[16px] bg-[#E0F7FF] p-4 md:p-[20px] rounded-[20px] w-full shadow-sm"
+          filteredList.map((item) => (
+            <div
+              key={item._id}
+              // Responsive width, min-height instead of fixed height
+              className="flex flex-col justify-between p-4 rounded-2xl h-full shrink-0"
+              style={{ backgroundColor: cardBg }}
+            >
+              {/* Paper Title */}
+              <a
+                href={item.link}
+                target="_blank"
+                className="text-sm underline sm:text-[16px] break-words"
+                style={{ color: cartTextColor }}
               >
-                {/* Optional Image */}
-                {item.image && (
-                  <div className="flex-shrink-0 w-full md:w-32 h-32 md:h-auto">
-                    <img
-                      src={item.image}
-                      alt={`Image for ${item.title}`}
-                      className="w-full h-full object-cover rounded-[10px]"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col justify-between grow gap-2">
-                  <span className="text-base md:text-[18px] font-medium leading-snug">
-                    {truncateText(item.title, 150)}
-                  </span>
-                  <div className="flex flex-col gap-2">
-                    {/* Authors */}
-                    <h4 className="font-medium text-[#10719A] text-xs md:text-[14px]">
-                      {item.authors.join(", ")}
-                    </h4>
-                    {/* Venue/Year + Link */}
-                    <div className="flex gap-3 justify-between items-center text-sm md:text-[16px] mt-1">
-                      <span className="font-semibold shrink-0 text-gray-700">{venueText}</span>
-                      {/* Link Icon */}
-                      {item.link && (
-                        <a
-                          className="flex justify-end items-center flex-shrink-0"
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer" // Added noopener
-                          title="Open publication link"
-                        >
-                          <LinkIcon className="size-5 md:size-[24px] text-[#10719A] hover:text-[#0b587a] transition-colors" />
-                        </a>
-                      )}
+                {truncateText(item.title, 130)} {/* Slightly less truncation */}
+              </a>
+              {/* Paper Details & Link */}
+              <div className="flex justify-between items-end mt-4">
+                <div className="flex flex-col text-sm text-[#10719A] truncate">
+                  {item.authors.map((author, index) => (
+                    <span key={index}>{author}</span>
+                  ))}
+                </div>
+                <div className="flex flex-col items-end gap-1" style={{ color: cartTextColor }}>
+                  {item.year && (
+                    <div className=" text-xl" style={{ opacity: "70%" }}>
+                      {item.year}
                     </div>
-                  </div>
+                  )}
+                  {item.venue && <div className=" font-bold text-base">{item.venue}</div>}
+                  {item.location && (
+                    <div className=" text-xl" style={{ opacity: "80%" }}>
+                      {item.location}
+                    </div>
+                  )}
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
       </div>
     </div>
   );

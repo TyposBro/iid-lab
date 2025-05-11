@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/News.jsx
 
 import { useState, useEffect } from "react";
@@ -97,7 +98,10 @@ export const News = () => {
 
       {/* Filter and Events List */}
       <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-4xl">
-        {" "}
+        <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-medium">
+          <span>Latest News</span>
+          <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
+        </h2>
         {/* Added max-width for readability */}
         {/* Assume Filter component is responsive */}
         <Filter selected={selected} setSelected={changeSelected} list={uniqueTypes} />
@@ -133,10 +137,9 @@ const Intro = ({ slides }) => {
   return (
     // Responsive padding and gap
     <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full max-w-4xl">
-      {" "}
       {/* Added max-width */}
       {/* Responsive heading and icon */}
-      <h2 className="flex justify-between items-end text-3xl sm:text-4xl lg:text-5xl text-text_black_primary leading-tight lg:leading-[48px] tracking-normal">
+      <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-semibold">
         <span>News</span>
         <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
       </h2>
@@ -150,51 +153,81 @@ Intro.propTypes = {
   slides: PropTypes.array.isRequired,
 };
 
-// Event Component with Responsive Text/Images/Margin
 const Event = ({ event }) => {
-  // Format date for display (optional, depends on desired format)
+  const [isExpanded, setIsExpanded] = useState(false);
+  const TRUNCATE_LENGTH = 1; // Adjust this character limit as needed
+
+  // Format date for display
   const displayDate = event.date
     ? new Date(event.date).toLocaleDateString("en-US", {
-        // Example formatting
         year: "numeric",
         month: "long",
         day: "numeric",
       })
     : "Date not available";
 
-  return (
-    // Responsive gap and padding
-    <div className="flex flex-col gap-3 sm:gap-4 py-2 w-full">
-      {/* Date and Type row - Responsive text */}
-      <div className="flex justify-between text-text_black_secondary text-xs sm:text-sm">
-        <span>{displayDate}</span>
-        <span className="font-bold">{event.type}</span>
-      </div>
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
 
-      {/* Image horizontal scroll - Responsive image width */}
+  // Determine if content needs truncation
+  const needsTruncation = event.content && event.content.length > TRUNCATE_LENGTH;
+
+  // Prepare the content to be displayed (either full or truncated)
+  let displayedContent = event.content;
+  if (needsTruncation && !isExpanded) {
+    // Try to truncate at a word boundary
+    let lastSpace = event.content.lastIndexOf(" ", TRUNCATE_LENGTH);
+    if (lastSpace === -1 && TRUNCATE_LENGTH < event.content.length) {
+      // No space found before limit, or very short limit
+      lastSpace = TRUNCATE_LENGTH; // Fallback to hard cut
+    }
+    displayedContent =
+      event.content.substring(0, lastSpace > 0 ? lastSpace : TRUNCATE_LENGTH) + "...";
+  }
+
+  return (
+    <div className="w-full relative">
       {event?.images?.length > 0 && (
-        <div className="w-full overflow-x-auto flex space-x-2 sm:space-x-3 no-scrollbar">
+        <div className="absolute w-full h-60 overflow-x-auto flex space-x-2 sm:space-x-3 no-scrollbar z-10">
           {event.images.map((image, index) => (
             <img
-              key={image || index} // Use image URL as key, fallback to index
+              key={image || index}
               src={image}
-              // Responsive width, ensure shrink-0
-              className="shrink-0 w-[60%] sm:w-56 h-auto rounded-[15px] sm:rounded-[20px] object-cover bg-gray-200" // Added aspect ratio / bg color
+              className="shrink-0 w-full sm:w-56 h-full rounded-[15px] sm:rounded-[20px] object-cover bg-gray-200" // Use h-full to fill the container
               alt={`${event.title} - image ${index + 1}`}
-              loading="lazy" // Add lazy loading
+              loading="lazy"
             />
           ))}
         </div>
       )}
+      <div className="flex flex-col gap-3.5 w-full border rounded-2xl">
+        {/* Image placeholder: This div pushes the content down if images are present */}
+        {event?.images?.length > 0 && <div className="w-full h-60" />}
 
-      {/* Title - Responsive text */}
-      <div className="text-lg sm:text-xl font-bold">{event.title}</div>
-
-      {/* Content - Assume Markdown component handles responsive text */}
-      <Markdown markdown={event.content} />
-
-      {/* Separator - Responsive margin */}
-      <div className="h-[2px] sm:h-[3px] border-y border-primary_main border-solid rounded mx-4 sm:mx-8 my-2" />
+        <div className="flex flex-col gap-2.5 px-2.5 pb-5">
+          {" "}
+          {/* Changed mb-5 to pb-5 */}
+          {/* Date and Type row */}
+          <div className="flex justify-between text-text_black_secondary text-sm">
+            <span>{displayDate}</span>
+            <span className="font-bold">{event.type}</span>
+          </div>
+          {/* Title */}
+          <div className="text-base sm:text-xl font-bold">{event.title}</div>
+          {/* Content - Pass the (potentially truncated) content to your Markdown component */}
+          <Markdown markdown={displayedContent} />
+          {/* "Learn More" / "Show Less" button - only shown if content can be truncated */}
+          {needsTruncation && (
+            <button
+              onClick={toggleExpand}
+              className="self-end active:text-text_white_primary active:bg-primary_main text-primary_main border w-28 h-9 rounded-md border-primary_main mt-2" // Added some margin-top
+            >
+              {isExpanded ? "Show Less" : "Learn More"}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
