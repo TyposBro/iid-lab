@@ -47,18 +47,6 @@ export const Projects = () => {
       <Current refreshKey={refreshKey} />
       <Completed refreshKey={refreshKey} />
       <Awards refreshKey={refreshKey} />
-
-      {/* Navigation */}
-      <div className="w-full px-4 md:px-[25px] py-8">
-        {window.innerWidth <= 640 ? (
-          <GoTo title="Projects Gallery" link="/gallery" />
-        ) : (
-          <div className="sm:w-full sm:items-center sm:flex sm:justify-between">
-            <GoTo title="Team members" link="/team" />
-            <GoTo title="Publications" link="/publications" />
-          </div>
-        )}
-      </div>
     </div>
   );
 };

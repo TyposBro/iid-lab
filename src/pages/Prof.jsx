@@ -64,7 +64,6 @@ const Prof = () => {
       )}
 
       {isAdmin && <AdminProfessorControls prof={prof} setProf={setProf} />}
-      <GoTo title="Projects Gallery" link="/projects" />
     </div>
   );
 };
