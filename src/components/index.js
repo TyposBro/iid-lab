@@ -9,4 +9,5 @@ export { default as Filter } from "./Filter";
 export { default as GoTo } from "./GoTo";
 export { default as LoadingSpinner } from "./LoadingSpinner";
 export { default as MainCarousel } from "./MainCarousel";
+export { default as AdminMetaControls } from "./AdminMetaControls";
 export { default as Markdown } from "./Markdown";
