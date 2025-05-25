@@ -20,7 +20,7 @@ export const Publications = () => {
 
   return (
     // Added min-h-dvh and no-scrollbar classes
-    <div className="flex flex-col justify-start items-center pt-16 md:pt-[95px] w-full min-h-dvh overflow-y-scroll no-scrollbar">
+    <div className="flex flex-col justify-start items-center pt-16 md:pt-[95px] w-full overflow-y-scroll no-scrollbar">
       {/* Intro Section */}
       <div className="flex flex-col gap-[10px] px-4 md:px-[25px] py-8 w-full">
         <h2 className="font-bold text-5xl md:text-[48px] text-black leading-tight md:leading-[48px]">
@@ -141,7 +141,7 @@ const PublicationList = ({
 
   return (
     <div
-      className="w-full flex flex-col gap-6 md:gap-[30px] py-6 md:py-[30px]"
+      className="w-full flex flex-col gap-6 md:gap-[30px] py-6 md:py-[30px] shrink-0"
       style={{ backgroundColor: bg }}
     >
       {/* Header & Filters */}
@@ -202,7 +202,7 @@ const PublicationList = ({
       </div>
 
       {/* Publication Items */}
-      <div className="flex flex-col gap-4 px-4 h-72 w-full">
+      <div className="flex flex-col gap-4 px-4 w-full">
         {loading && <div className="text-center p-4">Loading {title}...</div>}
         {error && (
           <div className="text-center p-4 text-red-600">
