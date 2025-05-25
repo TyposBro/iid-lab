@@ -165,6 +165,7 @@ const CurrentTeam = ({ members, loading, error }) => {
               subtitle={member.role}
               bg={member.img}
               desc={member.bio}
+              linkedIn={member.linkedIn}
             />
           ))}
       </div>
@@ -216,6 +217,7 @@ const Alumni = ({ members, loading, error }) => {
               subtitle={member.role}
               bg={member.img}
               desc={member.bio}
+              linkedIn={member.linkedIn}
             />
           ))}
       </div>
@@ -321,6 +323,7 @@ const AdminTeamControls = ({ refreshData }) => {
       type: newType,
       bio: newBio,
       img: uploadedImageUrl,
+      linkedIn: newLinkedIn,
     };
 
     try {

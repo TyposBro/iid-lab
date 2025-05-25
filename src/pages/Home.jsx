@@ -251,7 +251,6 @@ const Members = () => {
               ></div>
               {/* Member Card Text */}
               <div className="flex flex-col sm:gap-1 w-[170px]">
-                {" "}
                 {/* Match width */}
                 {/* Responsive text */}
                 <h2 className="font-bold text-base sm:text-lg text-text_black_primary truncate">
@@ -260,8 +259,9 @@ const Members = () => {
                 <h3 className="text-xs sm:text-sm text-text_black_primary truncate">
                   {member.role}
                 </h3>
-                {member.linkedin && (
-                  <a href={member.linkedin} target="_blank" rel="noreferrer noopener">
+                {console.log("Member data:", member)} {/* Debugging log */}
+                {member.linkedIn && (
+                  <a href={member.linkedIn} target="_blank" rel="noreferrer noopener">
                     <LinkedIn className="text-text_black_primary hover:text-blue-400 size-5 sm:size-[25px]" />
                   </a>
                 )}

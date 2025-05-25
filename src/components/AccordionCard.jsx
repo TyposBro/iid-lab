@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { LinkedIn } from "@mui/icons-material";
 
-const AccordionCard = ({ title, subtitle, desc, bg, linkedin }) => {
+const AccordionCard = ({ title, subtitle, desc, bg, linkedIn }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -15,8 +15,8 @@ const AccordionCard = ({ title, subtitle, desc, bg, linkedin }) => {
           <h3 className="italic text-base">{subtitle}</h3>
         </div>
         <div className="flex justify-between items-center gap-2">
-          {linkedin && (
-            <a href={linkedin} target="_blank" rel="noreferrer noopener">
+          {linkedIn && (
+            <a href={linkedIn} target="_blank" rel="noreferrer noopener">
               <LinkedIn className="text-text_black_primary hover:text-blue-400 size-7 z-10" />
             </a>
           )}
@@ -50,7 +50,7 @@ AccordionCard.propTypes = {
   subtitle: PropTypes.string.isRequired,
   desc: PropTypes.string.isRequired,
   bg: PropTypes.string.isRequired,
-  linkedin: PropTypes.string.isRequired,
+  linkedIn: PropTypes.string.isRequired,
 };
 
 export default AccordionCard;
