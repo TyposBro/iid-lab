@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/News.jsx
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react"; // Added useCallback, useMemo
 import PropTypes from "prop-types";
-import { Filter, MainCarousel, Markdown, LoadingSpinner } from "@/components/"; // Assume Filter & MainCarousel are responsive
+import { Filter, MainCarousel, Markdown, LoadingSpinner, AdminMetaControls } from "@/components/"; // Added AdminMetaControls
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
@@ -13,19 +13,71 @@ import "../styles/datepicker-override.css"; // Optional: Add a CSS file for cust
 
 export const News = () => {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // For news items
+  const [error, setError] = useState(null); // For news items
   const [selected, setSelected] = useState("Latest");
   const [limit, setLimit] = useState(5);
-  const { isAdmin } = useAdmin(); // Removed unused adminToken here
+  const { isAdmin } = useAdmin();
 
-  // Fetching Logic (Keep as is)
+  // --- Meta Data State and Fetching ---
+  const [newsMeta, setNewsMeta] = useState(null);
+  const [metaLoading, setMetaLoading] = useState(true);
+  const [metaError, setMetaError] = useState(null);
+  const [refreshMetaKey, setRefreshMetaKey] = useState(0);
+
+  const defaultNewsMeta = useMemo(
+    () => ({
+      title: "News",
+      description:
+        "Stay updated with the latest announcements, achievements, and events from our lab.",
+    }),
+    []
+  );
+
+  const fetchNewsMeta = useCallback(async () => {
+    setMetaLoading(true);
+    setMetaError(null);
+    try {
+      const response = await fetch(`${BASE_URL}/meta/news`); // Ensure this endpoint exists
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.warn("News meta data not found, using defaults.");
+          setNewsMeta(defaultNewsMeta);
+          document.title = defaultNewsMeta.title + " - I&I Design Lab";
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      } else {
+        const data = await response.json();
+        setNewsMeta(data);
+        document.title = (data.title || defaultNewsMeta.title) + " - I&I Design Lab";
+      }
+    } catch (err) {
+      setMetaError(err.message);
+      console.error("Failed to fetch news meta:", err);
+      setNewsMeta(defaultNewsMeta);
+      document.title = defaultNewsMeta.title + " - I&I Design Lab";
+    } finally {
+      setMetaLoading(false);
+    }
+  }, [defaultNewsMeta]);
+
+  useEffect(() => {
+    fetchNewsMeta();
+  }, [fetchNewsMeta, refreshMetaKey]);
+
+  const handleMetaUpdated = () => {
+    setRefreshMetaKey((prev) => prev + 1);
+  };
+  // --- End Meta Data ---
+
+  // Fetching News Items Logic
   useEffect(() => {
     fetchNews();
   }, []);
 
   const fetchNews = async () => {
-    setLoading(true); // Ensure loading is true at the start
+    setLoading(true); // Ensure loading is true at the start for news items
     setError(null);
     try {
       const response = await fetch(`${BASE_URL}/news`);
@@ -36,41 +88,26 @@ export const News = () => {
       // Sort news by date descending by default
       const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
       setEvents(sortedData);
-      // console.log("Fetched events:", sortedData);
     } catch (err) {
       setError(err.message);
       console.error("Failed to fetch news:", err);
     } finally {
-      setLoading(false);
+      setLoading(false); // End loading for news items
     }
   };
 
-  // Refetch function passed to Admin controls
   const refetchNews = () => {
-    fetchNews(); // Simply re-run the fetch
+    fetchNews(); // Simply re-run the fetch for news items
   };
 
-  // Loading and Error States
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen pt-[95px] pb-12">
-        <LoadingSpinner message="Loading News..." />
-      </div>
-    );
-  }
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen pt-[95px] pb-12 px-4 text-center text-red-600">
-        Error loading news: {error}
-      </div>
-    );
-  }
+  // Use resolved meta or defaults for display
+  const currentMetaTitle = newsMeta?.title || defaultNewsMeta.title;
+  const currentMetaDescription = newsMeta?.description || defaultNewsMeta.description;
 
   // Prepare data for components
-  const slides = events.flatMap((event) => event.images || []).filter(Boolean); // Use flatMap and handle potentially missing images array
+  const slides = events.flatMap((event) => event.images || []).filter(Boolean);
   const uniqueTypes = ["Latest", ...new Set(events.map((event) => event.type))];
 
-  // Filter events based on selection
   const filteredEvents =
     selected === "Latest"
       ? events // Already sorted by date
@@ -87,63 +124,119 @@ export const News = () => {
   };
 
   return (
-    // Responsive main container: padding, top/bottom space, min-height, gap
     <div className="flex flex-col justify-start items-center pt-[95px] pb-12 sm:pb-16 w-full min-h-screen px-4 sm:px-6 lg:px-7 gap-6 sm:gap-8">
-      <Intro slides={slides} />
+      {/* META ADMIN CONTROLS - START */}
+      {isAdmin && newsMeta && (
+        <AdminMetaControls
+          pageIdentifier="news" // Unique identifier for this page's meta
+          initialData={newsMeta}
+          fieldsConfig={[
+            { name: "title", label: "News Page Title", type: "text" },
+            {
+              name: "description",
+              label: "News Page Description (shown below title)",
+              type: "textarea",
+            },
+          ]}
+          onUpdateSuccess={handleMetaUpdated}
+          containerClass="w-full max-w-4xl mx-auto py-2 bg-gray-50 rounded-b-lg shadow mb-4"
+        />
+      )}
+      {/* META ADMIN CONTROLS - END */}
 
-      {/* Only render Admin controls if user is admin */}
-      {isAdmin && (
-        <AdminNewsControls events={events} setEvents={setEvents} refetchNews={refetchNews} />
+      {/* Display loading or error for meta if applicable */}
+      {metaLoading && (
+        <div className="flex justify-center items-center min-h-[200px] w-full">
+          <LoadingSpinner message="Loading page details..." />
+        </div>
+      )}
+      {metaError && !metaLoading && (
+        <div className="p-6 text-center text-red-500 w-full">
+          Error loading page details: {metaError}. Displaying default content.
+        </div>
       )}
 
-      {/* Filter and Events List */}
-      <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-4xl">
-        <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-medium">
-          <span>Latest News</span>
-          <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
-        </h2>
-        {/* Added max-width for readability */}
-        {/* Assume Filter component is responsive */}
-        <Filter selected={selected} setSelected={changeSelected} list={uniqueTypes} />
-        {/* Events List */}
-        <div className="flex flex-col gap-6 sm:gap-8">
-          {filteredEvents.length > 0 ? (
-            filteredEvents.slice(0, limit).map((event) => (
-              <Event key={event._id || event.title} event={event} /> // Use _id if available
-            ))
-          ) : (
-            <p className="text-center text-gray-500 py-6">
-              No news items found{selected !== "Latest" ? ` for type "${selected}"` : ""}.
-            </p>
-          )}
-        </div>
-      </div>
+      {/* Render page content once meta (even default) is resolved */}
+      {(!metaLoading || newsMeta) && (
+        <>
+          <Intro
+            slides={slides}
+            titleText={currentMetaTitle}
+            descriptionText={currentMetaDescription}
+          />
 
-      {/* Load More Button */}
-      {limit < filteredEvents.length && (
-        <button
-          className="flex justify-center items-center w-full max-w-xs h-12 text-base sm:text-lg font-bold text-primary_main bg-primary_light rounded-lg hover:bg-blue-200 transition-colors duration-200"
-          onClick={loadMore}
-        >
-          Load More
-        </button>
+          {/* Loading and Error States for News Items */}
+          {loading &&
+            !metaLoading && ( // Show news loading only if meta is done
+              <div className="flex justify-center items-center min-h-screen pt-[95px] pb-12">
+                <LoadingSpinner message="Loading News..." />
+              </div>
+            )}
+          {error &&
+            !metaLoading && ( // Show news error only if meta is done
+              <div className="flex justify-center items-center min-h-screen pt-[95px] pb-12 px-4 text-center text-red-600">
+                Error loading news: {error}
+              </div>
+            )}
+
+          {/* Render news items and admin controls only when news items are not loading and no error */}
+          {!loading && !error && (
+            <>
+              {isAdmin && (
+                <AdminNewsControls
+                  events={events}
+                  setEvents={setEvents}
+                  refetchNews={refetchNews}
+                />
+              )}
+
+              <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-4xl">
+                <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-medium">
+                  <span>Latest News</span>
+                  <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
+                </h2>
+                <Filter selected={selected} setSelected={changeSelected} list={uniqueTypes} />
+                <div className="flex flex-col gap-6 sm:gap-8">
+                  {filteredEvents.length > 0 ? (
+                    filteredEvents
+                      .slice(0, limit)
+                      .map((event) => <Event key={event._id || event.title} event={event} />)
+                  ) : (
+                    <p className="text-center text-gray-500 py-6">
+                      No news items found{selected !== "Latest" ? ` for type "${selected}"` : ""}.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {limit < filteredEvents.length && (
+                <button
+                  className="flex justify-center items-center w-full max-w-xs h-12 text-base sm:text-lg font-bold text-primary_main bg-primary_light rounded-lg hover:bg-blue-200 transition-colors duration-200"
+                  onClick={loadMore}
+                >
+                  Load More
+                </button>
+              )}
+            </>
+          )}
+        </>
       )}
     </div>
   );
 };
 
-// Intro Component with Responsive Title/Icon/Padding
-const Intro = ({ slides }) => {
+// Modified Intro Component
+const Intro = ({ slides, titleText, descriptionText }) => {
   return (
-    // Responsive padding and gap
     <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full max-w-4xl">
-      {/* Added max-width */}
-      {/* Responsive heading and icon */}
-      <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-semibold">
-        <span>News</span>
+      <div className="flex justify-between items-end">
+        <h1 className="text-5xl text-text_black_primary font-semibold">{titleText}</h1>{" "}
+        {/* Use h1 for main page title */}
         <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
-      </h2>
-      {/* Conditionally render carousel only if there are slides */}
+      </div>
+      {descriptionText && (
+        <p className="text-lg text-text_black_secondary mt-1">{descriptionText}</p>
+      )}
       {slides.length > 0 && <MainCarousel slides={slides} />}
     </div>
   );
@@ -151,13 +244,14 @@ const Intro = ({ slides }) => {
 
 Intro.propTypes = {
   slides: PropTypes.array.isRequired,
+  titleText: PropTypes.string.isRequired,
+  descriptionText: PropTypes.string,
 };
 
 const Event = ({ event }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const TRUNCATE_LENGTH = 1; // Adjust this character limit as needed
+  const TRUNCATE_LENGTH = 200; // Increased character limit for news
 
-  // Format date for display
   const displayDate = event.date
     ? new Date(event.date).toLocaleDateString("en-US", {
         year: "numeric",
@@ -170,63 +264,61 @@ const Event = ({ event }) => {
     setIsExpanded(!isExpanded);
   };
 
-  // Determine if content needs truncation
   const needsTruncation = event.content && event.content.length > TRUNCATE_LENGTH;
-
-  // Prepare the content to be displayed (either full or truncated)
   let displayedContent = event.content;
+
   if (needsTruncation && !isExpanded) {
-    // Try to truncate at a word boundary
     let lastSpace = event.content.lastIndexOf(" ", TRUNCATE_LENGTH);
-    if (lastSpace === -1 && TRUNCATE_LENGTH < event.content.length) {
-      // No space found before limit, or very short limit
-      lastSpace = TRUNCATE_LENGTH; // Fallback to hard cut
-    }
     displayedContent =
       event.content.substring(0, lastSpace > 0 ? lastSpace : TRUNCATE_LENGTH) + "...";
   }
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative border rounded-2xl shadow-sm overflow-hidden bg-white">
+      {" "}
+      {/* Added bg-white and shadow */}
       {event?.images?.length > 0 && (
-        <div className="absolute w-full h-60 overflow-x-auto flex space-x-2 sm:space-x-3 no-scrollbar z-10">
+        // Image carousel/slider at the top of the card
+        <div className="w-full h-60 overflow-x-auto flex snap-x snap-mandatory no-scrollbar">
           {event.images.map((image, index) => (
-            <img
-              key={image || index}
-              src={image}
-              className="shrink-0 w-full sm:w-56 h-full rounded-[15px] sm:rounded-[20px] object-cover bg-gray-200" // Use h-full to fill the container
-              alt={`${event.title} - image ${index + 1}`}
-              loading="lazy"
-            />
+            <div key={image || index} className="snap-center flex-shrink-0 w-full h-full">
+              <img
+                src={image}
+                className="w-full h-full object-cover bg-gray-200"
+                alt={`${event.title} - image ${index + 1}`}
+                loading="lazy"
+              />
+            </div>
           ))}
         </div>
       )}
-      <div className="flex flex-col gap-3.5 w-full border rounded-2xl">
-        {/* Image placeholder: This div pushes the content down if images are present */}
-        {event?.images?.length > 0 && <div className="w-full h-60" />}
-
-        <div className="flex flex-col gap-2.5 px-2.5 pb-5">
-          {" "}
-          {/* Changed mb-5 to pb-5 */}
-          {/* Date and Type row */}
-          <div className="flex justify-between text-text_black_secondary text-sm">
-            <span>{displayDate}</span>
-            <span className="font-bold">{event.type}</span>
-          </div>
-          {/* Title */}
-          <div className="text-base sm:text-xl font-bold">{event.title}</div>
-          {/* Content - Pass the (potentially truncated) content to your Markdown component */}
-          <Markdown markdown={displayedContent} />
-          {/* "Learn More" / "Show Less" button - only shown if content can be truncated */}
-          {needsTruncation && (
-            <button
-              onClick={toggleExpand}
-              className="self-end active:text-text_white_primary active:bg-primary_main text-primary_main border w-28 h-9 rounded-md border-primary_main mt-2" // Added some margin-top
-            >
-              {isExpanded ? "Show Less" : "Learn More"}
-            </button>
-          )}
+      {/* Content Area */}
+      <div className="flex flex-col gap-3 p-4 sm:p-5">
+        {" "}
+        {/* Consistent padding */}
+        <div className="flex justify-between text-text_black_secondary text-sm">
+          <span>{displayDate}</span>
+          <span className="font-bold uppercase text-xs tracking-wider px-2 py-1 bg-gray-100 text-gray-700 rounded">
+            {" "}
+            {/* Styled type */}
+            {event.type}
+          </span>
         </div>
+        <h3 className="text-xl sm:text-2xl font-bold text-text_black_primary">{event.title}</h3>{" "}
+        {/* Use h3 for event title */}
+        <div className="prose prose-sm sm:prose-base max-w-none">
+          {" "}
+          {/* Tailwind typography for markdown */}
+          <Markdown markdown={displayedContent} />
+        </div>
+        {needsTruncation && (
+          <button
+            onClick={toggleExpand}
+            className="self-start text-primary_main hover:text-primary_dark font-semibold mt-2 text-sm" // Simplified button
+          >
+            {isExpanded ? "Show Less" : "Learn More"}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -253,7 +345,6 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
   const [imagesToKeep, setImagesToKeep] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
-  // Effects for managing previews and existing images (Keep as is)
   useEffect(() => {
     if (isEditing && editingEvent) {
       setImagesToKeep(editingEvent.images || []);
@@ -264,26 +355,20 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
 
   useEffect(() => {
     const previews = [];
-    // Check if selectedFiles is iterable
     if (selectedFiles && typeof selectedFiles[Symbol.iterator] === "function") {
       for (let i = 0; i < selectedFiles.length; i++) {
         previews.push(URL.createObjectURL(selectedFiles[i]));
       }
       setImagePreviews(previews);
     } else {
-      // Handle case where selectedFiles is not iterable (e.g., null or not an array)
       setImagePreviews([]);
     }
-
-    // Cleanup function
     return () => {
       previews.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [selectedFiles]);
 
-  // Handlers (Create, Edit, Update, Delete, FileChange - Keep logic as is, ensure BASE_URL and token are used)
   const handleFileChange = (event) => {
-    // Ensure files exist and are Array-like before spreading
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFiles((prevFiles) => [...prevFiles, ...Array.from(event.target.files)]);
     }
@@ -294,47 +379,37 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
   };
 
   const handleRemoveNewImagePreview = (indexToRemove) => {
-    // Remove the file from selectedFiles
     setSelectedFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
-    // Previews will update automatically via useEffect
   };
 
   const handleCreate = async () => {
-    // Validation (Keep as is)
     if (!newDate || !newTitle || !newContent || !newType || selectedFiles.length === 0) {
       alert("Please fill in all fields and select at least one image.");
       return;
     }
-
     setIsSubmitting(true);
     const formData = new FormData();
-    selectedFiles.forEach((file) => formData.append("images", file)); // Use forEach
+    selectedFiles.forEach((file) => formData.append("images", file));
 
     try {
-      // Upload images
       const uploadResponse = await fetch(`${BASE_URL}/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${adminToken}` },
         body: formData,
       });
-
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json();
         throw new Error(`Image upload failed: ${errorData?.message || uploadResponse.statusText}`);
       }
       const uploadedImageUrls = await uploadResponse.json();
-
-      // Format date and create event data
       const isoDate = newDate.toISOString().split("T")[0];
       const newEventData = {
         title: newTitle,
-        content: newContent, // Ensure backend expects 'content'
+        content: newContent,
         date: isoDate,
         images: uploadedImageUrls,
         type: newType,
       };
-
-      // Create news item
       const createResponse = await fetch(`${BASE_URL}/news`, {
         method: "POST",
         headers: {
@@ -343,22 +418,19 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
         },
         body: JSON.stringify(newEventData),
       });
-
       if (!createResponse.ok) {
         const errorData = await createResponse.json();
         throw new Error(
           `Failed to create news item: ${errorData?.message || createResponse.statusText}`
         );
       }
-
-      // Reset form and refetch
       setIsCreating(false);
       setNewTitle("");
       setNewContent("");
       setNewDate(null);
       setSelectedFiles([]);
       setNewType("");
-      setImagePreviews([]); // Previews cleared by selectedFiles change
+      setImagePreviews([]);
       refetchNews();
     } catch (error) {
       console.error("Error creating news item:", error);
@@ -370,15 +442,15 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
 
   const handleEdit = (event) => {
     setIsEditing(true);
-    setIsCreating(false); // Ensure not in creating mode
+    setIsCreating(false);
     setEditingEvent(event);
     setNewTitle(event.title);
-    setNewContent(event.content); // Assuming backend uses 'content'
+    setNewContent(event.content);
     setNewDate(event.date ? new Date(event.date) : null);
     setNewType(event.type);
     setImagesToKeep(event.images || []);
-    setSelectedFiles([]); // Reset new files
-    setImagePreviews([]); // Reset new previews
+    setSelectedFiles([]);
+    setImagePreviews([]);
   };
 
   const handleUpdate = async () => {
@@ -387,16 +459,12 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
       alert("Please fill in all fields.");
       return;
     }
-    // Check if there are any images left (existing + new)
     if (imagesToKeep.length === 0 && selectedFiles.length === 0) {
       alert("Please keep or add at least one image.");
       return;
     }
-
     setIsSubmitting(true);
     let newImageUrls = [];
-
-    // Upload new files if any
     if (selectedFiles.length > 0) {
       const formData = new FormData();
       selectedFiles.forEach((file) => formData.append("images", file));
@@ -420,18 +488,14 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
         return;
       }
     }
-
-    // Prepare updated data
     const isoDate = newDate.toISOString().split("T")[0];
     const updatedEventData = {
       title: newTitle,
-      content: newContent, // Use 'content' if that's what backend expects
+      content: newContent,
       date: isoDate,
-      images: [...imagesToKeep, ...newImageUrls], // Combine kept and new images
+      images: [...imagesToKeep, ...newImageUrls],
       type: newType,
     };
-
-    // Send update request
     try {
       const response = await fetch(`${BASE_URL}/news/${editingEvent._id}`, {
         method: "PUT",
@@ -441,13 +505,10 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
         },
         body: JSON.stringify(updatedEventData),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`Failed to update news item: ${errorData?.message || response.statusText}`);
       }
-
-      // Reset form and refetch
       setIsEditing(false);
       setEditingEvent(null);
       setNewTitle("");
@@ -456,7 +517,7 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
       setSelectedFiles([]);
       setNewType("");
       setImagesToKeep([]);
-      setImagePreviews([]); // Cleared by selectedFiles change
+      setImagePreviews([]);
       refetchNews();
     } catch (error) {
       console.error("Error updating news item:", error);
@@ -474,14 +535,13 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
           method: "DELETE",
           headers: { Authorization: `Bearer ${adminToken}` },
         });
-
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(
             `Failed to delete news item: ${errorData?.message || response.statusText}`
           );
         }
-        refetchNews(); // Refetch after successful delete
+        refetchNews();
       } catch (error) {
         console.error("Error deleting news item:", error);
         alert(`Failed to delete: ${error.message}`);
@@ -494,7 +554,6 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
   const cancelEditing = () => {
     setIsEditing(false);
     setEditingEvent(null);
-    // Optionally reset form fields
     setNewTitle("");
     setNewContent("");
     setNewDate(null);
@@ -506,7 +565,6 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
 
   const cancelCreating = () => {
     setIsCreating(false);
-    // Reset form fields
     setNewTitle("");
     setNewContent("");
     setNewDate(null);
@@ -515,13 +573,36 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
     setImagePreviews([]);
   };
 
-  return (
-    // Add border, padding, max-width for admin section clarity
-    <div className="p-4 border rounded-lg shadow-md w-full flex flex-wrap justify-between items-center bg-gray-50 mb-6">
-      <h3 className="text-xl font-semibold mb-4">Admin: Manage News</h3>
+  // Styling for form elements
+  const inputClass =
+    "w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-100";
+  const buttonClass =
+    "font-bold py-2 px-4 rounded transition-colors duration-200 disabled:opacity-50";
+  const primaryButtonClass = `bg-blue-600 hover:bg-blue-700 text-white ${buttonClass}`;
+  const secondaryButtonClass = `bg-gray-200 hover:bg-gray-300 text-gray-700 ${buttonClass}`;
+  const dangerButtonClass = `bg-red-600 hover:bg-red-700 text-white ${buttonClass} text-xs`;
+  const warningButtonClass = `bg-yellow-500 hover:bg-yellow-600 text-white ${buttonClass} text-xs`;
+  const successButtonClass = `bg-green-600 hover:bg-green-700 text-white ${buttonClass}`;
 
-      {/* Loading overlay for submitting/deleting */}
-      {(isSubmitting || deletingId) && (
+  return (
+    <div className="p-4 sm:p-6 border rounded-lg shadow-lg w-full bg-gray-50 mb-8 max-w-4xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-200">
+        <h3 className="text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Admin: Manage News</h3>
+        {!isCreating && !isEditing && (
+          <button
+            onClick={() => {
+              setIsCreating(true);
+              setIsEditing(false);
+            }}
+            className={successButtonClass}
+            disabled={isSubmitting || deletingId !== null}
+          >
+            + Add News
+          </button>
+        )}
+      </div>
+
+      {(isSubmitting || deletingId !== null) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <LoadingSpinner
             message={isSubmitting ? (isCreating ? "Creating..." : "Updating...") : "Deleting..."}
@@ -529,126 +610,96 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
         </div>
       )}
 
-      {/* "Add New" Button - Hidden when creating/editing */}
       {!isCreating && !isEditing && (
-        <button
-          onClick={() => {
-            setIsCreating(true);
-            setIsEditing(false); /* Reset potentially needed */
-          }}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 transition-colors duration-200 disabled:opacity-50"
-          disabled={isSubmitting || deletingId}
-        >
-          + Add News
-        </button>
-      )}
-
-      {/* List of existing items for editing/deleting - Only show when not creating/editing */}
-      {!isCreating && !isEditing && (
-        <div className="w-full space-y-2">
+        <div className="w-full space-y-3">
           {events.map((event) => (
             <div
               key={event._id}
-              className="border rounded p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 bg-white shadow-sm"
+              className="border border-gray-200 rounded-md p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-white shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="flex items-start gap-3 flex-grow">
-                {event.images.length > 0 && (
+              <div className="flex items-start gap-3 flex-grow min-w-0">
+                {" "}
+                {/* Added min-w-0 for better flex behavior */}
+                {event.images && event.images.length > 0 && (
                   <img
                     src={event.images[0]}
                     alt=""
-                    className="w-16 h-16 object-cover rounded flex-shrink-0"
+                    className="w-16 h-16 object-cover rounded flex-shrink-0 border border-gray-100"
                   />
                 )}
-                <div className="flex-grow">
-                  <p className="font-semibold">{event.title}</p>
+                <div className="flex-grow overflow-hidden">
+                  {" "}
+                  {/* Added overflow-hidden */}
+                  <p className="font-semibold text-gray-800 truncate" title={event.title}>
+                    {event.title}
+                  </p>
                   <p className="text-xs text-gray-500">
                     ({event.date ? new Date(event.date).toLocaleDateString() : "No Date"}) -{" "}
                     {event.type}
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2 flex-shrink-0 self-end md:self-center">
+              <div className="flex gap-2 flex-shrink-0 self-end md:self-center mt-2 md:mt-0">
                 <button
                   onClick={() => handleEdit(event)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white p-1 px-2 rounded text transition-colors duration-200 disabled:opacity-50"
-                  disabled={isSubmitting || deletingId}
+                  className={warningButtonClass}
+                  disabled={isSubmitting || deletingId !== null}
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(event._id)}
-                  className={`bg-red-500 hover:bg-red-600 text-white p-1 px-2 rounded text transition-colors duration-200 ${
+                  className={`${dangerButtonClass} ${
                     deletingId === event._id ? "opacity-50 cursor-wait" : ""
-                  } disabled:opacity-50`}
+                  }`}
                   disabled={isSubmitting || deletingId === event._id}
                 >
                   {deletingId === event._id ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>
-            // <div
-            //   key={event._id}
-            //   className="border rounded p-2 sm:p-3 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
-            // >
-            //   <p className="flex-grow">
-            //     <strong className="block sm:inline">{event.title}</strong>
-            //     <span className="text-sm text-gray-600 ml-0 sm:ml-2">
-            //       ({event.date ? new Date(event.date).toLocaleDateString() : "No Date"}) -{" "}
-            //       {event.type}
-            //     </span>
-            //   </p>
-            //   <div className="flex gap-2 shrink-0">
-            //     <button
-            //       onClick={() => handleEdit(event)}
-            //       className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs sm:text-sm transition-colors duration-200 disabled:opacity-50"
-            //       disabled={isSubmitting || deletingId}
-            //     >
-            //       Edit
-            //     </button>
-            //     <button
-            //       onClick={() => handleDelete(event._id)}
-            //       className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs sm:text-sm transition-colors duration-200 disabled:opacity-50"
-            //       disabled={isSubmitting || deletingId === event._id}
-            //     >
-            //       {deletingId === event._id ? "Deleting..." : "Delete"}
-            //     </button>
-            //   </div>
-            // </div>
           ))}
-          {events.length === 0 && <p className="text-gray-500 italic">No news items yet.</p>}
+          {events.length === 0 && (
+            <p className="text-gray-500 italic text-center py-4">
+              No news items yet. Click &quot;Add News&quot; to create one.
+            </p>
+          )}
         </div>
       )}
 
-      {/* --- Create Form --- */}
-      {isCreating && (
-        <div className="p-4 border rounded mt-4 bg-white space-y-3">
-          <h3 className="text-xl font-semibold mb-3">Create New News Item</h3>
-          {/* Common Form Fields Component could be extracted */}
+      {(isCreating || isEditing) && (
+        <div className="p-4 border border-gray-200 rounded-md mt-4 bg-white shadow-sm space-y-4">
+          <h3 className="text-xl font-semibold text-gray-800 mb-3">
+            {isCreating ? "Create New News Item" : "Edit News Item"}
+          </h3>
           <input
             type="text"
             placeholder="Title"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+            className={inputClass}
             disabled={isSubmitting}
           />
           <textarea
             placeholder="Content (Markdown supported)"
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
-            className="w-full p-2 border rounded h-32 focus:ring-2 focus:ring-blue-500 outline-none"
+            className={`${inputClass} h-40`}
             disabled={isSubmitting}
           />
           <div>
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="create-date">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-1"
+              htmlFor={isCreating ? "create-date" : "edit-date"}
+            >
               Date
             </label>
             <DatePicker
-              id="create-date"
+              id={isCreating ? "create-date" : "edit-date"}
               selected={newDate}
               onChange={(date) => setNewDate(date)}
               dateFormat="yyyy-MM-dd"
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+              className={inputClass}
               wrapperClassName="w-full"
               disabled={isSubmitting}
             />
@@ -658,124 +709,29 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
             placeholder="Type (e.g., Awards, Conference)"
             value={newType}
             onChange={(e) => setNewType(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            disabled={isSubmitting}
-          />
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="create-images">
-              Images
-            </label>
-            <input
-              type="file"
-              id="create-images"
-              multiple
-              onChange={handleFileChange}
-              className="w-full p-2 border rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isSubmitting}
-            />
-            {/* New Image Previews */}
-            <div className="flex flex-wrap mt-2 gap-2">
-              {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={preview}
-                    alt={`New Preview ${index}`}
-                    className="w-20 h-20 object-cover rounded border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveNewImagePreview(index)}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs focus:outline-none hover:bg-red-600"
-                    title="Remove image"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* --- End Common Fields --- */}
-          <div className="flex gap-3">
-            <button
-              onClick={handleCreate}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200 disabled:opacity-50"
-              disabled={isSubmitting}
-            >
-              Create
-            </button>
-            <button
-              onClick={cancelCreating}
-              className="text-gray-600 hover:text-gray-800 py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* --- Edit Form --- */}
-      {isEditing && editingEvent && (
-        <div className="p-4 border rounded mt-4 bg-white space-y-3">
-          <h3 className="text-xl font-semibold mb-3">Edit News Item</h3>
-          {/* Common Form Fields Component could be extracted */}
-          <input
-            type="text"
-            placeholder="Title"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
-            disabled={isSubmitting}
-          />
-          <textarea
-            placeholder="Content (Markdown supported)"
-            value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
-            className="w-full p-2 border rounded h-32 focus:ring-2 focus:ring-blue-500 outline-none"
-            disabled={isSubmitting}
-          />
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="edit-date">
-              Date
-            </label>
-            <DatePicker
-              id="edit-date"
-              selected={newDate}
-              onChange={(date) => setNewDate(date)}
-              dateFormat="yyyy-MM-dd"
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
-              wrapperClassName="w-full"
-              disabled={isSubmitting}
-            />
-          </div>
-          <input
-            type="text"
-            placeholder="Type (e.g., Awards, Conference)"
-            value={newType}
-            onChange={(e) => setNewType(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+            className={inputClass}
             disabled={isSubmitting}
           />
 
-          {/* Existing Images Preview */}
-          {imagesToKeep.length > 0 && (
+          {isEditing && imagesToKeep.length > 0 && (
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-1">
-                Existing Images (Click X to remove)
+                Current Images (Click X to remove)
               </label>
-              <div className="flex flex-wrap gap-2">
-                {imagesToKeep.map((imageUrl, index) => (
-                  <div key={index} className="relative">
+              <div className="flex flex-wrap gap-2 p-2 border border-gray-200 rounded-md bg-gray-50">
+                {imagesToKeep.map((imageUrl, idx) => (
+                  <div key={`existing-${idx}`} className="relative">
                     <img
                       src={imageUrl}
-                      alt={`Existing Image ${index}`}
-                      className="w-24 h-20 object-cover rounded border"
+                      alt={`Existing ${idx}`}
+                      className="w-24 h-20 object-cover rounded border border-gray-300"
                     />
                     <button
                       type="button"
                       onClick={() => handleRemoveExistingImage(imageUrl)}
                       className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs focus:outline-none hover:bg-red-600"
                       title="Remove image"
+                      disabled={isSubmitting}
                     >
                       ×
                     </button>
@@ -785,52 +741,55 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
             </div>
           )}
 
-          {/* Add New Images */}
           <div>
-            <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="edit-images">
-              Add New Images
+            <label
+              className="block text-gray-700 text-sm font-bold mb-1"
+              htmlFor={isCreating ? "create-images" : "edit-images"}
+            >
+              {isEditing ? "Add New Images" : "Images (select multiple)"}
             </label>
             <input
               type="file"
-              id="edit-images"
+              id={isCreating ? "create-images" : "edit-images"}
               multiple
               onChange={handleFileChange}
-              className="w-full p-2 border rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`${inputClass} file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100`}
               disabled={isSubmitting}
             />
-            {/* New Image Previews */}
-            <div className="flex flex-wrap mt-2 gap-2">
-              {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={preview}
-                    alt={`New Preview ${index}`}
-                    className="w-20 h-20 object-cover rounded border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveNewImagePreview(index)}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs focus:outline-none hover:bg-red-600"
-                    title="Remove image"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
+            {selectedFiles.length > 0 && (
+              <div className="flex flex-wrap mt-2 gap-2 p-2 border border-gray-200 rounded-md bg-gray-50">
+                {imagePreviews.map((preview, idx) => (
+                  <div key={`new-${idx}`} className="relative">
+                    <img
+                      src={preview}
+                      alt={`New Preview ${idx}`}
+                      className="w-24 h-20 object-cover rounded border border-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveNewImagePreview(idx)}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs focus:outline-none hover:bg-red-600"
+                      title="Remove image"
+                      disabled={isSubmitting}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          {/* --- End Common Fields --- */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <button
-              onClick={handleUpdate}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200 disabled:opacity-50"
+              onClick={isCreating ? handleCreate : handleUpdate}
+              className={primaryButtonClass}
               disabled={isSubmitting}
             >
-              Update
+              {isCreating ? "Create" : "Update"}
             </button>
             <button
-              onClick={cancelEditing}
-              className="text-gray-600 hover:text-gray-800 py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 transition-colors duration-200"
+              onClick={isCreating ? cancelCreating : cancelEditing}
+              className={secondaryButtonClass}
               disabled={isSubmitting}
             >
               Cancel
@@ -844,8 +803,8 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
 
 AdminNewsControls.propTypes = {
   events: PropTypes.array.isRequired,
-  setEvents: PropTypes.func.isRequired, // Although not directly used, kept for potential future use
+  setEvents: PropTypes.func.isRequired,
   refetchNews: PropTypes.func.isRequired,
 };
 
-export default News; // Ensure default export if needed
+export default News;

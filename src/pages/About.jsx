@@ -1,6 +1,6 @@
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/About.jsx
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { MainCarousel, LoadingSpinner, Filter } from "@/components"; // Ensure Filter is correctly imported
 import { AdminAboutControls } from "@/components/admin/AboutControls"; // Your existing admin for tracks
 import { AdminMetaControls } from "@/components/AdminMetaControls"; // For page title/desc
@@ -22,12 +22,15 @@ export const About = () => {
   const [metaLoading, setMetaLoading] = useState(true);
   const [, setMetaError] = useState(null);
 
-  const defaultAboutMeta = {
-    title: "About Our Lab",
-    description:
-      "Discover our research focus, the dedicated team, and the environment we cultivate for innovation and learning.",
-    // You could add more fields here if needed, e.g., a specific subtitle for the "Research Tracks" section
-  };
+  const defaultAboutMeta = useMemo(
+    () => ({
+      title: "About Our Lab",
+      description:
+        "Discover our research focus, the dedicated team, and the environment we cultivate for innovation and learning.",
+      // You could add more fields here if needed, e.g., a specific subtitle for the "Research Tracks" section
+    }),
+    []
+  );
 
   // Fetch Meta Data for About Page
   const fetchAboutMeta = useCallback(async () => {
@@ -178,7 +181,7 @@ export const About = () => {
         {/* Adjusted pt if AdminMetaControls is present */}
         {/* Page Title and Description Section */}
         {!metaLoading && (
-          <div className="max-w-[1340px] mx-auto mb-8 text-center md:text-left">
+          <div className="max-w-[1340px] mx-auto mb-8 md:text-left">
             <h1 className="text-4xl md:text-5xl lg:text-[60px] font-bold text-text_black_primary leading-tight mb-3">
               {currentTitle}
             </h1>

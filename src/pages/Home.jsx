@@ -1,7 +1,7 @@
 // {PATH_TO_THE_PROJECT}/src/pages/Home.jsx
 
-import { useRef, useState, useEffect, useCallback, useMemo } from "react"; // Added useCallback
-import { MainCarousel } from "@/components/"; // Assume these are responsive
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { MainCarousel } from "@/components/";
 import { useNavigate } from "react-router";
 import { HashLink } from "react-router-hash-link";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
@@ -9,82 +9,97 @@ import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import PropTypes from "prop-types";
 
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
-import { truncateText } from "@/utils/text"; // Ensure this utility exists
+import { truncateText } from "@/utils/text";
 import { BASE_URL } from "@/config/api";
 import { LinkedIn } from "@mui/icons-material";
 import { useAdmin } from "@/contexts/AdminContext";
 import { AdminMetaControls } from "@/components/AdminMetaControls";
-import { LoadingSpinner } from "@/components/"; // Ensure this component is available
+import { LoadingSpinner } from "@/components/";
 
 // Main Home Component
 export const Home = () => {
   const ref = useRef(null);
   const navigate = useNavigate();
   const { isAdmin } = useAdmin();
-  const [homeMeta, setHomeMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshMetaKey, setRefreshMetaKey] = useState(0);
 
-  const defaultHomeMeta = useMemo(
+  // --- Overall Home Page Meta ---
+  const [homePageMeta, setHomePageMeta] = useState(null);
+  const [pageMetaLoading, setPageMetaLoading] = useState(true);
+  const [pageMetaError, setPageMetaError] = useState(null);
+  const [refreshPageMetaKey, setRefreshPageMetaKey] = useState(0);
+
+  const defaultHomePageMeta = useMemo(
     () => ({
-      title: "Integration & Innovation Design",
-      description:
-        "Integration + Innovation Design Lab focuses on design and development of innovative products and services by integrating Design, Ergonomics, Engineering, Technology and Entrepreneurship.",
+      title: "Integration & Innovation Design Lab",
+      description: "",
       homeYoutubeId: "Xd-lcSxIsHM",
+      // Titles for sections
+      currentProjectsTitle: "Current Projects",
+      currentProjectsDescription: "",
+      journalPapersTitle: "Journal Papers",
+      conferencePapersTitle: "Conference Papers",
+      currentTeamTitle: "Current Team",
     }),
     []
   );
 
-  const fetchHomeMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
+  const fetchHomePageMeta = useCallback(async () => {
+    setPageMetaLoading(true);
+    setPageMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/home`);
+      const response = await fetch(`${BASE_URL}/meta/home`); // Endpoint for all home page related meta
       if (!response.ok) {
         if (response.status === 404) {
-          console.warn("Home meta data not found, using defaults.");
-          setHomeMeta(defaultHomeMeta);
+          console.warn("Home page comprehensive meta not found, using defaults.");
+          setHomePageMeta(defaultHomePageMeta);
+          document.title = defaultHomePageMeta.title;
         } else {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       } else {
         const data = await response.json();
-        setHomeMeta(data);
-        if (data.title) {
-          document.title = data.title + " Lab";
-        } else {
-          document.title = defaultHomeMeta.title + " Lab";
-        }
+        // Merge fetched data with defaults to ensure all keys are present
+        const mergedMeta = { ...defaultHomePageMeta, ...data };
+        setHomePageMeta(mergedMeta);
+        document.title = mergedMeta.title || defaultHomePageMeta.title;
       }
     } catch (err) {
-      setMetaError(err.message);
-      console.error("Failed to fetch home meta:", err);
-      setHomeMeta(defaultHomeMeta);
-      document.title = defaultHomeMeta.title + " Lab";
+      setPageMetaError(err.message);
+      console.error("Failed to fetch home page meta:", err);
+      setHomePageMeta(defaultHomePageMeta);
+      document.title = defaultHomePageMeta.title;
     } finally {
-      setMetaLoading(false);
+      setPageMetaLoading(false);
     }
-  }, [defaultHomeMeta]);
+  }, [defaultHomePageMeta]);
 
   useEffect(() => {
-    fetchHomeMeta();
-  }, [fetchHomeMeta, refreshMetaKey]);
+    fetchHomePageMeta();
+  }, [fetchHomePageMeta, refreshPageMetaKey]);
 
-  const handleMetaUpdated = () => {
-    setRefreshMetaKey((prev) => prev + 1);
+  const handlePageMetaUpdated = () => {
+    setRefreshPageMetaKey((prev) => prev + 1);
   };
 
-  const currentTitle = homeMeta?.title || defaultHomeMeta.title;
-  const currentDescription = homeMeta?.description || defaultHomeMeta.description;
-  const currentYoutubeId = homeMeta?.homeYoutubeId || defaultHomeMeta.homeYoutubeId;
+  const currentTitle = homePageMeta?.title || defaultHomePageMeta.title;
+  const currentDescription = homePageMeta?.description || defaultHomePageMeta.description;
+  const currentYoutubeId = homePageMeta?.homeYoutubeId || defaultHomePageMeta.homeYoutubeId;
+  const currentProjectsTitle =
+    homePageMeta?.currentProjectsTitle || defaultHomePageMeta.currentProjectsTitle;
+  const currentProjectsDescription =
+    homePageMeta?.currentProjectsDescription || defaultHomePageMeta.currentProjectsDescription;
+  const journalPapersTitle =
+    homePageMeta?.journalPapersTitle || defaultHomePageMeta.journalPapersTitle;
+  const conferencePapersTitle =
+    homePageMeta?.conferencePapersTitle || defaultHomePageMeta.conferencePapersTitle;
+  const currentTeamTitle = homePageMeta?.currentTeamTitle || defaultHomePageMeta.currentTeamTitle;
 
   return (
     <div className="flex flex-col justify-start items-center pt-[95px] w-full min-h-screen">
-      {isAdmin && homeMeta && (
+      {isAdmin && homePageMeta && (
         <AdminMetaControls
-          pageIdentifier="home"
-          initialData={homeMeta}
+          pageIdentifier="home" // This will now manage all text fields for the home page
+          initialData={homePageMeta} // Pass the comprehensive meta object
           fieldsConfig={[
             {
               name: "title",
@@ -92,26 +107,44 @@ export const Home = () => {
               type: "text",
               hint: "The '&' symbol will be styled. 'Lab' is appended automatically.",
             },
-            { name: "description", label: "Page Description/Subtitle", type: "textarea" },
+            {
+              name: "description",
+              label: "Page Description/Subtitle (Below title)",
+              type: "textarea",
+            },
             { name: "homeYoutubeId", label: "Home Page YouTube Video ID", type: "text" },
+            { name: "currentProjectsTitle", label: "Current Projects Section Title", type: "text" },
+            {
+              name: "currentProjectsDescription",
+              label: "Current Projects Section Description",
+              type: "textarea",
+            },
+            { name: "journalPapersTitle", label: "Journal Papers Section Title", type: "text" },
+            {
+              name: "conferencePapersTitle",
+              label: "Conference Papers Section Title",
+              type: "text",
+            },
+            { name: "currentTeamTitle", label: "Current Team Section Title", type: "text" },
+            // Add more fields here if other sections on Home need dynamic text
           ]}
-          onUpdateSuccess={handleMetaUpdated}
+          onUpdateSuccess={handlePageMetaUpdated}
           containerClass="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-[25px] py-2 bg-gray-50 rounded-b-lg shadow"
         />
       )}
 
-      {metaLoading && (
+      {pageMetaLoading && (
         <div className="p-10 text-center w-full">
           <LoadingSpinner message="Loading page details..." />
         </div>
       )}
-      {metaError && !metaLoading && (
+      {pageMetaError && !pageMetaLoading && (
         <div className="p-6 text-center text-red-500 w-full">
-          Error loading page details: {metaError}. Displaying default content.
+          Error loading page details: {pageMetaError}. Displaying default content.
         </div>
       )}
 
-      {(!metaLoading || homeMeta) && (
+      {(!pageMetaLoading || homePageMeta) && (
         <>
           <Intro
             navigate={navigate}
@@ -137,10 +170,13 @@ export const Home = () => {
             />
           </div>
           <Prof navigate={navigate} />
-          <Members />
-          <Projects />
-          <Journal />
-          <Conference />
+          <Members sectionTitle={currentTeamTitle} />
+          <Projects
+            sectionTitle={currentProjectsTitle}
+            sectionDescription={currentProjectsDescription}
+          />
+          <Journal sectionTitle={journalPapersTitle} />
+          <Conference sectionTitle={conferencePapersTitle} />
         </>
       )}
     </div>
@@ -159,9 +195,7 @@ const Intro = ({ navigate, titleText, descriptionText }) => {
       setError(null);
       try {
         const response = await fetch(`${BASE_URL}/gallery`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const slides = data
           .map((event) => event.images[0])
@@ -182,12 +216,11 @@ const Intro = ({ navigate, titleText, descriptionText }) => {
   let titleEmphasis = "";
   let titlePart2 = "";
   const labSuffix = " Lab";
-
   const titleWithoutSuffix = titleText.endsWith(labSuffix)
     ? titleText.slice(0, -labSuffix.length)
     : titleText;
-
   const emphasisIndex = titleWithoutSuffix.indexOf("&");
+
   if (emphasisIndex !== -1) {
     titlePart1 = titleWithoutSuffix.substring(0, emphasisIndex).trim();
     titleEmphasis = "&";
@@ -211,18 +244,17 @@ const Intro = ({ navigate, titleText, descriptionText }) => {
           Could not load gallery images: {error}
         </div>
       )}
-
       <div className="flex flex-col gap-6 sm:gap-[30px] w-full sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-2 sm:gap-[8px]">
-          <h1 className="text-3xl sm:text-4xl lg:text-[44px] text-text_black_primary tracking-tight lg:tracking-[-4%] leading-tight lg:leading-[48px]">
+          <h1 className="text-6xl text-text_black_primary font-semibold">
             {titlePart1}
-            {titleEmphasis && <span className="text-primary_main">{titleEmphasis}</span>}
+            {titleEmphasis && (
+              <span className="text-primary_main">{" " + titleEmphasis + " "}</span>
+            )}
             {titlePart2}
             {(titlePart1 || titlePart2) && labSuffix}
           </h1>
-          <h3 className="text-sm lg:text-[12px] xl:text-sm text-text_black_secondary max-w-xl">
-            {descriptionText}
-          </h3>
+          <h3 className="text-sm text-text_black_secondary max-w-xl">{descriptionText}</h3>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-[10px] font-semibold text-base sm:text-[18px] flex-shrink-0">
           <button
@@ -264,13 +296,8 @@ const Prof = ({ navigate }) => {
           if (response.status === 404) {
             console.warn("Professor data not found.");
             setProf(null);
-          } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-        } else {
-          const data = await response.json();
-          setProf(data);
-        }
+          } else throw new Error(`HTTP error! status: ${response.status}`);
+        } else setProf(await response.json());
       } catch (err) {
         setError(err.message);
         console.error("Failed to fetch professor:", err);
@@ -338,8 +365,8 @@ const Prof = ({ navigate }) => {
 };
 Prof.propTypes = { navigate: PropTypes.func.isRequired };
 
-// Members Component
-const Members = () => {
+// Members Component - Accepts sectionTitle prop
+const Members = ({ sectionTitle }) => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -380,7 +407,7 @@ const Members = () => {
     <div className="flex flex-col gap-6 sm:gap-[30px] my-6 sm:my-[30px] w-full shrink-0">
       <div className="flex flex-col gap-2 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px]">
         <h1 className="font-semibold text-5xl sm:text-[42px] text-text_black_primary leading-tight sm:leading-[46px]">
-          Current Team
+          {sectionTitle}
         </h1>
       </div>
       <div className="flex flex-row gap-4 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px] w-full overflow-x-auto no-scrollbar pb-2">
@@ -437,9 +464,10 @@ const Members = () => {
     </div>
   );
 };
+Members.propTypes = { sectionTitle: PropTypes.string.isRequired };
 
-// Projects Component (Updated to reflect File 1 design)
-const Projects = () => {
+// Projects Component - Accepts sectionTitle and sectionDescription props
+const Projects = ({ sectionTitle, sectionDescription }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -464,12 +492,8 @@ const Projects = () => {
   }, []);
 
   const handleLearnMore = (projectLink, projectId) => {
-    if (projectLink) {
-      window.open(projectLink, "_blank", "noopener,noreferrer");
-    } else if (projectId) {
-      console.log("No direct link, project ID:", projectId);
-      // Potentially navigate to a detail page: navigate(`/projects/${projectId}`);
-    }
+    if (projectLink) window.open(projectLink, "_blank", "noopener,noreferrer");
+    else if (projectId) console.log("No direct link, project ID:", projectId);
   };
 
   if (loading)
@@ -489,16 +513,12 @@ const Projects = () => {
     <div className="flex flex-col gap-6 sm:gap-[30px] bg-text_black_primary text-white px-4 sm:px-6 lg:px-[25px] py-6 sm:py-[30px] w-full">
       <div className="flex flex-col gap-4 sm:gap-6 lg:gap-10 sm:items-center sm:flex-row">
         <h2 className="font-semibold text-5xl sm:text-5xl lg:text-[80px] leading-tight text-text_white_primary sm:shrink-0">
-          Current Projects
+          {sectionTitle}
         </h2>
         <h3 className="text-sm sm:text-base lg:text-lg text-text_white_secondary max-w-2xl">
-          We create innovative design concepts through systematic, human-centered methods,
-          developing them into products and services using engineering design. Our focus is on
-          elderly care, rehabilitation, healthcare, and safety, and we collaborate closely with
-          experts in medicine, geriatrics, physical therapy, materials, and production.
+          {sectionDescription}
         </h3>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {projects.length === 0 && !loading && (
           <div className="py-10 text-center text-gray-400 w-full md:col-span-2">
@@ -506,20 +526,14 @@ const Projects = () => {
           </div>
         )}
         {projects.map((project) => (
-          // Project Card based on File 1 design
           <div key={project._id} className="relative w-full rounded-3xl">
-            {" "}
-            {/* Container for positioning */}
             <img
-              className="absolute top-0 left-0 rounded-t-3xl w-full h-60 object-cover z-0" // Image layer
+              className="absolute top-0 left-0 rounded-t-3xl w-full h-60 object-cover z-0"
               src={`${project.image || "/img/placeholder.png"}`}
               alt={project.title || "Project image"}
             />
-            {/* The card's main body, which includes the border and background for content */}
             <div className="relative w-full min-h-[250px] rounded-3xl flex flex-col items-end border border-[#282828f2] bg-transparent overflow-hidden">
-              {/* This div creates space for the image above it. Content starts below this. */}
-              <div className="w-full h-60 flex-shrink-0" /> {/* Spacer for image height */}
-              {/* Text content area */}
+              <div className="w-full h-60 flex-shrink-0" />
               <div className="w-full flex flex-col gap-2 px-5 pt-4 flex-grow">
                 <h2 className="font-bold text-base sm:text-xl lg:text-[24px] text-text_white_primary">
                   {project.title}
@@ -528,7 +542,6 @@ const Projects = () => {
                   <h3 className="text-sm text-text_white_primary">{project.subtitle}</h3>
                 )}
               </div>
-              {/* Button */}
               <button
                 onClick={() => handleLearnMore(project.link, project._id)}
                 className="mb-5 mr-5 mt-2 px-4 py-2 border-2 border-primary_main rounded-md font-semibold text-sm text-primary_main hover:bg-primary_main hover:text-text_black_primary transition-colors"
@@ -539,7 +552,6 @@ const Projects = () => {
           </div>
         ))}
       </div>
-
       <div className="mt-4">
         <HashLink
           className="flex justify-center items-center gap-[10px] border-2 border-primary_main border-solid rounded-[15px] h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-primary_main hover:bg-primary_main hover:text-text_black_primary transition-colors duration-200"
@@ -552,9 +564,13 @@ const Projects = () => {
     </div>
   );
 };
+Projects.propTypes = {
+  sectionTitle: PropTypes.string.isRequired,
+  sectionDescription: PropTypes.string.isRequired,
+};
 
-// Journal Component (Updated to reflect File 1 design)
-const Journal = () => {
+// Journal Component - Accepts sectionTitle prop
+const Journal = ({ sectionTitle }) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -595,10 +611,9 @@ const Journal = () => {
     <div className="flex flex-col gap-6 sm:gap-[30px] bg-primary_main text-white py-6 sm:py-[30px] w-full">
       <div className="flex flex-col gap-4 sm:gap-5 px-5 sm:px-6 lg:px-[25px]">
         <h2 className="text-5xl text-text_black_primary tracking-normal font-semibold">
-          Journal Papers
+          {sectionTitle}
         </h2>
       </div>
-
       <div className="flex gap-2.5 overflow-x-scroll no-scrollbar min-h-[240px] px-2 sm:px-0 pb-2">
         <div className="w-1 sm:w-3 shrink-0" />
         {list.length === 0 && !loading && (
@@ -607,7 +622,6 @@ const Journal = () => {
           </div>
         )}
         {list.map((paper) => (
-          // Journal Card based on File 1 design
           <div
             key={paper._id}
             className="flex flex-col justify-between bg-black bg-opacity-80 p-4 rounded-2xl w-80 shrink-0 shadow-lg"
@@ -644,7 +658,6 @@ const Journal = () => {
         ))}
         <div className="w-1 sm:w-3 shrink-0" />
       </div>
-
       <div className="px-4 sm:px-6 lg:px-[25px] mt-4">
         <HashLink
           className="flex justify-center items-center gap-[10px] border-2 border-text_black_primary border-solid rounded-[15px] w-full h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-text_black_primary hover:bg-text_black_primary hover:text-primary_main transition-colors duration-200"
@@ -657,9 +670,10 @@ const Journal = () => {
     </div>
   );
 };
+Journal.propTypes = { sectionTitle: PropTypes.string.isRequired };
 
-// Conference Component (Updated to reflect File 1 design)
-const Conference = () => {
+// Conference Component - Accepts sectionTitle prop
+const Conference = ({ sectionTitle }) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -699,17 +713,15 @@ const Conference = () => {
   return (
     <div className="flex flex-col gap-6 sm:gap-[30px] py-6 sm:py-[30px] w-full">
       <h2 className="flex justify-between items-end px-4 sm:px-6 lg:px-[25px] text-5xl font-semibold text-text_black_primary tracking-normal">
-        <span>Conference Papers</span>
+        <span>{sectionTitle}</span>
         <Down_left_dark_arrow className="size-12 lg:size-14" style={{ path: { strokeWidth: 1 } }} />
       </h2>
-
       <div className="flex gap-2.5 overflow-x-auto no-scrollbar min-h-[240px] px-2 sm:px-0 pb-2">
         <div className="w-1 sm:w-3 shrink-0" />
         {list.length === 0 && !loading && (
           <div className="py-10 text-center text-gray-500 w-full">No conference papers found.</div>
         )}
         {list.map((item) => (
-          // Conference Card based on File 1 design
           <div
             key={item._id}
             className="flex flex-col justify-between bg-[#C1EDFF] p-4 rounded-2xl w-80 shrink-0 shadow-md"
@@ -749,7 +761,6 @@ const Conference = () => {
         ))}
         <div className="w-1 sm:w-3 shrink-0" />
       </div>
-
       <div className="px-4 sm:px-6 lg:px-[25px] mt-4">
         <HashLink
           className="flex justify-center items-center gap-[10px] border-2 border-primary_main border-solid rounded-[15px] w-full h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-primary_main hover:bg-primary_main hover:text-white transition-colors duration-200"
@@ -762,5 +773,6 @@ const Conference = () => {
     </div>
   );
 };
+Conference.propTypes = { sectionTitle: PropTypes.string.isRequired };
 
 export default Home;
