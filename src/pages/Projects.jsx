@@ -20,9 +20,8 @@ export const Projects = () => {
 
   const defaultProjectsPageMeta = useMemo(
     () => ({
-      title: "Projects",
-      description:
-        "We create innovative design concepts using systematic, human-centered methods and develop them into products and services through engineering design. Our focus is on elderly care, rehabilitation, healthcare, and safety, collaborating with experts in medicine, geriatrics, physical therapy, materials, and production.",
+      title: "",
+      description: "",
     }),
     []
   );
@@ -131,8 +130,8 @@ const Current = ({ refreshKey }) => {
 
   const defaultCurrentProjectsMeta = useMemo(
     () => ({
-      title: "Current Projects",
-      description: "Discover the ongoing research and development shaping the future.", // Optional description
+      title: "",
+      description: "", // Optional description
     }),
     []
   );
@@ -280,8 +279,8 @@ const Completed = ({ refreshKey }) => {
 
   const defaultCompletedProjectsMeta = useMemo(
     () => ({
-      title: "Completed Projects",
-      description: "A look back at our finished projects and their impact.", // Optional
+      title: "",
+      description: "", // Optional
     }),
     []
   );
@@ -478,8 +477,8 @@ const Awards = ({ refreshKey }) => {
 
   const defaultAwardsMeta = useMemo(
     () => ({
-      title: "Awards",
-      description: "Recognizing excellence in design and innovation.", // Optional
+      title: "",
+      description: "", // Optional
     }),
     []
   );

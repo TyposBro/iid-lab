@@ -25,8 +25,8 @@ export const Team = () => {
 
   const defaultTeamPageMeta = useMemo(
     () => ({
-      title: "Our Team",
-      description: "Meet the talented individuals driving innovation at our lab.", // This is a default, can be empty if not used.
+      title: "",
+      description: "", // This is a default, can be empty if not used.
     }),
     []
   );
@@ -70,9 +70,8 @@ export const Team = () => {
 
   const defaultCurrentTeamMeta = useMemo(
     () => ({
-      title: "Current Team",
-      description:
-        "Our lab is a vibrant hub of international and Korean researchers from diverse backgrounds, creating a dynamic and inclusive environment. Working here is not just productive but also a lot of fun, thanks to our enthusiastic and collaborative team!",
+      title: "",
+      description: "",
     }),
     []
   );
@@ -113,9 +112,8 @@ export const Team = () => {
 
   const defaultAlumniMeta = useMemo(
     () => ({
-      title: "Alumni",
-      description:
-        "Celebrating the achievements and contributions of our esteemed alumni who continue to make an impact worldwide.",
+      title: "",
+      description: "",
     }),
     []
   );

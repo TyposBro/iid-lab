@@ -27,9 +27,8 @@ export const News = () => {
 
   const defaultNewsMeta = useMemo(
     () => ({
-      title: "News",
-      description:
-        "Stay updated with the latest announcements, achievements, and events from our lab.",
+      title: "",
+      description: "",
     }),
     []
   );

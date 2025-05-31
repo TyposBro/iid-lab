@@ -30,15 +30,15 @@ export const Home = () => {
 
   const defaultHomePageMeta = useMemo(
     () => ({
-      title: "Integration & Innovation Design Lab",
+      title: "",
       description: "",
-      homeYoutubeId: "Xd-lcSxIsHM",
+      homeYoutubeId: "",
       // Titles for sections
-      currentProjectsTitle: "Current Projects",
+      currentProjectsTitle: "",
       currentProjectsDescription: "",
-      journalPapersTitle: "Journal Papers",
-      conferencePapersTitle: "Conference Papers",
-      currentTeamTitle: "Current Team",
+      journalPapersTitle: "",
+      conferencePapersTitle: "",
+      currentTeamTitle: "",
     }),
     []
   );
@@ -519,7 +519,7 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
           {sectionDescription}
         </h3>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-6 gap-4 sm:gap-6">
         {projects.length === 0 && !loading && (
           <div className="py-10 text-center text-gray-400 w-full md:col-span-2">
             No current projects found.
@@ -532,7 +532,7 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
               src={`${project.image || "/img/placeholder.png"}`}
               alt={project.title || "Project image"}
             />
-            <div className="relative w-full min-h-[250px] rounded-3xl flex flex-col items-end border border-[#282828f2] bg-transparent overflow-hidden">
+            <div className="relative w-full rounded-3xl flex flex-col items-end border border-[#282828f2] bg-transparent overflow-hidden">
               <div className="w-full h-60 flex-shrink-0" />
               <div className="w-full flex flex-col gap-2 px-5 pt-4 flex-grow">
                 <h2 className="font-bold text-base sm:text-xl lg:text-[24px] text-text_white_primary">
@@ -624,7 +624,7 @@ const Journal = ({ sectionTitle }) => {
         {list.map((paper) => (
           <div
             key={paper._id}
-            className="flex flex-col justify-between bg-black bg-opacity-80 p-4 rounded-2xl w-80 shrink-0 shadow-lg"
+            className="flex flex-col justify-between bg-text_black_primary p-4 rounded-2xl w-72 shrink-0 shadow-lg"
           >
             <a
               href={paper.link || "#"}
@@ -724,7 +724,7 @@ const Conference = ({ sectionTitle }) => {
         {list.map((item) => (
           <div
             key={item._id}
-            className="flex flex-col justify-between bg-[#C1EDFF] p-4 rounded-2xl w-80 shrink-0 shadow-md"
+            className="flex flex-col justify-between bg-[#C1EDFF] p-4 rounded-2xl w-72 shrink-0 shadow-md"
           >
             <a
               href={item.link || "#"}

@@ -20,9 +20,8 @@ export const Publications = () => {
 
   const defaultPublicationsPageMeta = useMemo(
     () => ({
-      title: "Publications",
-      description:
-        "We've published world-class research and won prestigious design awards. Our students gain the integrated knowledge and experience needed to lead new product development, leading to successful careers after graduation.",
+      title: "",
+      description: "",
     }),
     []
   );

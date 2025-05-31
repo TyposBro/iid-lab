@@ -25,7 +25,7 @@ export const Gallery = () => {
 
   const defaultGalleryMeta = useMemo(
     () => ({
-      title: "Gallery",
+      title: "",
       description: "",
     }),
     []
