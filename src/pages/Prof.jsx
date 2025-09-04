@@ -329,10 +329,10 @@ const AdminProfessorControls = ({ prof, setProf }) => {
 
   const uploadFile = async (file, fieldNameInFormData) => {
     const fileData = new FormData();
-    fileData.append(fieldNameInFormData, file);
+    fileData.append("file", file); // Always use "file" for our Worker API
 
     try {
-      const response = await fetch(`${BASE_URL}/upload`, {
+      const response = await fetch(`${BASE_URL}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${adminToken}` },
         body: fileData,
@@ -344,8 +344,8 @@ const AdminProfessorControls = ({ prof, setProf }) => {
       }
 
       const data = await response.json();
-      // Adjusted to handle if backend returns an array with one URL, or an object with imageUrl/url
-      const uploadedUrl = Array.isArray(data) ? data[0] : data.imageUrl || data.url;
+      // Our Worker API returns {success: true, urls: [...], count: 1}
+      const uploadedUrl = data.urls?.[0];
 
       if (!uploadedUrl) {
         throw new Error("Invalid response format from upload API or no URL returned.");

@@ -244,16 +244,16 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
       if (cb.imageFile) {
         // New image to upload
         const formData = new FormData();
-        formData.append("images", cb.imageFile);
+        formData.append("file", cb.imageFile);
         try {
-          const res = await fetch(`${BASE_URL}/upload`, {
+          const res = await fetch(`${BASE_URL}/api/upload`, {
             method: "POST",
             headers: { Authorization: `Bearer ${adminToken}` },
             body: formData,
           });
           if (!res.ok) throw new Error(`Image upload failed for block "${cb.title}"`);
-          const urls = await res.json();
-          imageUrl = urls[0];
+          const uploadResult = await res.json();
+          imageUrl = uploadResult.urls?.[0];
         } catch (uploadError) {
           setError(`Upload error: ${uploadError.message}`);
           setIsLoading(false);

@@ -750,19 +750,19 @@ const AdminProjectControls = ({ onProjectsUpdated }) => {
   const uploadImage = async (file) => {
     if (!file) return null; // No file to upload
     const formData = new FormData();
-    formData.append("images", file); // Ensure your backend /upload endpoint expects "images"
+    formData.append("file", file); // Change from "images" to "file" to match our Worker API
     try {
-      const uploadResponse = await fetch(`${BASE_URL}/upload`, {
+      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${adminToken}` },
         body: formData,
       });
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json();
-        throw new Error(errorData.message || `Image upload failed: ${uploadResponse.status}`);
+        throw new Error(errorData.error || `Image upload failed: ${uploadResponse.status}`);
       }
-      const uploadedUrls = await uploadResponse.json();
-      return uploadedUrls[0] || null; // Assuming it returns an array with one URL
+      const uploadResult = await uploadResponse.json();
+      return uploadResult.urls?.[0] || null; // Our Worker API returns {success: true, urls: [...], count: 1}
     } catch (error) {
       console.error("Image upload error:", error);
       setSubmitError(`Image Upload Failed: ${error.message}`);

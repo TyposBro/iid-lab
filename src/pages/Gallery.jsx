@@ -307,11 +307,11 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
     setIsSubmitting(true);
     const formData = new FormData();
     for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append("images", selectedFiles[i]);
+      formData.append("file", selectedFiles[i]);
     }
 
     try {
-      const uploadResponse = await fetch(`${BASE_URL}/upload`, {
+      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${adminToken}`,
@@ -320,7 +320,8 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
       });
 
       if (uploadResponse.ok) {
-        const uploadedImageUrls = await uploadResponse.json();
+        const uploadResult = await uploadResponse.json();
+        const uploadedImageUrls = uploadResult.urls || [];
         const isoDate = newDate.toISOString();
         const newEvent = {
           title: newTitle,
@@ -385,13 +386,13 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
     setIsSubmitting(true);
     const formData = new FormData();
     for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append("images", selectedFiles[i]);
+      formData.append("file", selectedFiles[i]);
     }
 
     let newImageUrls = [];
     if (selectedFiles.length > 0) {
       try {
-        const uploadResponse = await fetch(`${BASE_URL}/upload`, {
+        const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${adminToken}`,
@@ -400,7 +401,8 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
         });
 
         if (uploadResponse.ok) {
-          newImageUrls = await uploadResponse.json();
+          const uploadResult = await uploadResponse.json();
+          newImageUrls = uploadResult.urls || [];
         } else {
           console.error("Failed to upload new images");
           const errorData = await uploadResponse.json();
