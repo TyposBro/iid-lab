@@ -42,7 +42,7 @@ export const AdminMetaControls = ({
     setSuccess(null);
 
     try {
-      const response = await fetch(`${BASE_URL}/meta/${pageIdentifier}`, {
+      const response = await fetch(`${BASE_URL}/api/meta/${pageIdentifier}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

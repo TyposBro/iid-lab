@@ -35,7 +35,7 @@ export const Team = () => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/team`);
+      const response = await fetch(`${BASE_URL}/api/meta/team`);
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("Team page meta not found, using defaults.");
@@ -80,7 +80,7 @@ export const Team = () => {
     setCurrentMetaLoading(true);
     setCurrentMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/team-current`);
+      const response = await fetch(`${BASE_URL}/api/meta/team-current`);
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("Current Team meta not found, using defaults.");
@@ -122,7 +122,7 @@ export const Team = () => {
     setAlumniMetaLoading(true);
     setAlumniMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/team-alumni`);
+      const response = await fetch(`${BASE_URL}/api/meta/team-alumni`);
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("Alumni meta not found, using defaults.");
@@ -151,7 +151,7 @@ export const Team = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/team`);
+      const response = await fetch(`${BASE_URL}/api/team`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       setTeamData(await response.json());
     } catch (err) {
@@ -166,7 +166,7 @@ export const Team = () => {
     setProfLoading(true);
     setProfError(null);
     try {
-      const response = await fetch(`${BASE_URL}/prof`);
+      const response = await fetch(`${BASE_URL}/api/professors/all`);
       if (!response.ok) {
         // If professor not found, don't throw error, just setProfData to null
         if (response.status === 404) {
@@ -575,7 +575,7 @@ const AdminTeamControls = ({ refreshData }) => {
   const fetchAdminTeamMembers = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BASE_URL}/team`);
+      const response = await fetch(`${BASE_URL}/api/team`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setMembers(data.sort((a, b) => a.name.localeCompare(b.name)));
@@ -649,7 +649,7 @@ const AdminTeamControls = ({ refreshData }) => {
       linkedIn: newLinkedIn,
     };
     try {
-      const response = await fetch(`${BASE_URL}/team`, {
+      const response = await fetch(`${BASE_URL}/api/team`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
         body: JSON.stringify(newMember),
@@ -699,7 +699,7 @@ const AdminTeamControls = ({ refreshData }) => {
       img: uploadedImageUrl,
     };
     try {
-      const response = await fetch(`${BASE_URL}/team/${editingMember._id}`, {
+      const response = await fetch(`${BASE_URL}/api/team/${editingMember._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
         body: JSON.stringify(updatedMember),
@@ -726,7 +726,7 @@ const AdminTeamControls = ({ refreshData }) => {
     if (window.confirm("Are you sure you want to delete this team member?")) {
       setDeletingId(id);
       try {
-        const response = await fetch(`${BASE_URL}/team/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/team/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${adminToken}` },
         });
@@ -1108,7 +1108,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     if (window.confirm("Are you sure you want to delete the professor's information?")) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`${BASE_URL}/prof/${professor._id}`, {
+        const response = await fetch(`${BASE_URL}/api/professors/${professor._id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${adminToken}` },
         });

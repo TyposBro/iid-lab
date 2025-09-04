@@ -35,7 +35,7 @@ export const Footer = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/footer`);
+      const response = await fetch(`${BASE_URL}/api/meta/footer`);
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("Footer meta data not found, using defaults.");

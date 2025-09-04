@@ -36,7 +36,7 @@ export const About = () => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/about`);
+      const response = await fetch(`${BASE_URL}/api/meta/about`);
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("About page meta data not found, using defaults.");
@@ -68,7 +68,7 @@ export const About = () => {
     setLoadingAboutTracks(true);
     setTracksError(null);
     try {
-      const response = await fetch(`${BASE_URL}/about`);
+      const response = await fetch(`${BASE_URL}/api/about`);
       if (!response.ok) {
         const errData = await response
           .json()
@@ -104,10 +104,10 @@ export const About = () => {
     let finalSlides = [];
     try {
       const results = await Promise.allSettled([
-        fetch(`${BASE_URL}/news`).then((res) =>
+        fetch(`${BASE_URL}/api/news`).then((res) =>
           res.ok ? res.json() : Promise.resolve({ data: [] })
         ), // Ensure data structure
-        fetch(`${BASE_URL}/gallery`).then((res) =>
+        fetch(`${BASE_URL}/api/gallery`).then((res) =>
           res.ok ? res.json() : Promise.resolve({ data: [] })
         ), // Ensure data structure
       ]);

@@ -30,7 +30,7 @@ export const Projects = () => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/projects`); // e.g., /meta/projects-main
+      const response = await fetch(`${BASE_URL}/api/meta/projects`); // e.g., /meta/projects-main
       if (!response.ok) {
         if (response.status === 404) {
           setProjectsPageMeta(defaultProjectsPageMeta);
@@ -140,7 +140,7 @@ const Current = ({ refreshKey }) => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/projects-current`);
+      const response = await fetch(`${BASE_URL}/api/meta/projects-current`);
       if (!response.ok) {
         if (response.status === 404) {
           setCurrentProjectsMeta(defaultCurrentProjectsMeta);
@@ -166,7 +166,7 @@ const Current = ({ refreshKey }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/projects/status/current`);
+      const response = await fetch(`${BASE_URL}/api/projects?status=current`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       setProjects(await response.json());
     } catch (err) {
@@ -289,7 +289,7 @@ const Completed = ({ refreshKey }) => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/projects-completed`);
+      const response = await fetch(`${BASE_URL}/api/meta/projects-completed`);
       if (!response.ok) {
         if (response.status === 404) {
           setCompletedProjectsMeta(defaultCompletedProjectsMeta);
@@ -315,7 +315,7 @@ const Completed = ({ refreshKey }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/projects/status/completed`);
+      const response = await fetch(`${BASE_URL}/api/projects?status=completed`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setAllCompleted(data);
@@ -487,7 +487,7 @@ const Awards = ({ refreshKey }) => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/projects-awards`);
+      const response = await fetch(`${BASE_URL}/api/meta/projects-awards`);
       if (!response.ok) {
         if (response.status === 404) {
           setAwardsMeta(defaultAwardsMeta);
@@ -513,7 +513,7 @@ const Awards = ({ refreshKey }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/projects/status/award`);
+      const response = await fetch(`${BASE_URL}/api/projects?status=award`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setAllAwards(data);

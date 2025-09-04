@@ -30,7 +30,7 @@ export const Publications = () => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/publications`); // e.g., /meta/publications-main
+      const response = await fetch(`${BASE_URL}/api/meta/publications`); // e.g., /meta/publications-main
       if (!response.ok) {
         if (response.status === 404) {
           setPublicationsPageMeta(defaultPublicationsPageMeta);
@@ -179,7 +179,7 @@ const PublicationList = ({
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/publications-${titleKey}`);
+      const response = await fetch(`${BASE_URL}/api/meta/publications-${titleKey}`);
       if (!response.ok) {
         if (response.status === 404) {
           setSectionMeta(defaultSectionMeta);
@@ -207,7 +207,7 @@ const PublicationList = ({
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/publications/type/${listType}`);
+      const response = await fetch(`${BASE_URL}/api/publications?type=${listType}`);
       if (!response.ok) {
         const errorData = await response
           .json()

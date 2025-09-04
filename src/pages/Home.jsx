@@ -47,7 +47,7 @@ export const Home = () => {
     setPageMetaLoading(true);
     setPageMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/home`); // Endpoint for all home page related meta
+      const response = await fetch(`${BASE_URL}/api/meta/home`); // Endpoint for all home page related meta
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("Home page comprehensive meta not found, using defaults.");
@@ -194,7 +194,7 @@ const Intro = ({ navigate, titleText, descriptionText }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${BASE_URL}/gallery`);
+        const response = await fetch(`${BASE_URL}/api/gallery?featured=true`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const slides = data
@@ -291,7 +291,7 @@ const Prof = ({ navigate }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${BASE_URL}/prof`);
+        const response = await fetch(`${BASE_URL}/api/professors/all`);
         if (!response.ok) {
           if (response.status === 404) {
             console.warn("Professor data not found.");
@@ -376,7 +376,7 @@ const Members = ({ sectionTitle }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${BASE_URL}/team`);
+        const response = await fetch(`${BASE_URL}/api/team?featured=true`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setMembers(data.filter((member) => member.type !== "alumni"));

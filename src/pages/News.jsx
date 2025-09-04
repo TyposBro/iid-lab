@@ -37,7 +37,7 @@ export const News = () => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/news`); // Ensure this endpoint exists
+      const response = await fetch(`${BASE_URL}/api/meta/news`); // Ensure this endpoint exists
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("News meta data not found, using defaults.");
@@ -79,7 +79,7 @@ export const News = () => {
     setLoading(true); // Ensure loading is true at the start for news items
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/news`);
+      const response = await fetch(`${BASE_URL}/api/news`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -409,7 +409,7 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
         images: uploadedImageUrls,
         type: newType,
       };
-      const createResponse = await fetch(`${BASE_URL}/news`, {
+      const createResponse = await fetch(`${BASE_URL}/api/news`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -496,7 +496,7 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
       type: newType,
     };
     try {
-      const response = await fetch(`${BASE_URL}/news/${editingEvent._id}`, {
+      const response = await fetch(`${BASE_URL}/api/news/${editingEvent._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -530,7 +530,7 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
     if (window.confirm("Are you sure you want to delete this news item?")) {
       setDeletingId(id);
       try {
-        const response = await fetch(`${BASE_URL}/news/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/news/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${adminToken}` },
         });

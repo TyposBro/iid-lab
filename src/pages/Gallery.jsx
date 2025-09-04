@@ -35,7 +35,7 @@ export const Gallery = () => {
     setMetaLoading(true);
     setMetaError(null);
     try {
-      const response = await fetch(`${BASE_URL}/meta/gallery`); // Ensure this endpoint exists
+      const response = await fetch(`${BASE_URL}/api/meta/gallery`); // Ensure this endpoint exists
       if (!response.ok) {
         if (response.status === 404) {
           console.warn("Gallery meta data not found, using defaults.");
@@ -76,7 +76,7 @@ export const Gallery = () => {
     setLoading(true); // Keep this for gallery events loading
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/gallery`);
+      const response = await fetch(`${BASE_URL}/api/gallery`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -331,7 +331,7 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
           type: newType,
         };
 
-        const createResponse = await fetch(`${BASE_URL}/gallery`, {
+        const createResponse = await fetch(`${BASE_URL}/api/gallery`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -428,7 +428,7 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
     };
 
     try {
-      const response = await fetch(`${BASE_URL}/gallery/${editingEvent._id}`, {
+      const response = await fetch(`${BASE_URL}/api/gallery/${editingEvent._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -463,7 +463,7 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       setDeletingId(id);
       try {
-        const response = await fetch(`${BASE_URL}/gallery/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/gallery/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${adminToken}`,

@@ -311,7 +311,7 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${BASE_URL}/about/${trackId}`, {
+      const response = await fetch(`${BASE_URL}/api/about/${trackId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${adminToken}` },
       });

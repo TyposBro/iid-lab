@@ -49,7 +49,7 @@ const Prof = () => {
     const fetchProfessor = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${BASE_URL}/prof`);
+        const response = await fetch(`${BASE_URL}/api/professors/all`);
         if (!response.ok) {
           if (response.status === 404) {
             setProf(null);
@@ -431,7 +431,7 @@ const AdminProfessorControls = ({ prof, setProf }) => {
     setIsSubmitting(true);
     setFormError(null);
     try {
-      const response = await fetch(`${BASE_URL}/prof/${prof._id}`, {
+      const response = await fetch(`${BASE_URL}/api/professors/${prof._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${adminToken}` },
       });
