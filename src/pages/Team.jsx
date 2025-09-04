@@ -597,16 +597,16 @@ const AdminTeamControls = ({ refreshData }) => {
     if (file) {
       setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("images", file);
+      formData.append("file", file);
       try {
-        const response = await fetch(`${BASE_URL}/upload`, {
+        const response = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
           headers: { Authorization: `Bearer ${adminToken}` },
           body: formData,
         });
         if (response.ok) {
           const data = await response.json();
-          setUploadedImageUrl(data[0]);
+          setUploadedImageUrl(data.urls?.[0]);
         } else {
           const errorData = await response.json();
           alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
@@ -1021,16 +1021,16 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     if (file) {
       setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("images", file);
+      formData.append("file", file);
       try {
-        const response = await fetch(`${BASE_URL}/upload`, {
+        const response = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
           headers: { Authorization: `Bearer ${adminToken}` },
           body: formData,
         });
         if (response.ok) {
           const data = await response.json();
-          setUploadedImageUrl(data[0]);
+          setUploadedImageUrl(data.urls?.[0]);
         } else {
           const errorData = await response.json();
           alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);

@@ -30,7 +30,7 @@ export const AdminProvider = ({ children }) => {
           setIsAdmin(false);
           // Optionally redirect to login page here if not already on it
           if (window.location.pathname == "/admin-dashboard") {
-            navigate("/admin/login");
+            navigate("/admin");
           }
         } else {
           setIsAdmin(true);

@@ -388,10 +388,10 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
     }
     setIsSubmitting(true);
     const formData = new FormData();
-    selectedFiles.forEach((file) => formData.append("images", file));
+    selectedFiles.forEach((file) => formData.append("file", file));
 
     try {
-      const uploadResponse = await fetch(`${BASE_URL}/upload`, {
+      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${adminToken}` },
         body: formData,
@@ -400,7 +400,7 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
         const errorData = await uploadResponse.json();
         throw new Error(`Image upload failed: ${errorData?.message || uploadResponse.statusText}`);
       }
-      const uploadedImageUrls = await uploadResponse.json();
+      const uploadResult = await uploadResponse.json(); const uploadedImageUrls = uploadResult.urls || [];
       const isoDate = newDate.toISOString().split("T")[0];
       const newEventData = {
         title: newTitle,
@@ -466,9 +466,9 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
     let newImageUrls = [];
     if (selectedFiles.length > 0) {
       const formData = new FormData();
-      selectedFiles.forEach((file) => formData.append("images", file));
+      selectedFiles.forEach((file) => formData.append("file", file));
       try {
-        const uploadResponse = await fetch(`${BASE_URL}/upload`, {
+        const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
           headers: { Authorization: `Bearer ${adminToken}` },
           body: formData,
@@ -479,7 +479,7 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
             `Image upload failed: ${errorData?.message || uploadResponse.statusText}`
           );
         }
-        newImageUrls = await uploadResponse.json();
+        const uploadResult = await uploadResponse.json(); newImageUrls = uploadResult.urls || [];
       } catch (error) {
         console.error("Error uploading new images:", error);
         alert(`Failed to upload new images: ${error.message}`);

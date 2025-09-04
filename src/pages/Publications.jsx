@@ -543,9 +543,9 @@ const AdminControls = ({ onPublicationsUpdated }) => {
   const uploadImage = async (file) => {
     if (!file) return null;
     const formData = new FormData();
-    formData.append("images", file);
+    formData.append("file", file);
     try {
-      const uploadResponse = await fetch(`${BASE_URL}/upload`, {
+      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${adminToken}` },
         body: formData,
@@ -556,7 +556,7 @@ const AdminControls = ({ onPublicationsUpdated }) => {
           .catch(() => ({ message: `Image upload failed: ${uploadResponse.status}` }));
         throw new Error(errorData.message);
       }
-      const uploadedUrls = await uploadResponse.json();
+      const uploadResult = await uploadResponse.json(); const uploadedUrls = uploadResult.urls || [];
       return uploadedUrls[0] || null;
     } catch (error) {
       console.error("Image upload error:", error);
