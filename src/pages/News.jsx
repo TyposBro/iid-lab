@@ -400,7 +400,8 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
         const errorData = await uploadResponse.json();
         throw new Error(`Image upload failed: ${errorData?.message || uploadResponse.statusText}`);
       }
-      const uploadResult = await uploadResponse.json(); const uploadedImageUrls = uploadResult.urls || [];
+      const uploadResult = await uploadResponse.json();
+      const uploadedImageUrls = uploadResult.urls || [];
       const isoDate = newDate.toISOString().split("T")[0];
       const newEventData = {
         title: newTitle,
@@ -479,7 +480,8 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
             `Image upload failed: ${errorData?.message || uploadResponse.statusText}`
           );
         }
-        const uploadResult = await uploadResponse.json(); newImageUrls = uploadResult.urls || [];
+        const uploadResult = await uploadResponse.json();
+        newImageUrls = uploadResult.urls || [];
       } catch (error) {
         console.error("Error uploading new images:", error);
         alert(`Failed to upload new images: ${error.message}`);

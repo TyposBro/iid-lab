@@ -481,7 +481,7 @@ const AdminControls = ({ onPublicationsUpdated }) => {
     setIsLoadingList(true);
     setListError(null);
     try {
-      const response = await fetch(`${BASE_URL}/publications`, {
+      const response = await fetch(`${BASE_URL}/api/publications`, {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       if (!response.ok) {
@@ -556,7 +556,8 @@ const AdminControls = ({ onPublicationsUpdated }) => {
           .catch(() => ({ message: `Image upload failed: ${uploadResponse.status}` }));
         throw new Error(errorData.message);
       }
-      const uploadResult = await uploadResponse.json(); const uploadedUrls = uploadResult.urls || [];
+      const uploadResult = await uploadResponse.json();
+      const uploadedUrls = uploadResult.urls || [];
       return uploadedUrls[0] || null;
     } catch (error) {
       console.error("Image upload error:", error);
@@ -662,7 +663,7 @@ const AdminControls = ({ onPublicationsUpdated }) => {
       setDeletingId(id);
       setSubmitError(null);
       try {
-        const response = await fetch(`${BASE_URL}/publications/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/publications/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${adminToken}` },
         });

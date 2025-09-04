@@ -693,7 +693,7 @@ const AdminProjectControls = ({ onProjectsUpdated }) => {
     setIsLoadingList(true);
     setListError(null);
     try {
-      const response = await fetch(`${BASE_URL}/projects`); // GET all projects
+      const response = await fetch(`${BASE_URL}/api/projects`); // GET all projects
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
       setProjects(
@@ -880,7 +880,7 @@ const AdminProjectControls = ({ onProjectsUpdated }) => {
       setDeletingId(id);
       setSubmitError(null);
       try {
-        const response = await fetch(`${BASE_URL}/projects/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/projects/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${adminToken}` },
         });

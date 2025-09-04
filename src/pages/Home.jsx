@@ -477,7 +477,7 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${BASE_URL}/projects/status/current`);
+        const response = await fetch(`${BASE_URL}/api/projects?status=current`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setProjects(data.slice(0, 4));
@@ -580,7 +580,7 @@ const Journal = ({ sectionTitle }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${BASE_URL}/publications/type/journal`);
+        const response = await fetch(`${BASE_URL}/api/publications?type=journal`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setList(data.slice(0, 5));
@@ -683,7 +683,7 @@ const Conference = ({ sectionTitle }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${BASE_URL}/publications/type/conference`);
+        const response = await fetch(`${BASE_URL}/api/publications?type=conference`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         setList(data.slice(0, 5));
