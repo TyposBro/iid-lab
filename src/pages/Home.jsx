@@ -297,7 +297,11 @@ const Prof = ({ navigate }) => {
             console.warn("Professor data not found.");
             setProf(null);
           } else throw new Error(`HTTP error! status: ${response.status}`);
-        } else setProf(await response.json());
+        } else {
+          const data = await response.json();
+          // Take the first professor from the array
+          setProf(Array.isArray(data) && data.length > 0 ? data[0] : null);
+        }
       } catch (err) {
         setError(err.message);
         console.error("Failed to fetch professor:", err);
@@ -637,7 +641,10 @@ const Journal = ({ sectionTitle }) => {
             </a>
             <div className="flex justify-between items-end mt-4">
               <div className="flex flex-col text-sm text-[#08DBE9] truncate">
-                {paper.authors.map((author, index) => (
+                {(Array.isArray(paper.authors)
+                  ? paper.authors
+                  : JSON.parse(paper.authors || "[]")
+                ).map((author, index) => (
                   <span key={index} className="truncate">
                     {author}
                   </span>
@@ -737,7 +744,10 @@ const Conference = ({ sectionTitle }) => {
             </a>
             <div className="flex justify-between items-end mt-4">
               <div className="flex flex-col text-sm text-[#10719A] truncate">
-                {item.authors.map((author, index) => (
+                {(Array.isArray(item.authors)
+                  ? item.authors
+                  : JSON.parse(item.authors || "[]")
+                ).map((author, index) => (
                   <span key={index} className="truncate">
                     {author}
                   </span>

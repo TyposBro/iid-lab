@@ -58,7 +58,8 @@ const Prof = () => {
           }
         } else {
           const data = await response.json();
-          setProf(data);
+          // Take the first professor from the array
+          setProf(Array.isArray(data) && data.length > 0 ? data[0] : null);
         }
       } catch (err) {
         setError(err.message);
