@@ -1,29 +1,27 @@
 /* eslint-disable no-unused-vars */
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/News.jsx
 
-import { useState, useEffect, useCallback, useMemo } from "react"; // Added useCallback, useMemo
+import { useState, useMemo } from "react"; // Simplified hooks
 import PropTypes from "prop-types";
 import { Filter, MainCarousel, Markdown, LoadingSpinner, AdminMetaControls } from "@/components/"; // Added AdminMetaControls
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
+import { useNewsMeta, useNewsItems } from "@/hooks/useNewsApi";
+import { useQueryClient } from "@tanstack/react-query";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styles/datepicker-override.css"; // Optional: Add a CSS file for custom DatePicker styles if needed
 
 export const News = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true); // For news items
-  const [error, setError] = useState(null); // For news items
+  const queryClient = useQueryClient();
+  const { data: events = [], isLoading: loading, error } = useNewsItems();
   const [selected, setSelected] = useState("Latest");
   const [limit, setLimit] = useState(5);
   const { isAdmin } = useAdmin();
 
   // --- Meta Data State and Fetching ---
-  const [newsMeta, setNewsMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshMetaKey, setRefreshMetaKey] = useState(0);
+  const { data: newsMeta, isLoading: metaLoading, error: metaError } = useNewsMeta();
 
   const defaultNewsMeta = useMemo(
     () => ({
@@ -33,70 +31,13 @@ export const News = () => {
     []
   );
 
-  const fetchNewsMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/news`); // Ensure this endpoint exists
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn("News meta data not found, using defaults.");
-          setNewsMeta(defaultNewsMeta);
-          document.title = defaultNewsMeta.title + " - I&I Design Lab";
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      } else {
-        const data = await response.json();
-        setNewsMeta(data);
-        document.title = (data.title || defaultNewsMeta.title) + " - I&I Design Lab";
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      console.error("Failed to fetch news meta:", err);
-      setNewsMeta(defaultNewsMeta);
-      document.title = defaultNewsMeta.title + " - I&I Design Lab";
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultNewsMeta]);
-
-  useEffect(() => {
-    fetchNewsMeta();
-  }, [fetchNewsMeta, refreshMetaKey]);
-
   const handleMetaUpdated = () => {
-    setRefreshMetaKey((prev) => prev + 1);
+    queryClient.invalidateQueries({ queryKey: ["news", "meta"] });
   };
   // --- End Meta Data ---
 
-  // Fetching News Items Logic
-  useEffect(() => {
-    fetchNews();
-  }, []);
-
-  const fetchNews = async () => {
-    setLoading(true); // Ensure loading is true at the start for news items
-    setError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/news`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      // Sort news by date descending by default
-      const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-      setEvents(sortedData);
-    } catch (err) {
-      setError(err.message);
-      console.error("Failed to fetch news:", err);
-    } finally {
-      setLoading(false); // End loading for news items
-    }
-  };
-
   const refetchNews = () => {
-    fetchNews(); // Simply re-run the fetch for news items
+    queryClient.invalidateQueries({ queryKey: ["news", "list"] });
   };
 
   // Use resolved meta or defaults for display
@@ -182,11 +123,7 @@ export const News = () => {
           {!loading && !error && (
             <>
               {isAdmin && (
-                <AdminNewsControls
-                  events={events}
-                  setEvents={setEvents}
-                  refetchNews={refetchNews}
-                />
+                <AdminNewsControls events={events} setEvents={() => {}} refetchNews={refetchNews} />
               )}
 
               <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-4xl">
