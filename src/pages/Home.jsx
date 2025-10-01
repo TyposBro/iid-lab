@@ -218,7 +218,7 @@ const Prof = ({ navigate }) => {
   if (loading)
     return (
       <div className="p-6 text-center w-full">
-  <LoadingSpinner variant="block" message="Loading professor data..." />
+        <LoadingSpinner variant="block" message="Loading professor data..." />
       </div>
     );
   if (error)
@@ -279,7 +279,7 @@ const Members = ({ sectionTitle }) => {
   if (loading)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center w-full">
-  <LoadingSpinner variant="block" message="Loading team members..." />
+        <LoadingSpinner variant="block" message="Loading team members..." />
       </div>
     );
   if (error)
@@ -364,7 +364,7 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
   if (loading)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] bg-text_black_primary py-10 text-center w-full">
-  <LoadingSpinner variant="block" message="Loading projects..." />
+        <LoadingSpinner variant="block" message="Loading projects..." />
       </div>
     );
   if (error)
@@ -441,7 +441,7 @@ const Journal = ({ sectionTitle }) => {
   if (loading)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] bg-primary_main py-10 text-center w-full">
-  <LoadingSpinner variant="block" message="Loading journal papers..." />
+        <LoadingSpinner variant="block" message="Loading journal papers..." />
       </div>
     );
   if (error)
@@ -526,7 +526,7 @@ const Conference = ({ sectionTitle }) => {
   if (loading)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center w-full">
-  <LoadingSpinner variant="block" message="Loading conference papers..." />
+        <LoadingSpinner variant="block" message="Loading conference papers..." />
       </div>
     );
   if (error)
