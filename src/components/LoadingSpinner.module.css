@@ -1,31 +1,52 @@
 /* frontend/components/LoadingSpinner.module.css */
+/* Fullscreen overlay */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it's on top of other content */
+  z-index: 1000;
+}
+
+/* Block (default) centers spinner inside parent flow without overlay */
+.blockWrapper {
+  position: relative;
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Inline for embedding inside buttons / small UI */
+.inlineWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .spinner {
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3; /* Light grey */
-  border-top: 5px solid #3498db; /* Blue */
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
+  border: 5px solid rgba(0, 0, 0, 0.15);
+  border-top-color: #3498db;
+  animation: spin 0.9s linear infinite;
+  box-sizing: border-box;
 }
 
 .message {
-  color: white;
-  font-size: 1.2em;
+  color: inherit;
+  font-size: 0.85rem;
+  text-align: center;
+  max-width: 240px;
+  line-height: 1.2;
+  font-weight: 500;
 }
 
 @keyframes spin {

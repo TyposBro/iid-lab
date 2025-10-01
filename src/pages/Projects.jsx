@@ -57,7 +57,7 @@ export const Projects = () => {
       )}
       {metaLoading && (
         <div className="text-center py-6">
-          <LoadingSpinner message="Loading page details..." />
+          <LoadingSpinner variant="block" message="Loading page details..." />
         </div>
       )}
       {metaError && (
@@ -83,7 +83,7 @@ export const Projects = () => {
         <Suspense
           fallback={
             <div className="w-full max-w-screen-xl mx-auto px-4 md:px-[25px] py-4">
-              <LoadingSpinner message="Loading admin controls..." />
+              <LoadingSpinner variant="block" message="Loading admin controls..." />
             </div>
           }
         >
@@ -134,7 +134,7 @@ const Current = ({ refreshKey }) => {
       )}
       {metaLoading && (
         <div className="text-center py-4">
-          <LoadingSpinner message="Loading section details..." />
+          <LoadingSpinner variant="block" message="Loading section details..." />
         </div>
       )}
       {metaError && <div className="text-red-500 text-center p-4">Error: {metaError}</div>}
@@ -155,7 +155,7 @@ const Current = ({ refreshKey }) => {
 
       {loading && (
         <div className="text-center p-4">
-          <LoadingSpinner message="Loading Current Projects..." />
+          <LoadingSpinner variant="block" message="Loading Current Projects..." />
         </div>
       )}
       {error && <div className="text-center p-4 text-red-600">Error: {error}</div>}
@@ -248,7 +248,7 @@ const Completed = ({ refreshKey }) => {
         )}
         {metaLoading && (
           <div className="text-center py-4 text-white">
-            <LoadingSpinner message="Loading section details..." />
+            <LoadingSpinner variant="block" message="Loading section details..." />
           </div>
         )}
         {metaError && <div className="text-red-400 text-center p-4">Error: {metaError}</div>}
@@ -286,7 +286,7 @@ const Completed = ({ refreshKey }) => {
 
       {loading && (
         <div className="text-center p-4 text-white">
-          <LoadingSpinner message="Loading Completed Projects..." />
+          <LoadingSpinner variant="block" message="Loading Completed Projects..." />
         </div>
       )}
       {error && <div className="text-center p-4 text-red-400">Error: {error}</div>}
@@ -392,7 +392,7 @@ const Awards = ({ refreshKey }) => {
         )}
         {metaLoading && (
           <div className="text-center py-4 text-black">
-            <LoadingSpinner message="Loading section details..." />
+            <LoadingSpinner variant="block" message="Loading section details..." />
           </div>
         )}
         {metaError && <div className="text-red-700 text-center p-4">Error: {metaError}</div>}
@@ -430,7 +430,7 @@ const Awards = ({ refreshKey }) => {
 
       {loading && (
         <div className="text-center p-4 text-black">
-          <LoadingSpinner message="Loading Awards..." />
+          <LoadingSpinner variant="block" message="Loading Awards..." />
         </div>
       )}
       {error && <div className="text-center p-4 text-red-700">Error: {error}</div>}

@@ -225,7 +225,7 @@ export const Team = () => {
       )}
       {metaLoading && (
         <div className="text-center py-6">
-          <LoadingSpinner message="Loading page details..." />
+          <LoadingSpinner variant="block" message="Loading page details..." />
         </div>
       )}
       {metaError && (
@@ -256,7 +256,7 @@ export const Team = () => {
         )}
         {currentMetaLoading && (
           <div className="text-center py-6">
-            <LoadingSpinner message="Loading current team intro..." />
+            <LoadingSpinner variant="block" message="Loading current team intro..." />
           </div>
         )}
         {currentMetaError && (
@@ -292,7 +292,7 @@ export const Team = () => {
         )}
         {alumniMetaLoading && (
           <div className="text-center py-6">
-            <LoadingSpinner message="Loading alumni intro..." />
+            <LoadingSpinner variant="block" message="Loading alumni intro..." />
           </div>
         )}
         {alumniMetaError && (
@@ -320,7 +320,7 @@ const TeamProf = ({ prof, loading, error }) => {
   if (loading)
     return (
       <div className="text-center py-10">
-        <LoadingSpinner message="Loading Professor..." />
+        <LoadingSpinner variant="block" message="Loading Professor..." />
       </div>
     );
   if (error)
@@ -390,7 +390,7 @@ const CurrentTeam = ({ members, loading, error, introTitle, introDescription }) 
   if (loading && !members.length)
     return (
       <div className="text-center py-10">
-        <LoadingSpinner message="Loading Current Team..." />
+        <LoadingSpinner variant="block" message="Loading Current Team..." />
       </div>
     );
   if (error)
@@ -477,7 +477,7 @@ const Alumni = ({ members, loading, error, introTitle, introDescription }) => {
   if (loading && !members.length)
     return (
       <div className="text-center py-10">
-        <LoadingSpinner message="Loading Alumni..." />
+        <LoadingSpinner variant="block" message="Loading Alumni..." />
       </div>
     );
   if (error)
@@ -760,7 +760,7 @@ const AdminTeamControls = ({ refreshData }) => {
   if (loading && !members.length)
     return (
       <div className="text-center py-6">
-        <LoadingSpinner message="Loading Team Members for Admin..." />
+        <LoadingSpinner variant="block" message="Loading Team Members for Admin..." />
       </div>
     );
   if (error)

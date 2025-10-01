@@ -108,7 +108,7 @@ export const About = () => {
         <div className="w-full max-w-[1340px] mx-auto mb-6 md:mb-12">
           {loadingCarousel && (
             <div className="w-full h-[200px] md:h-[465px] bg-gray-200 rounded-lg md:rounded-[30px] flex items-center justify-center">
-              <LoadingSpinner message="Loading visuals..." />
+              <LoadingSpinner variant="block" message="Loading visuals..." />
             </div>
           )}
           {!loadingCarousel && carouselSlides.length > 0 && (
@@ -154,7 +154,7 @@ export const About = () => {
 
           {loadingAboutTracks && (
             <div className="mt-10 flex justify-center">
-              <LoadingSpinner message="Loading research tracks..." />
+              <LoadingSpinner variant="block" message="Loading research tracks..." />
             </div>
           )}
           {!loadingAboutTracks && tracksError && (

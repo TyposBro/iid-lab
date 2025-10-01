@@ -69,7 +69,7 @@ export const Gallery = () => {
       {/* Display loading or error for meta if applicable */}
       {metaLoading && (
         <div className="p-10 text-center w-full">
-          <LoadingSpinner message="Loading page details..." />
+          <LoadingSpinner variant="block" message="Loading page details..." />
         </div>
       )}
       {metaError && !metaLoading && (
@@ -87,7 +87,7 @@ export const Gallery = () => {
           {loading &&
             !metaLoading && ( // Show gallery loading only if meta is done
               <div className="p-10 text-center w-full">
-                <LoadingSpinner message="Loading Gallery Events..." />
+                <LoadingSpinner variant="block" message="Loading Gallery Events..." />
               </div>
             )}
           {error &&

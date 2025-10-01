@@ -86,7 +86,7 @@ export const Publications = () => {
       )}
       {metaLoading && (
         <div className="text-center py-6">
-          <LoadingSpinner message="Loading page details..." />
+          <LoadingSpinner variant="block" message="Loading page details..." />
         </div>
       )}
       {metaError && (
@@ -274,7 +274,7 @@ const PublicationList = ({
         )}
         {metaLoading && (
           <div className="text-center py-4">
-            <LoadingSpinner message="Loading section details..." />
+            <LoadingSpinner variant="block" message="Loading section details..." />
           </div>
         )}
         {metaError && (
@@ -359,7 +359,7 @@ const PublicationList = ({
           <div
             className={`text-center p-4 ${bg === "#ffffff" ? "text-gray-700" : "text-gray-200"}`}
           >
-            <LoadingSpinner message={`Loading ${defaultTitle}...`} />
+            <LoadingSpinner variant="block" message={`Loading ${defaultTitle}...`} />
           </div>
         )}
         {error && (

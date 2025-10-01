@@ -89,7 +89,7 @@ export const News = () => {
       {/* Display loading or error for meta if applicable */}
       {metaLoading && (
         <div className="flex justify-center items-center min-h-[200px] w-full">
-          <LoadingSpinner message="Loading page details..." />
+          <LoadingSpinner variant="block" message="Loading page details..." />
         </div>
       )}
       {metaError && !metaLoading && (
@@ -111,7 +111,7 @@ export const News = () => {
           {loading &&
             !metaLoading && ( // Show news loading only if meta is done
               <div className="flex justify-center items-center min-h-screen pt-[95px] pb-12">
-                <LoadingSpinner message="Loading News..." />
+                <LoadingSpinner variant="block" message="Loading News..." />
               </div>
             )}
           {error &&
