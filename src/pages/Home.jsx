@@ -1,6 +1,6 @@
 // {PATH_TO_THE_PROJECT}/src/pages/Home.jsx
 
-import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { useRef } from "react";
 import { MainCarousel } from "@/components/";
 import { useNavigate } from "react-router";
 import { HashLink } from "react-router-hash-link";
@@ -10,11 +10,18 @@ import PropTypes from "prop-types";
 
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
 import { truncateText } from "@/utils/text";
-import { BASE_URL } from "@/config/api";
 import { LinkedIn } from "@mui/icons-material";
 import { useAdmin } from "@/contexts/AdminContext";
 import { AdminMetaControls } from "@/components/AdminMetaControls";
 import { LoadingSpinner } from "@/components/";
+import {
+  useHomePageMeta,
+  useGalleryEvents,
+  useProfessors,
+  useTeamMembers,
+  useProjects,
+  usePublications,
+} from "@/hooks";
 
 // Main Home Component
 export const Home = () => {
@@ -23,76 +30,25 @@ export const Home = () => {
   const { isAdmin } = useAdmin();
 
   // --- Overall Home Page Meta ---
-  const [homePageMeta, setHomePageMeta] = useState(null);
-  const [pageMetaLoading, setPageMetaLoading] = useState(true);
-  const [pageMetaError, setPageMetaError] = useState(null);
-  const [refreshPageMetaKey, setRefreshPageMetaKey] = useState(0);
+  const {
+    data: homePageMeta,
+    isLoading: pageMetaLoading,
+    error: pageMetaError,
+  } = useHomePageMeta();
 
-  const defaultHomePageMeta = useMemo(
-    () => ({
-      title: "",
-      description: "",
-      homeYoutubeId: "",
-      // Titles for sections
-      currentProjectsTitle: "",
-      currentProjectsDescription: "",
-      journalPapersTitle: "",
-      conferencePapersTitle: "",
-      currentTeamTitle: "",
-    }),
-    []
-  );
+  // Set document title when meta data is available
+  if (homePageMeta?.title) {
+    document.title = homePageMeta.title;
+  }
 
-  const fetchHomePageMeta = useCallback(async () => {
-    setPageMetaLoading(true);
-    setPageMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/home`); // Endpoint for all home page related meta
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn("Home page comprehensive meta not found, using defaults.");
-          setHomePageMeta(defaultHomePageMeta);
-          document.title = defaultHomePageMeta.title;
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      } else {
-        const data = await response.json();
-        // Merge fetched data with defaults to ensure all keys are present
-        const mergedMeta = { ...defaultHomePageMeta, ...data };
-        setHomePageMeta(mergedMeta);
-        document.title = mergedMeta.title || defaultHomePageMeta.title;
-      }
-    } catch (err) {
-      setPageMetaError(err.message);
-      console.error("Failed to fetch home page meta:", err);
-      setHomePageMeta(defaultHomePageMeta);
-      document.title = defaultHomePageMeta.title;
-    } finally {
-      setPageMetaLoading(false);
-    }
-  }, [defaultHomePageMeta]);
-
-  useEffect(() => {
-    fetchHomePageMeta();
-  }, [fetchHomePageMeta, refreshPageMetaKey]);
-
-  const handlePageMetaUpdated = () => {
-    setRefreshPageMetaKey((prev) => prev + 1);
-  };
-
-  const currentTitle = homePageMeta?.title || defaultHomePageMeta.title;
-  const currentDescription = homePageMeta?.description || defaultHomePageMeta.description;
-  const currentYoutubeId = homePageMeta?.homeYoutubeId || defaultHomePageMeta.homeYoutubeId;
-  const currentProjectsTitle =
-    homePageMeta?.currentProjectsTitle || defaultHomePageMeta.currentProjectsTitle;
-  const currentProjectsDescription =
-    homePageMeta?.currentProjectsDescription || defaultHomePageMeta.currentProjectsDescription;
-  const journalPapersTitle =
-    homePageMeta?.journalPapersTitle || defaultHomePageMeta.journalPapersTitle;
-  const conferencePapersTitle =
-    homePageMeta?.conferencePapersTitle || defaultHomePageMeta.conferencePapersTitle;
-  const currentTeamTitle = homePageMeta?.currentTeamTitle || defaultHomePageMeta.currentTeamTitle;
+  const currentTitle = homePageMeta?.title || "";
+  const currentDescription = homePageMeta?.description || "";
+  const currentYoutubeId = homePageMeta?.homeYoutubeId || "";
+  const currentProjectsTitle = homePageMeta?.currentProjectsTitle || "";
+  const currentProjectsDescription = homePageMeta?.currentProjectsDescription || "";
+  const journalPapersTitle = homePageMeta?.journalPapersTitle || "";
+  const conferencePapersTitle = homePageMeta?.conferencePapersTitle || "";
+  const currentTeamTitle = homePageMeta?.currentTeamTitle || "";
 
   return (
     <div className="flex flex-col justify-start items-center pt-[95px] w-full min-h-screen">
@@ -140,7 +96,7 @@ export const Home = () => {
       )}
       {pageMetaError && !pageMetaLoading && (
         <div className="p-6 text-center text-red-500 w-full">
-          Error loading page details: {pageMetaError}. Displaying default content.
+          Error loading page details: {pageMetaError.message}. Displaying default content.
         </div>
       )}
 
@@ -185,32 +141,7 @@ export const Home = () => {
 
 // Intro Component
 const Intro = ({ navigate, titleText, descriptionText }) => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchGalleryEvents = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${BASE_URL}/api/gallery?featured=true`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        const slides = data
-          .map((event) => event.images[0])
-          .filter(Boolean)
-          .slice(0, 7);
-        setEvents(slides);
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching gallery events:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchGalleryEvents();
-  }, []);
+  const { data: events = [], isLoading: loading, error } = useGalleryEvents(true);
 
   let titlePart1 = titleText || "Integration & Innovation Design";
   let titleEmphasis = "";
@@ -241,7 +172,7 @@ const Intro = ({ navigate, titleText, descriptionText }) => {
       {events.length > 0 && <MainCarousel slides={events} />}
       {error && !loading && (
         <div className="text-xs text-red-400 text-center py-2">
-          Could not load gallery images: {error}
+          Could not load gallery images: {error.message}
         </div>
       )}
       <div className="flex flex-col gap-6 sm:gap-[30px] w-full sm:flex-row sm:justify-between">
@@ -282,35 +213,7 @@ Intro.propTypes = {
 
 // Prof Component
 const Prof = ({ navigate }) => {
-  const [prof, setProf] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchProfessorData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${BASE_URL}/api/professors/all`);
-        if (!response.ok) {
-          if (response.status === 404) {
-            console.warn("Professor data not found.");
-            setProf(null);
-          } else throw new Error(`HTTP error! status: ${response.status}`);
-        } else {
-          const data = await response.json();
-          // Take the first professor from the array
-          setProf(Array.isArray(data) && data.length > 0 ? data[0] : null);
-        }
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch professor:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfessorData();
-  }, []);
+  const { data: prof, isLoading: loading, error } = useProfessors();
 
   if (loading)
     return (
@@ -321,7 +224,7 @@ const Prof = ({ navigate }) => {
   if (error)
     return (
       <div className="p-6 text-center text-red-600 w-full">
-        Error loading professor data: {error}
+        Error loading professor data: {error.message}
       </div>
     );
   if (!prof)
@@ -371,28 +274,7 @@ Prof.propTypes = { navigate: PropTypes.func.isRequired };
 
 // Members Component - Accepts sectionTitle prop
 const Members = ({ sectionTitle }) => {
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchTeamMembers = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${BASE_URL}/api/team?featured=true`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        setMembers(data.filter((member) => member.type !== "alumni"));
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch team:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTeamMembers();
-  }, []);
+  const { data: members = [], isLoading: loading, error } = useTeamMembers(true);
 
   if (loading)
     return (
@@ -403,7 +285,7 @@ const Members = ({ sectionTitle }) => {
   if (error)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center text-red-600 w-full">
-        Error loading team members: {error}
+        Error loading team members: {error.message}
       </div>
     );
 
@@ -472,28 +354,7 @@ Members.propTypes = { sectionTitle: PropTypes.string.isRequired };
 
 // Projects Component - Accepts sectionTitle and sectionDescription props
 const Projects = ({ sectionTitle, sectionDescription }) => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchCurrentProjects = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${BASE_URL}/api/projects?status=current`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        setProjects(data.slice(0, 4));
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch projects:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCurrentProjects();
-  }, []);
+  const { data: projects = [], isLoading: loading, error } = useProjects("current");
 
   const handleLearnMore = (projectLink, projectId) => {
     if (projectLink) window.open(projectLink, "_blank", "noopener,noreferrer");
@@ -509,7 +370,7 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
   if (error)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] bg-text_black_primary py-10 text-center text-red-400 w-full">
-        Error loading projects: {error}
+        Error loading projects: {error.message}
       </div>
     );
 
@@ -575,28 +436,7 @@ Projects.propTypes = {
 
 // Journal Component - Accepts sectionTitle prop
 const Journal = ({ sectionTitle }) => {
-  const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchJournalPapersDirectly = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${BASE_URL}/api/publications?type=journal`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        setList(data.slice(0, 5));
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch journal papers:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchJournalPapersDirectly();
-  }, []);
+  const { data: list = [], isLoading: loading, error } = usePublications("journal");
 
   if (loading)
     return (
@@ -607,7 +447,7 @@ const Journal = ({ sectionTitle }) => {
   if (error)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] bg-primary_main py-10 text-center text-red-300 w-full">
-        Error loading journal papers: {error}
+        Error loading journal papers: {error.message}
       </div>
     );
 
@@ -681,28 +521,7 @@ Journal.propTypes = { sectionTitle: PropTypes.string.isRequired };
 
 // Conference Component - Accepts sectionTitle prop
 const Conference = ({ sectionTitle }) => {
-  const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchConferencePapersDirectly = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`${BASE_URL}/api/publications?type=conference`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        setList(data.slice(0, 5));
-      } catch (err) {
-        setError(err.message);
-        console.error("Failed to fetch conference papers:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchConferencePapersDirectly();
-  }, []);
+  const { data: list = [], isLoading: loading, error } = usePublications("conference");
 
   if (loading)
     return (
@@ -713,7 +532,7 @@ const Conference = ({ sectionTitle }) => {
   if (error)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center text-red-600 w-full">
-        Error loading conference papers: {error}
+        Error loading conference papers: {error.message}
       </div>
     );
 
