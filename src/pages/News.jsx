@@ -1,13 +1,15 @@
 /* eslint-disable no-unused-vars */
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/News.jsx
 
-import { useState, useMemo } from "react"; // Simplified hooks
+import { useState, useMemo, useEffect } from "react"; // Added useEffect for previews & syncing
 import PropTypes from "prop-types";
 import { Filter, MainCarousel, Markdown, LoadingSpinner, AdminMetaControls } from "@/components/"; // Added AdminMetaControls
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
 import { useNewsMeta, useNewsItems } from "@/hooks/useNewsApi";
+import { useCreateNewsItem, useUpdateNewsItem, useDeleteNewsItem } from "@/hooks";
+import { useToast } from "@/contexts/ToastContext";
 import { useQueryClient } from "@tanstack/react-query";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -122,9 +124,7 @@ export const News = () => {
           {/* Render news items and admin controls only when news items are not loading and no error */}
           {!loading && !error && (
             <>
-              {isAdmin && (
-                <AdminNewsControls events={events} setEvents={() => {}} refetchNews={refetchNews} />
-              )}
+              {isAdmin && <AdminNewsControls events={events} refetchNews={refetchNews} />}
 
               <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-4xl">
                 <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-medium">
@@ -265,7 +265,7 @@ Event.propTypes = {
 };
 
 // --- Admin UI Component for News (with basic responsive tweaks) ---
-const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
+const AdminNewsControls = ({ events, refetchNews }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -276,8 +276,27 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
   const [newType, setNewType] = useState("");
   const { adminToken } = useAdmin();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const toast = useToast();
+  // Mutations with toast
+  const createMutation = useCreateNewsItem(adminToken, {
+    onSuccess: () => {
+      setIsCreating(false);
+      setNewTitle("");
+      setNewContent("");
+      setNewDate(null);
+      setSelectedFiles([]);
+      setNewType("");
+      setImagePreviews([]);
+      refetchNews();
+    },
+    toast,
+  });
+  const updateMutation = useUpdateNewsItem(adminToken, { toast });
+  const deleteMutation = useDeleteNewsItem(adminToken, { toast });
+
+  const isSubmitting =
+    createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
   const [imagesToKeep, setImagesToKeep] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
@@ -318,63 +337,17 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
     setSelectedFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
-  const handleCreate = async () => {
-    if (!newDate || !newTitle || !newContent || !newType || selectedFiles.length === 0) {
-      alert("Please fill in all fields and select at least one image.");
-      return;
-    }
-    setIsSubmitting(true);
-    const formData = new FormData();
-    selectedFiles.forEach((file) => formData.append("file", file));
-
-    try {
-      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${adminToken}` },
-        body: formData,
-      });
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json();
-        throw new Error(`Image upload failed: ${errorData?.message || uploadResponse.statusText}`);
-      }
-      const uploadResult = await uploadResponse.json();
-      const uploadedImageUrls = uploadResult.urls || [];
-      const isoDate = newDate.toISOString().split("T")[0];
-      const newEventData = {
-        title: newTitle,
-        content: newContent,
-        date: isoDate,
-        images: uploadedImageUrls,
-        type: newType,
-      };
-      const createResponse = await fetch(`${BASE_URL}/api/news`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
-        },
-        body: JSON.stringify(newEventData),
-      });
-      if (!createResponse.ok) {
-        const errorData = await createResponse.json();
-        throw new Error(
-          `Failed to create news item: ${errorData?.message || createResponse.statusText}`
-        );
-      }
-      setIsCreating(false);
-      setNewTitle("");
-      setNewContent("");
-      setNewDate(null);
-      setSelectedFiles([]);
-      setNewType("");
-      setImagePreviews([]);
-      refetchNews();
-    } catch (error) {
-      console.error("Error creating news item:", error);
-      alert(`An error occurred: ${error.message}`);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleCreate = () => {
+    if (!newDate || !newTitle || !newContent || !newType || selectedFiles.length === 0)
+      return alert("Please fill in all fields and select at least one image.");
+    const isoDate = newDate.toISOString().split("T")[0];
+    createMutation.mutate({
+      title: newTitle,
+      content: newContent,
+      date: isoDate,
+      type: newType,
+      files: selectedFiles,
+    });
   };
 
   const handleEdit = (event) => {
@@ -390,103 +363,47 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
     setImagePreviews([]);
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = () => {
     if (!editingEvent || !newDate) return;
-    if (!newTitle || !newContent || !newType) {
-      alert("Please fill in all fields.");
-      return;
-    }
-    if (imagesToKeep.length === 0 && selectedFiles.length === 0) {
-      alert("Please keep or add at least one image.");
-      return;
-    }
-    setIsSubmitting(true);
-    let newImageUrls = [];
-    if (selectedFiles.length > 0) {
-      const formData = new FormData();
-      selectedFiles.forEach((file) => formData.append("file", file));
-      try {
-        const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${adminToken}` },
-          body: formData,
-        });
-        if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json();
-          throw new Error(
-            `Image upload failed: ${errorData?.message || uploadResponse.statusText}`
-          );
-        }
-        const uploadResult = await uploadResponse.json();
-        newImageUrls = uploadResult.urls || [];
-      } catch (error) {
-        console.error("Error uploading new images:", error);
-        alert(`Failed to upload new images: ${error.message}`);
-        setIsSubmitting(false);
-        return;
-      }
-    }
+    if (!newTitle || !newContent || !newType) return alert("Please fill in all fields.");
+    if (imagesToKeep.length === 0 && selectedFiles.length === 0)
+      return alert("Please keep or add at least one image.");
     const isoDate = newDate.toISOString().split("T")[0];
-    const updatedEventData = {
-      title: newTitle,
-      content: newContent,
-      date: isoDate,
-      images: [...imagesToKeep, ...newImageUrls],
-      type: newType,
-    };
-    try {
-      const response = await fetch(`${BASE_URL}/api/news/${editingEvent._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
+    updateMutation.mutate(
+      {
+        id: editingEvent._id,
+        files: selectedFiles,
+        update: {
+          title: newTitle,
+          content: newContent,
+          date: isoDate,
+          images: imagesToKeep,
+          type: newType,
         },
-        body: JSON.stringify(updatedEventData),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to update news item: ${errorData?.message || response.statusText}`);
+      },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+          setEditingEvent(null);
+          setNewTitle("");
+          setNewContent("");
+          setNewDate(null);
+          setSelectedFiles([]);
+          setNewType("");
+          setImagesToKeep([]);
+          setImagePreviews([]);
+          refetchNews();
+        },
       }
-      setIsEditing(false);
-      setEditingEvent(null);
-      setNewTitle("");
-      setNewContent("");
-      setNewDate(null);
-      setSelectedFiles([]);
-      setNewType("");
-      setImagesToKeep([]);
-      setImagePreviews([]);
-      refetchNews();
-    } catch (error) {
-      console.error("Error updating news item:", error);
-      alert(`Failed to update: ${error.message}`);
-    } finally {
-      setIsSubmitting(false);
-    }
+    );
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this news item?")) {
-      setDeletingId(id);
-      try {
-        const response = await fetch(`${BASE_URL}/api/news/${id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${adminToken}` },
-        });
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            `Failed to delete news item: ${errorData?.message || response.statusText}`
-          );
-        }
-        refetchNews();
-      } catch (error) {
-        console.error("Error deleting news item:", error);
-        alert(`Failed to delete: ${error.message}`);
-      } finally {
-        setDeletingId(null);
-      }
-    }
+  const handleDelete = (id) => {
+    if (!window.confirm("Are you sure you want to delete this news item?")) return;
+    setDeletingId(id);
+    deleteMutation.mutate(id, {
+      onSettled: () => setDeletingId(null),
+    });
   };
 
   const cancelEditing = () => {
@@ -741,7 +658,6 @@ const AdminNewsControls = ({ events, setEvents, refetchNews }) => {
 
 AdminNewsControls.propTypes = {
   events: PropTypes.array.isRequired,
-  setEvents: PropTypes.func.isRequired,
   refetchNews: PropTypes.func.isRequired,
 };
 

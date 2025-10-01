@@ -1,60 +1,36 @@
 /* eslint-disable react/prop-types */ // Or define PropTypes rigorously
-import { useState, useEffect, useCallback, useMemo } from "react"; // Added useMemo
+import { useState, useEffect, useCallback, useMemo, Suspense, lazy } from "react"; // Added Suspense, lazy for code-splitting
 import PropTypes from "prop-types";
 import { Down_left_dark_arrow, Down_straight_neutral_arrow } from "@/assets/";
 import { LoadingSpinner, AdminMetaControls } from "@/components/"; // Added AdminMetaControls
 import { ProjectCard } from "@/components/ProjectCard";
 import { useAdmin } from "@/contexts/AdminContext";
-import { BASE_URL } from "@/config/api";
+// Removed BASE_URL import (no longer needed after extracting admin controls)
+import {
+  useProjectsPageMeta,
+  useCurrentProjectsMeta,
+  useCompletedProjectsMeta,
+  useAwardsProjectsMeta,
+  useProjectsList,
+} from "@/hooks";
 
 // Main Projects Page Component
+const AdminProjectControlsLazy = lazy(() => import("@/components/admin/ProjectsAdminControls"));
+
 export const Projects = () => {
   const { isAdmin } = useAdmin();
   const [refreshKey, setRefreshKey] = useState(0);
 
   // --- Overall Projects Page Meta ---
-  const [projectsPageMeta, setProjectsPageMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshPageMetaKey, setRefreshPageMetaKey] = useState(0);
-
-  const defaultProjectsPageMeta = useMemo(
-    () => ({
-      title: "",
-      description: "",
-    }),
-    []
-  );
-
-  const fetchProjectsPageMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/projects`); // e.g., /meta/projects-main
-      if (!response.ok) {
-        if (response.status === 404) {
-          setProjectsPageMeta(defaultProjectsPageMeta);
-          document.title = defaultProjectsPageMeta.title + " - I&I Design Lab";
-        } else throw new Error(`HTTP error! status: ${response.status}`);
-      } else {
-        const data = await response.json();
-        setProjectsPageMeta(data);
-        document.title = (data.title || defaultProjectsPageMeta.title) + " - I&I Design Lab";
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      setProjectsPageMeta(defaultProjectsPageMeta);
-      document.title = defaultProjectsPageMeta.title + " - I&I Design Lab";
-      console.error("Failed to fetch projects page meta:", err);
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultProjectsPageMeta]);
-
-  useEffect(() => {
-    fetchProjectsPageMeta();
-  }, [fetchProjectsPageMeta, refreshPageMetaKey]);
-  const handleProjectsPageMetaUpdated = () => setRefreshPageMetaKey((prev) => prev + 1);
+  const {
+    data: projectsPageMeta,
+    isLoading: metaLoading,
+    error: metaError,
+  } = useProjectsPageMeta();
+  const defaultProjectsPageMeta = { title: "", description: "" };
+  const handleProjectsPageMetaUpdated = () => {
+    // invalidate occurs automatically via AdminMetaControls implementation (assumed) or can be triggered externally
+  };
 
   const refetchAllProjects = useCallback(() => {
     setRefreshKey((prevKey) => prevKey + 1);
@@ -102,8 +78,18 @@ export const Projects = () => {
         </div>
       )}
 
-      {/* Admin controls for individual project items */}
-      {isAdmin && <AdminProjectControls onProjectsUpdated={refetchAllProjects} />}
+      {/* Admin controls for individual project items (lazy loaded) */}
+      {isAdmin && (
+        <Suspense
+          fallback={
+            <div className="w-full max-w-screen-xl mx-auto px-4 md:px-[25px] py-4">
+              <LoadingSpinner message="Loading admin controls..." />
+            </div>
+          }
+        >
+          <AdminProjectControlsLazy onProjectsUpdated={refetchAllProjects} />
+        </Suspense>
+      )}
 
       {/* Sections will have their own meta controls below */}
       <Current refreshKey={refreshKey} />
@@ -117,72 +103,16 @@ export default Projects;
 
 // --- Current Projects Section ---
 const Current = ({ refreshKey }) => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { isAdmin } = useAdmin(); // Get admin status
-
-  // Meta for Current Projects Section
-  const [currentProjectsMeta, setCurrentProjectsMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshMetaKey, setRefreshMetaKey] = useState(0);
-
-  const defaultCurrentProjectsMeta = useMemo(
-    () => ({
-      title: "",
-      description: "", // Optional description
-    }),
-    []
-  );
-
-  const fetchCurrentProjectsMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/projects-current`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          setCurrentProjectsMeta(defaultCurrentProjectsMeta);
-        } else throw new Error(`HTTP error! status: ${response.status}`);
-      } else {
-        setCurrentProjectsMeta(await response.json());
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      setCurrentProjectsMeta(defaultCurrentProjectsMeta);
-      console.error("Failed to fetch current projects meta:", err);
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultCurrentProjectsMeta]);
-
-  useEffect(() => {
-    fetchCurrentProjectsMeta();
-  }, [fetchCurrentProjectsMeta, refreshMetaKey]);
-  const handleCurrentProjectsMetaUpdated = () => setRefreshMetaKey((prev) => prev + 1);
-
-  const fetchCurrentProjects = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/projects?status=current`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      setProjects(await response.json());
-    } catch (err) {
-      setError(err.message);
-      console.error("Failed to fetch current projects:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCurrentProjects();
-  }, [fetchCurrentProjects, refreshKey]);
-
+  const { isAdmin } = useAdmin();
+  const {
+    data: currentProjectsMeta,
+    isLoading: metaLoading,
+    error: metaError,
+  } = useCurrentProjectsMeta();
+  const { data: projects = [], isLoading: loading, error } = useProjectsList("current");
+  const defaultCurrentProjectsMeta = { title: "", description: "" };
   const sectionTitle = currentProjectsMeta?.title || defaultCurrentProjectsMeta.title;
-  const sectionDescription = currentProjectsMeta?.description; // Optional
+  const sectionDescription = currentProjectsMeta?.description;
 
   return (
     <div className="flex flex-col gap-6 md:gap-[30px] px-4 md:px-[25px] py-6 md:py-[30px] w-full max-w-screen-xl mx-auto">
@@ -263,89 +193,34 @@ Current.propTypes = {
 
 // --- Completed Projects Section ---
 const Completed = ({ refreshKey }) => {
-  const [allCompleted, setAllCompleted] = useState([]);
-  const [filteredProjects, setFilteredProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { isAdmin } = useAdmin();
+  const {
+    data: completedMeta,
+    isLoading: metaLoading,
+    error: metaError,
+  } = useCompletedProjectsMeta();
+  const { data: allCompleted = [], isLoading: loading, error } = useProjectsList("completed");
   const [selectedYear, setSelectedYear] = useState("Recent");
   const [availableYears, setAvailableYears] = useState([]);
-  const { isAdmin } = useAdmin();
-
-  // Meta for Completed Projects Section
-  const [completedProjectsMeta, setCompletedProjectsMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshMetaKey, setRefreshMetaKey] = useState(0);
-
-  const defaultCompletedProjectsMeta = useMemo(
-    () => ({
-      title: "",
-      description: "", // Optional
-    }),
-    []
-  );
-
-  const fetchCompletedProjectsMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/projects-completed`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          setCompletedProjectsMeta(defaultCompletedProjectsMeta);
-        } else throw new Error(`HTTP error! status: ${response.status}`);
-      } else {
-        setCompletedProjectsMeta(await response.json());
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      setCompletedProjectsMeta(defaultCompletedProjectsMeta);
-      console.error("Failed to fetch completed projects meta:", err);
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultCompletedProjectsMeta]);
-
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const defaultCompletedProjectsMeta = { title: "", description: "" };
   useEffect(() => {
-    fetchCompletedProjectsMeta();
-  }, [fetchCompletedProjectsMeta, refreshMetaKey]);
-  const handleCompletedProjectsMetaUpdated = () => setRefreshMetaKey((prev) => prev + 1);
-
-  const fetchCompletedProjects = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/projects?status=completed`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
-      setAllCompleted(data);
-      const years = ["Recent", ...new Set(data.map((p) => p.year).filter(Boolean))].sort((a, b) => {
+    const years = ["Recent", ...new Set(allCompleted.map((p) => p.year).filter(Boolean))].sort(
+      (a, b) => {
         if (a === "Recent") return -1;
         if (b === "Recent") return 1;
         return b - a;
-      });
-      setAvailableYears(years);
-    } catch (err) {
-      setError(err.message);
-      console.error("Failed to fetch completed projects:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCompletedProjects();
-  }, [fetchCompletedProjects, refreshKey]);
-
+      }
+    );
+    setAvailableYears(years);
+  }, [allCompleted]);
   useEffect(() => {
     if (selectedYear === "Recent") setFilteredProjects(allCompleted);
     else setFilteredProjects(allCompleted.filter((p) => p.year?.toString() === selectedYear));
   }, [allCompleted, selectedYear]);
-
   const handleYearFilter = (year) => setSelectedYear(year.toString());
-
-  const sectionTitle = completedProjectsMeta?.title || defaultCompletedProjectsMeta.title;
-  const sectionDescription = completedProjectsMeta?.description; // Optional
+  const sectionTitle = completedMeta?.title || defaultCompletedProjectsMeta.title;
+  const sectionDescription = completedMeta?.description;
 
   return (
     <div
@@ -461,81 +336,22 @@ Completed.propTypes = {
 
 // --- Awards Section ---
 const Awards = ({ refreshKey }) => {
-  const [allAwards, setAllAwards] = useState([]);
-  const [filteredAwards, setFilteredAwards] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedFilter, setSelectedFilter] = useState("All");
-  const [availableFilters, setAvailableFilters] = useState(["All"]);
   const { isAdmin } = useAdmin();
-
-  // Meta for Awards Section
-  const [awardsMeta, setAwardsMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshMetaKey, setRefreshMetaKey] = useState(0);
-
-  const defaultAwardsMeta = useMemo(
-    () => ({
-      title: "",
-      description: "", // Optional
-    }),
-    []
-  );
-
-  const fetchAwardsMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/projects-awards`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          setAwardsMeta(defaultAwardsMeta);
-        } else throw new Error(`HTTP error! status: ${response.status}`);
-      } else {
-        setAwardsMeta(await response.json());
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      setAwardsMeta(defaultAwardsMeta);
-      console.error("Failed to fetch awards meta:", err);
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultAwardsMeta]);
-
+  const { data: awardsMeta, isLoading: metaLoading, error: metaError } = useAwardsProjectsMeta();
+  const { data: allAwards = [], isLoading: loading, error } = useProjectsList("award");
+  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [filteredAwards, setFilteredAwards] = useState([]);
+  const [availableFilters, setAvailableFilters] = useState(["All"]);
+  const defaultAwardsMeta = { title: "", description: "" };
   useEffect(() => {
-    fetchAwardsMeta();
-  }, [fetchAwardsMeta, refreshMetaKey]);
-  const handleAwardsMetaUpdated = () => setRefreshMetaKey((prev) => prev + 1);
-
-  const fetchAwards = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/projects?status=award`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
-      setAllAwards(data);
-      const filters = new Set(["All"]);
-      data.forEach((award) => {
-        if (award.awardName?.toLowerCase().includes("reddot")) filters.add("Reddot");
-        else if (award.awardName?.toLowerCase().includes("if")) filters.add("iF");
-        else if (award.awardName) filters.add("Others");
-      });
-      setAvailableFilters([...filters]);
-    } catch (err) {
-      setError(err.message);
-      console.error("Failed to fetch awards:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchAwards();
-  }, [fetchAwards, refreshKey]);
-
+    const filters = new Set(["All"]);
+    allAwards.forEach((award) => {
+      if (award.awardName?.toLowerCase().includes("reddot")) filters.add("Reddot");
+      else if (award.awardName?.toLowerCase().includes("if")) filters.add("iF");
+      else if (award.awardName) filters.add("Others");
+    });
+    setAvailableFilters([...filters]);
+  }, [allAwards]);
   useEffect(() => {
     if (selectedFilter === "All") setFilteredAwards(allAwards);
     else if (selectedFilter === "Reddot")
@@ -553,11 +369,9 @@ const Awards = ({ refreshKey }) => {
       );
     else setFilteredAwards(allAwards);
   }, [allAwards, selectedFilter]);
-
   const handleFilter = (filter) => setSelectedFilter(filter);
-
   const sectionTitle = awardsMeta?.title || defaultAwardsMeta.title;
-  const sectionDescription = awardsMeta?.description; // Optional
+  const sectionDescription = awardsMeta?.description;
 
   return (
     <div className="flex flex-col gap-6 md:gap-[30px] bg-primary_main py-6 md:py-[30px] w-full">
@@ -665,568 +479,4 @@ Awards.propTypes = {
   refreshKey: PropTypes.number.isRequired,
 };
 
-// --- Admin UI Component for Projects ---
-const AdminProjectControls = ({ onProjectsUpdated }) => {
-  const { adminToken } = useAdmin();
-  const [projects, setProjects] = useState([]);
-  const [isLoadingList, setIsLoadingList] = useState(false);
-  const [listError, setListError] = useState(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingProject, setEditingProject] = useState(null);
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [link, setLink] = useState("");
-  const [status, setStatus] = useState("current");
-  const [year, setYear] = useState("");
-  const [authors, setAuthors] = useState(""); // Storing as a string for input
-  const [awardName, setAwardName] = useState("");
-  const [tags, setTags] = useState(""); // Storing as a string for input
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [currentImageUrl, setCurrentImageUrl] = useState(null); // For preview and keeping existing
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
-  const [submitError, setSubmitError] = useState(null);
-
-  const fetchAllAdminProjects = useCallback(async () => {
-    setIsLoadingList(true);
-    setListError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/projects`); // GET all projects
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const data = await response.json();
-      setProjects(
-        data.sort(
-          (a, b) =>
-            new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
-        )
-      ); // Sort by most recent
-    } catch (error) {
-      console.error("Error fetching projects for admin:", error);
-      setListError(error.message);
-    } finally {
-      setIsLoadingList(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchAllAdminProjects();
-  }, [fetchAllAdminProjects, onProjectsUpdated]); // Re-fetch when onProjectsUpdated changes
-
-  const resetForm = () => {
-    setTitle("");
-    setSubtitle("");
-    setDescription("");
-    setLink("");
-    setStatus("current");
-    setYear("");
-    setAuthors("");
-    setAwardName("");
-    setTags("");
-    setSelectedFile(null);
-    setCurrentImageUrl(null);
-    setEditingProject(null);
-    setIsCreating(false);
-    setIsEditing(false);
-    setSubmitError(null);
-  };
-
-  const handleFileChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => setCurrentImageUrl(e.target.result); // Show preview of new file
-      reader.readAsDataURL(file);
-    } else {
-      // If file selection is cleared
-      setSelectedFile(null);
-      // Revert to original image if editing, or null if creating
-      setCurrentImageUrl(editingProject?.image || null);
-    }
-  };
-
-  const uploadImage = async (file) => {
-    if (!file) return null; // No file to upload
-    const formData = new FormData();
-    formData.append("file", file); // Change from "images" to "file" to match our Worker API
-    try {
-      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${adminToken}` },
-        body: formData,
-      });
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json();
-        throw new Error(errorData.error || `Image upload failed: ${uploadResponse.status}`);
-      }
-      const uploadResult = await uploadResponse.json();
-      return uploadResult.urls?.[0] || null; // Our Worker API returns {success: true, urls: [...], count: 1}
-    } catch (error) {
-      console.error("Image upload error:", error);
-      setSubmitError(`Image Upload Failed: ${error.message}`);
-      return null;
-    }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setSubmitError(null);
-    if (!title || !status) {
-      setSubmitError("Title and Status are required.");
-      return;
-    }
-    if ((status === "award" || status === "completed") && !year) {
-      setSubmitError("Year is required for 'Award' or 'Completed'.");
-      return;
-    }
-    if (status === "award" && !awardName) {
-      setSubmitError("Award Name is required for 'Award'.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    let finalImageUrl = isEditing ? editingProject?.image || null : null;
-
-    if (selectedFile) {
-      // If a new file was selected, upload it
-      const uploadedUrl = await uploadImage(selectedFile);
-      if (uploadedUrl === null && selectedFile) {
-        // Upload failed but a file was selected
-        setIsSubmitting(false);
-        return;
-      }
-      finalImageUrl = uploadedUrl;
-    } else if (isEditing && currentImageUrl === null && editingProject?.image) {
-      // If editing and currentImageUrl is explicitly nulled (meaning user removed it), set to undefined to delete
-      finalImageUrl = undefined;
-    }
-
-    const projectData = {
-      title,
-      subtitle,
-      description,
-      link: link || undefined,
-      status,
-      year: year ? parseInt(year, 10) : undefined,
-      authors: authors
-        .split(",")
-        .map((a) => a.trim())
-        .filter(Boolean), // Convert to array
-      awardName: status === "award" ? awardName : undefined,
-      tags: tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean), // Convert to array
-      image: finalImageUrl,
-    };
-
-    // Remove undefined fields to prevent sending them, especially for image updates
-    Object.keys(projectData).forEach(
-      (key) => projectData[key] === undefined && delete projectData[key]
-    );
-
-    const url = isEditing ? `${BASE_URL}/projects/${editingProject._id}` : `${BASE_URL}/projects`;
-    const method = isEditing ? "PUT" : "POST";
-
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
-        body: JSON.stringify(projectData),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message ||
-            `Failed to ${isEditing ? "update" : "create"} project. Status: ${response.status}`
-        );
-      }
-      resetForm();
-      onProjectsUpdated(); // Trigger refresh in parent
-    } catch (error) {
-      console.error(`Error ${isEditing ? "updating" : "creating"} project:`, error);
-      setSubmitError(error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleEdit = (project) => {
-    resetForm(); // Clear previous form state
-    setIsEditing(true);
-    setIsCreating(false);
-    setEditingProject(project);
-    setTitle(project.title);
-    setSubtitle(project.subtitle || "");
-    setDescription(project.description || "");
-    setLink(project.link || "");
-    setStatus(project.status);
-    setYear(project.year?.toString() || "");
-    setAuthors(project.authors?.join(", ") || ""); // Join array for input
-    setAwardName(project.awardName || "");
-    setTags(project.tags?.join(", ") || ""); // Join array for input
-    setCurrentImageUrl(project.image || null); // Set for preview
-    setSelectedFile(null); // Clear any selected file from previous edit/create
-  };
-
-  const handleDelete = async (id) => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this project? This will also attempt to delete its image if stored with us."
-      )
-    ) {
-      setDeletingId(id);
-      setSubmitError(null);
-      try {
-        const response = await fetch(`${BASE_URL}/api/projects/${id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${adminToken}` },
-        });
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            errorData.message || `Failed to delete project. Status: ${response.status}`
-          );
-        }
-        onProjectsUpdated(); // Trigger refresh
-        if (editingProject?._id === id) resetForm(); // If currently editing deleted item, reset form
-      } catch (error) {
-        console.error("Error deleting project:", error);
-        setSubmitError(error.message);
-      } finally {
-        setDeletingId(null);
-      }
-    }
-  };
-
-  const inputClass =
-    "w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100";
-  const buttonClass =
-    "font-semibold py-2 px-4 rounded transition-colors duration-200 disabled:opacity-50";
-  const primaryButtonClass = `bg-blue-600 hover:bg-blue-700 text-white ${buttonClass}`;
-  const secondaryButtonClass = `bg-gray-200 hover:bg-gray-300 text-gray-700 ${buttonClass}`;
-  const dangerButtonClass = `bg-red-600 hover:bg-red-700 text-white ${buttonClass} text-xs px-3 py-1.5`;
-  const warningButtonClass = `bg-yellow-500 hover:bg-yellow-600 text-white ${buttonClass} text-xs px-3 py-1.5`;
-  const successButtonClass = `bg-green-600 hover:bg-green-700 text-white ${buttonClass}`;
-
-  const projectFormFields = (
-    <>
-      {submitError && (
-        <div className="mb-4 p-3 text-red-700 bg-red-100 border border-red-300 rounded-md">
-          {submitError}
-        </div>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-            Title *
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className={inputClass}
-            required
-            disabled={isSubmitting}
-          />
-        </div>
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-            Status *
-          </label>
-          <select
-            id="status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className={`${inputClass} bg-white`}
-            required
-            disabled={isSubmitting}
-          >
-            <option value="current">Current</option>
-            <option value="completed">Completed</option>
-            <option value="award">Award</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="subtitle" className="block text-sm font-medium text-gray-700 mb-1">
-            Subtitle
-          </label>
-          <input
-            type="text"
-            id="subtitle"
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-            className={inputClass}
-            disabled={isSubmitting}
-          />
-        </div>
-        {(status === "completed" || status === "award") && (
-          <div>
-            <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">
-              Year {(status === "completed" || status === "award") && "*"}
-            </label>
-            <input
-              type="number"
-              id="year"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className={inputClass}
-              required={status === "completed" || status === "award"}
-              disabled={isSubmitting}
-              placeholder="YYYY"
-            />
-          </div>
-        )}
-        {status === "award" && (
-          <div>
-            <label htmlFor="awardName" className="block text-sm font-medium text-gray-700 mb-1">
-              Award Name *
-            </label>
-            <input
-              type="text"
-              id="awardName"
-              value={awardName}
-              onChange={(e) => setAwardName(e.target.value)}
-              className={inputClass}
-              required={status === "award"}
-              disabled={isSubmitting}
-              placeholder="e.g., Reddot Design Award"
-            />
-          </div>
-        )}
-        <div>
-          <label htmlFor="authors" className="block text-sm font-medium text-gray-700 mb-1">
-            Authors (comma-separated)
-          </label>
-          <input
-            type="text"
-            id="authors"
-            value={authors}
-            onChange={(e) => setAuthors(e.target.value)}
-            className={inputClass}
-            disabled={isSubmitting}
-            placeholder="J. Doe, A. Smith"
-          />
-        </div>
-        <div>
-          <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
-            Project Link (URL)
-          </label>
-          <input
-            type="url"
-            id="link"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-            className={inputClass}
-            disabled={isSubmitting}
-            placeholder="https://example.com"
-          />
-        </div>
-        <div>
-          <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
-            Tags (comma-separated)
-          </label>
-          <input
-            type="text"
-            id="tags"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            className={inputClass}
-            disabled={isSubmitting}
-            placeholder="healthcare, iot, design"
-          />
-        </div>
-      </div>
-      <div className="mt-4">
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          Description
-        </label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows="4"
-          className={inputClass}
-          disabled={isSubmitting}
-        />
-      </div>
-      <div className="mt-4">
-        <label htmlFor="image-upload" className="block text-sm font-medium text-gray-700 mb-1">
-          {isEditing && editingProject?.image ? "Replace Image (Optional)" : "Image"}
-        </label>
-        {currentImageUrl && (
-          <div className="my-2 relative w-40 h-32">
-            <img
-              src={currentImageUrl}
-              alt="Preview"
-              className="w-full h-full object-cover rounded border border-gray-300"
-            />
-            {isEditing &&
-              editingProject?.image && ( // Show remove button only if editing an existing image
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrentImageUrl(null);
-                    setSelectedFile(
-                      null
-                    ); /* This means image will be removed on update if no new file is selected */
-                  }}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none focus:outline-none hover:bg-red-600"
-                  title="Remove Image"
-                  disabled={isSubmitting}
-                >
-                  {" "}
-                  ×{" "}
-                </button>
-              )}
-          </div>
-        )}
-        <input
-          type="file"
-          id="image-upload"
-          accept="image/*"
-          onChange={handleFileChange}
-          className={`${inputClass} file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100`}
-          disabled={isSubmitting}
-        />
-      </div>
-    </>
-  );
-
-  return (
-    <div className="w-full p-4 max-w-screen-xl mx-auto">
-      <div className="p-4 sm:p-6 border border-gray-200 rounded-lg my-8 bg-gray-50 shadow-lg">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-200">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-3 sm:mb-0">
-            Admin: Manage Projects
-          </h3>
-          {!isCreating && !isEditing && (
-            <button
-              onClick={() => {
-                resetForm();
-                setIsCreating(true);
-              }}
-              className={successButtonClass}
-              disabled={isSubmitting || deletingId !== null || isLoadingList}
-            >
-              + Add New Project
-            </button>
-          )}
-        </div>
-
-        {(isSubmitting || deletingId !== null || isLoadingList) && (
-          <div className="my-4">
-            <LoadingSpinner
-              message={
-                isLoadingList
-                  ? "Loading projects..."
-                  : isSubmitting
-                  ? isCreating
-                    ? "Creating..."
-                    : "Updating..."
-                  : deletingId
-                  ? "Deleting..."
-                  : "Processing..."
-              }
-            />
-          </div>
-        )}
-
-        {!isCreating && !isEditing && (
-          <div className="space-y-3 w-full max-h-96 overflow-y-auto pr-2">
-            {listError && (
-              <div className="p-3 text-red-700 bg-red-100 border border-red-300 rounded-md">
-                Error loading list: {listError}
-              </div>
-            )}
-            {!isLoadingList &&
-              projects.map((project) => (
-                <div
-                  key={project._id}
-                  className="border border-gray-200 rounded-md p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-white shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center gap-3 flex-grow min-w-0">
-                    {project.image && (
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-16 h-16 object-cover rounded flex-shrink-0 border"
-                      />
-                    )}
-                    <div className="flex-grow overflow-hidden">
-                      <p className="font-semibold text-gray-800 truncate" title={project.title}>
-                        {project.title}
-                      </p>
-                      <p className="text-xs text-gray-500 capitalize">
-                        {project.status}
-                        {project.year ? `, ${project.year}` : ""}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 flex-shrink-0 self-end md:self-center mt-2 md:mt-0">
-                    <button
-                      onClick={() => handleEdit(project)}
-                      className={warningButtonClass}
-                      disabled={isSubmitting || deletingId !== null || isLoadingList}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(project._id)}
-                      className={`${dangerButtonClass} ${
-                        deletingId === project._id ? "opacity-50 cursor-wait" : ""
-                      }`}
-                      disabled={isSubmitting || !!deletingId || isLoadingList}
-                    >
-                      {deletingId === project._id ? "Deleting..." : "Delete"}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            {!isLoadingList && !listError && projects.length === 0 && (
-              <p className="text-gray-500 italic text-center py-4">
-                No projects found. Click &quot;Add New Project&quot; to create one.
-              </p>
-            )}
-          </div>
-        )}
-
-        {(isCreating || isEditing) && (
-          <div className="p-4 border border-gray-200 rounded-md mt-4 bg-white shadow-md w-full">
-            <h4 className="text-lg font-medium mb-4 text-gray-700">
-              {isCreating ? "Create New Project" : `Edit Project: ${editingProject?.title}`}
-            </h4>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {projectFormFields}
-              <div className="flex gap-4 pt-2">
-                <button type="submit" className={primaryButtonClass} disabled={isSubmitting}>
-                  {isSubmitting
-                    ? isCreating
-                      ? "Creating..."
-                      : "Updating..."
-                    : isCreating
-                    ? "Create Project"
-                    : "Update Project"}
-                </button>
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className={secondaryButtonClass}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-AdminProjectControls.propTypes = {
-  onProjectsUpdated: PropTypes.func.isRequired,
-};
+// Admin project controls moved to components/admin/ProjectsAdminControls.jsx (lazy loaded)

@@ -1,13 +1,15 @@
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/Gallery.jsx
 
 /* eslint-disable no-unused-vars */
-import { useState, useMemo } from "react"; // Removed unnecessary hooks
+import { useState, useMemo, useEffect } from "react"; // Added useEffect
 import PropTypes from "prop-types";
 import { Filter, MainCarousel, LoadingSpinner, AdminMetaControls } from "@/components"; // Added AdminMetaControls
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
 import { useGalleryMeta, useGalleryEvents } from "@/hooks/useGalleryApi";
+import { useCreateGalleryEvent, useUpdateGalleryEvent, useDeleteGalleryEvent } from "@/hooks";
+import { useToast } from "@/contexts/ToastContext";
 import { useQueryClient } from "@tanstack/react-query";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -213,7 +215,7 @@ Event.propTypes = {
 // --- Admin UI Component for Gallery ---
 // (AdminGalleryControls component remains the same as in your provided code)
 // Make sure it's defined below or imported correctly.
-const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
+const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -224,9 +226,29 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
   const [newType, setNewType] = useState("");
   const { adminToken } = useAdmin();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [imagesToKeep, setImagesToKeep] = useState([]);
+
+  const toast = useToast();
+  // Mutations with toast integration
+  const createMutation = useCreateGalleryEvent(adminToken, {
+    onSuccess: () => {
+      setIsCreating(false);
+      setNewTitle("");
+      setNewDate(null);
+      setNewLocation("");
+      setSelectedFiles([]);
+      setNewType("");
+      // refetch will happen via invalidate in hook; extra safety
+      refetchGalleryEvents();
+    },
+    toast,
+  });
+  const updateMutation = useUpdateGalleryEvent(adminToken, { toast });
+  const deleteMutation = useDeleteGalleryEvent(adminToken, { toast });
+
+  const isSubmitting =
+    createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
   useEffect(() => {
     if (isEditing && editingEvent) {
@@ -240,76 +262,17 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
     setSelectedFiles((prevFiles) => [...prevFiles, ...Array.from(event.target.files)]);
   };
 
-  const handleCreate = async () => {
-    if (!newDate) {
-      alert("Please select a date.");
-      return;
-    }
-
-    if (selectedFiles.length === 0) {
-      alert("Please upload at least one image.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    const formData = new FormData();
-    for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append("file", selectedFiles[i]);
-    }
-
-    try {
-      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-        body: formData,
-      });
-
-      if (uploadResponse.ok) {
-        const uploadResult = await uploadResponse.json();
-        const uploadedImageUrls = uploadResult.urls || [];
-        const isoDate = newDate.toISOString();
-        const newEvent = {
-          title: newTitle,
-          date: isoDate,
-          location: newLocation,
-          images: uploadedImageUrls,
-          type: newType,
-        };
-
-        const createResponse = await fetch(`${BASE_URL}/api/gallery`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${adminToken}`,
-          },
-          body: JSON.stringify(newEvent),
-        });
-
-        if (createResponse.ok) {
-          setIsCreating(false);
-          setNewTitle("");
-          setNewDate(null);
-          setNewLocation("");
-          setSelectedFiles([]);
-          setNewType("");
-          refetchGalleryEvents();
-        } else {
-          console.error("Failed to create gallery event");
-          alert("Failed to create gallery event. Check console for details.");
-        }
-      } else {
-        console.error("Failed to upload images");
-        const errorData = await uploadResponse.json();
-        alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
-      }
-    } catch (error) {
-      console.error("Error creating gallery event:", error);
-      alert("An error occurred while creating the event. Check console for details.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleCreate = () => {
+    if (!newDate) return alert("Please select a date.");
+    if (selectedFiles.length === 0) return alert("Please upload at least one image.");
+    const isoDate = newDate.toISOString();
+    createMutation.mutate({
+      title: newTitle,
+      date: isoDate,
+      location: newLocation,
+      type: newType,
+      files: selectedFiles,
+    });
   };
 
   const handleEdit = (event) => {
@@ -327,109 +290,43 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
     setImagesToKeep(imagesToKeep.filter((url) => url !== imageUrlToRemove));
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = () => {
     if (!editingEvent || !newDate) return;
-
-    setIsSubmitting(true);
-    const formData = new FormData();
-    for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append("file", selectedFiles[i]);
-    }
-
-    let newImageUrls = [];
-    if (selectedFiles.length > 0) {
-      try {
-        const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
-          },
-          body: formData,
-        });
-
-        if (uploadResponse.ok) {
-          const uploadResult = await uploadResponse.json();
-          newImageUrls = uploadResult.urls || [];
-        } else {
-          console.error("Failed to upload new images");
-          const errorData = await uploadResponse.json();
-          alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
-          setIsSubmitting(false);
-          return;
-        }
-      } catch (error) {
-        console.error("Error uploading new images:", error);
-        alert("An error occurred while uploading new images. Check console.");
-        setIsSubmitting(false);
-        return;
-      }
-    }
-
     const isoDate = newDate.toISOString();
-    const updatedEvent = {
-      title: newTitle,
-      date: isoDate,
-      location: newLocation,
-      images: [...imagesToKeep, ...newImageUrls],
-      type: newType,
-    };
-
-    try {
-      const response = await fetch(`${BASE_URL}/api/gallery/${editingEvent._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
+    updateMutation.mutate(
+      {
+        id: editingEvent._id,
+        files: selectedFiles,
+        update: {
+          title: newTitle,
+          date: isoDate,
+          location: newLocation,
+          images: imagesToKeep, // existing kept images; new images handled inside mutation
+          type: newType,
         },
-        body: JSON.stringify(updatedEvent),
-      });
-
-      if (response.ok) {
-        setIsEditing(false);
-        setEditingEvent(null);
-        setNewTitle("");
-        setNewDate(null);
-        setNewLocation("");
-        setSelectedFiles([]);
-        setNewType("");
-        setImagesToKeep([]);
-        refetchGalleryEvents();
-      } else {
-        console.error("Failed to update gallery event");
-        alert("Failed to update gallery event. Check console for details.");
+      },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+          setEditingEvent(null);
+          setNewTitle("");
+          setNewDate(null);
+          setNewLocation("");
+          setSelectedFiles([]);
+          setNewType("");
+          setImagesToKeep([]);
+          refetchGalleryEvents();
+        },
       }
-    } catch (error) {
-      console.error("Error updating gallery event:", error);
-      alert("An error occurred while updating the event. Check console for details.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    );
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      setDeletingId(id);
-      try {
-        const response = await fetch(`${BASE_URL}/api/gallery/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
-          },
-        });
-
-        if (response.ok) {
-          refetchGalleryEvents();
-        } else {
-          console.error("Failed to delete gallery event");
-          alert("Failed to delete gallery event. Check console for details.");
-        }
-      } catch (error) {
-        console.error("Error deleting gallery event:", error);
-        alert("An error occurred while deleting the event. Check console for details.");
-      } finally {
-        setDeletingId(null);
-      }
-    }
+  const handleDelete = (id) => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
+    setDeletingId(id);
+    deleteMutation.mutate(id, {
+      onSettled: () => setDeletingId(null),
+    });
   };
 
   // Basic styling for better readability, can be enhanced with Tailwind
@@ -689,6 +586,5 @@ const AdminGalleryControls = ({ events, setEvents, refetchGalleryEvents }) => {
 
 AdminGalleryControls.propTypes = {
   events: PropTypes.array.isRequired,
-  setEvents: PropTypes.func.isRequired, // Though not directly used, good for consistency if needed later
   refetchGalleryEvents: PropTypes.func.isRequired,
 };

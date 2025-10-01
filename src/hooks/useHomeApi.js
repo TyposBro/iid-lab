@@ -27,7 +27,7 @@ export const useHomePageMeta = () => {
   };
   return useQuery(
     buildQueryOptions({
-  key: qk.homeMeta(),
+      key: qk.homeMeta(),
       path: "/api/meta/home",
       select: (data) => ({ ...defaults, ...data }),
       retry: (failureCount, error) => {
@@ -42,7 +42,7 @@ export const useHomePageMeta = () => {
 export const useGalleryEvents = (featured = false) => {
   return useQuery(
     buildQueryOptions({
-  key: qk.gallery(featured),
+      key: qk.gallery(featured),
       path: `/api/gallery${featured ? "?featured=true" : ""}`,
       select: (data) => {
         if (featured) {
@@ -61,8 +61,8 @@ export const useGalleryEvents = (featured = false) => {
 export const useProfessors = () => {
   return useQuery(
     buildQueryOptions({
-  key: qk.professors(),
-  staleTime: 5 * 60 * 1000, // cache professor data for 5 minutes
+      key: qk.professors(),
+      staleTime: 5 * 60 * 1000, // cache professor data for 5 minutes
       path: "/api/professors/all",
       select: (data) => (Array.isArray(data) && data.length > 0 ? data[0] : null),
       retry: (failureCount, error) => {
@@ -77,7 +77,7 @@ export const useProfessors = () => {
 export const useTeamMembers = (featured = false) => {
   return useQuery(
     buildQueryOptions({
-  key: qk.team(featured),
+      key: qk.team(featured),
       path: `/api/team${featured ? "?featured=true" : ""}`,
       select: (data) => {
         if (featured) return data.filter((m) => m.type !== "alumni");
@@ -91,7 +91,7 @@ export const useTeamMembers = (featured = false) => {
 export const useProjects = (status = null) => {
   return useQuery(
     buildQueryOptions({
-  key: qk.projects(status),
+      key: qk.projects(status),
       path: `/api/projects${status ? `?status=${status}` : ""}`,
       select: (data) => {
         if (status === "current") return data.slice(0, 4);
@@ -105,7 +105,7 @@ export const useProjects = (status = null) => {
 export const usePublications = (type = null) => {
   return useQuery(
     buildQueryOptions({
-  key: qk.publications(type),
+      key: qk.publications(type),
       path: `/api/publications${type ? `?type=${type}` : ""}`,
       select: (data) => data.slice(0, 5),
     })

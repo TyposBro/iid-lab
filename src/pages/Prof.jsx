@@ -156,7 +156,10 @@ const Prof = () => {
     }
   };
 
-  if (error) return <div className="pt-32 text-center text-red-600">Error: {error.message || String(error)}</div>;
+  if (error)
+    return (
+      <div className="pt-32 text-center text-red-600">Error: {error.message || String(error)}</div>
+    );
 
   return (
     <div className="flex flex-col justify-start items-center py-[95px] px-[25px] w-full gap-6">

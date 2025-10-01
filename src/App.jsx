@@ -1,5 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Router } from "./router";
+import { ToastProvider } from "@/contexts/ToastContext";
+import { ToastContainer } from "@/components";
 import "./index.css";
 import "./styles/nav.scss";
 
@@ -17,9 +19,12 @@ const queryClient = new QueryClient({
 export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="mx-auto">
-        <Router />
-      </div>
+      <ToastProvider>
+        <div className="mx-auto">
+          <Router />
+          <ToastContainer />
+        </div>
+      </ToastProvider>
     </QueryClientProvider>
   );
 };
