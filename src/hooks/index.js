@@ -1,3 +1,10 @@
+// New modular hook structure
+export * from "./useHomeApi";
+export * from "./useAboutApi";
+export { jsonFetcher } from "./useFetcher";
+
+// Temporary backward compatibility: re-export legacy hooks from useHomeApi if old import path `useApi` was used elsewhere
+// TODO: Remove after migrating all imports.
 export {
   useHomePageMeta,
   useGalleryEvents,
@@ -5,4 +12,4 @@ export {
   useTeamMembers,
   useProjects,
   usePublications,
-} from "./useApi";
+} from "./useHomeApi";

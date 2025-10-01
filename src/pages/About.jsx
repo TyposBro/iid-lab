@@ -1,161 +1,51 @@
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/About.jsx
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { MainCarousel, LoadingSpinner, Filter } from "@/components";
 import { AdminAboutControls } from "@/components/admin/AboutControls";
 import { AdminMetaControls } from "@/components/AdminMetaControls";
-import { BASE_URL } from "@/config/api";
 import { useAdmin } from "@/contexts/AdminContext";
 import { Down_left_dark_arrow } from "@/assets/";
+import { useAboutMeta, useResearchTracks, useAboutCarousel } from "@/hooks/useAboutApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const About = () => {
-  const [allTracks, setAllTracks] = useState([]);
-  const [carouselSlides, setCarouselSlides] = useState([]);
-  const [loadingAboutTracks, setLoadingAboutTracks] = useState(true);
-  const [loadingCarousel, setLoadingCarousel] = useState(true);
-  const [tracksError, setTracksError] = useState(null);
+  const queryClient = useQueryClient();
+  const { data: aboutMeta, isLoading: metaLoading } = useAboutMeta();
+  const {
+    data: allTracks = [],
+    isLoading: loadingAboutTracks,
+    error: tracksError,
+  } = useResearchTracks();
+  const { data: carouselSlides = [], isLoading: loadingCarousel } = useAboutCarousel();
+  // selection state
   const { isAdmin, adminToken } = useAdmin();
   const [selectedTrackFilter, setSelectedTrackFilter] = useState(null); // Initialize to null
-
-  // --- Meta Data State ---
-  const [aboutMeta, setAboutMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [, setMetaError] = useState(null); // metaError state exists but not used to display to user in this setup
-
   const defaultAboutMeta = useMemo(
-    () => ({
-      title: "",
-      description: "",
-      researchTracksTitle: "", // Added for dynamic section title
-    }),
+    () => ({ title: "", description: "", researchTracksTitle: "" }),
     []
   );
 
-  // Fetch Meta Data for About Page
-  const fetchAboutMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/about`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn("About page meta data not found, using defaults.");
-          setAboutMeta(defaultAboutMeta);
-          document.title = defaultAboutMeta.title;
-        } else {
-          throw new Error(`HTTP error for meta! status: ${response.status}`);
-        }
-      } else {
-        const data = await response.json();
-        const mergedMeta = { ...defaultAboutMeta, ...data }; // Ensure all default keys are present
-        setAboutMeta(mergedMeta);
-        if (mergedMeta.title) {
-          document.title = mergedMeta.title;
-        }
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      console.error("Failed to fetch about page meta:", err);
-      setAboutMeta(defaultAboutMeta);
-      document.title = defaultAboutMeta.title;
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultAboutMeta]);
-
-  // Fetch Research Tracks
-  const fetchAllTracks = useCallback(async () => {
-    setLoadingAboutTracks(true);
-    setTracksError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/about`);
-      if (!response.ok) {
-        const errData = await response
-          .json()
-          .catch(() => ({ message: `HTTP error for tracks! status: ${response.status}` }));
-        throw new Error(errData.message || `HTTP error for tracks! status: ${response.status}`);
-      }
-      const responseData = await response.json();
-      const tracks =
-        responseData.success && Array.isArray(responseData.data) ? responseData.data : [];
-      setAllTracks(tracks);
-      // Preselect the first track if tracks exist and no filter is yet selected OR if the current selection is no longer valid
-      if (
-        tracks.length > 0 &&
-        (!selectedTrackFilter || !tracks.find((t) => t.title === selectedTrackFilter))
-      ) {
-        setSelectedTrackFilter(tracks[0].title);
-      } else if (tracks.length === 0) {
-        setSelectedTrackFilter(null); // No tracks, no selection
-      }
-    } catch (err) {
-      console.error("Fetch about tracks error:", err);
-      setAllTracks([]);
-      setTracksError("Failed to load research tracks. " + err.message);
-      setSelectedTrackFilter(null); // Reset on error
-    } finally {
-      setLoadingAboutTracks(false);
-    }
-  }, [selectedTrackFilter]); // Add selectedTrackFilter to dependencies to handle re-selection logic if needed, though fetch is main driver
-
-  // Fetch Carousel Images
-  const fetchCarouselImages = useCallback(async () => {
-    setLoadingCarousel(true);
-    let finalSlides = [];
-    try {
-      const results = await Promise.allSettled([
-        fetch(`${BASE_URL}/api/news`).then((res) =>
-          res.ok ? res.json() : Promise.resolve({ data: [] })
-        ), // Ensure data structure
-        fetch(`${BASE_URL}/api/gallery`).then((res) =>
-          res.ok ? res.json() : Promise.resolve({ data: [] })
-        ), // Ensure data structure
-      ]);
-
-      const [newsResult, galleryResult] = results;
-
-      // Assuming news items are directly the array or inside a 'data' property
-      const newsData =
-        newsResult.status === "fulfilled" ? newsResult.value.data || newsResult.value : [];
-      const newsImages = Array.isArray(newsData)
-        ? newsData
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .flatMap((item) => item.images || [])
-            .filter(Boolean)
-            .slice(0, 5)
-        : [];
-
-      // Assuming gallery items are directly the array or inside a 'data' property
-      const galleryData =
-        galleryResult.status === "fulfilled" ? galleryResult.value.data || galleryResult.value : [];
-      const galleryImages = Array.isArray(galleryData)
-        ? galleryData
-            .flatMap((item) => item.images || [])
-            .filter(Boolean)
-            .slice(0, 5)
-        : [];
-
-      finalSlides = [...newsImages, ...galleryImages].slice(0, 7);
-    } catch (err) {
-      console.error("Carousel image fetch error (outer catch):", err);
-    } finally {
-      setCarouselSlides(finalSlides);
-      setLoadingCarousel(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchAboutMeta();
-    fetchAllTracks(); // fetchAllTracks will handle initial selection
-    fetchCarouselImages();
-  }, [fetchAboutMeta, fetchAllTracks, fetchCarouselImages]);
+  // Effects replaced by query lifecycle; compute selection when tracks change
+  if (
+    !loadingAboutTracks &&
+    allTracks.length > 0 &&
+    (!selectedTrackFilter || !allTracks.find((t) => t.title === selectedTrackFilter))
+  ) {
+    // set first valid track
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    setSelectedTrackFilter(allTracks[0].title);
+  }
+  if (!loadingAboutTracks && allTracks.length === 0 && selectedTrackFilter) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    setSelectedTrackFilter(null);
+  }
 
   const handleTrackDataChange = () => {
-    fetchAllTracks();
+    queryClient.invalidateQueries({ queryKey: ["about", "tracks"] });
   };
-
   const handleMetaDataChange = () => {
-    fetchAboutMeta();
+    queryClient.invalidateQueries({ queryKey: ["about", "meta"] });
   };
 
   // Filter options derived from fetched tracks for the Filter component
@@ -165,11 +55,9 @@ export const About = () => {
   );
 
   // Preselect first track if options are available and nothing is selected
-  useEffect(() => {
-    if (!loadingAboutTracks && filterOptions.length > 0 && selectedTrackFilter === null) {
-      setSelectedTrackFilter(filterOptions[0]);
-    }
-  }, [loadingAboutTracks, filterOptions, selectedTrackFilter]);
+  if (!loadingAboutTracks && filterOptions.length > 0 && selectedTrackFilter === null) {
+    setSelectedTrackFilter(filterOptions[0]);
+  }
 
   const tracksToDisplay = selectedTrackFilter
     ? allTracks.filter((track) => track.title === selectedTrackFilter)
