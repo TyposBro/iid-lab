@@ -34,7 +34,14 @@ export const Home = () => {
     data: homePageMeta,
     isLoading: pageMetaLoading,
     error: pageMetaError,
+    refetch: refetchHomeMeta,
   } = useHomePageMeta();
+
+  // When admin updates meta data, trigger a refetch so UI reflects latest values
+  const handlePageMetaUpdated = () => {
+    // Fire and forget; react-query will update cache & re-render
+    refetchHomeMeta();
+  };
 
   // Set document title when meta data is available
   if (homePageMeta?.title) {
