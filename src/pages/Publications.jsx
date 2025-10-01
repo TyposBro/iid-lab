@@ -614,8 +614,8 @@ const AdminControls = ({ onPublicationsUpdated }) => {
     Object.keys(pubData).forEach((key) => pubData[key] === undefined && delete pubData[key]);
 
     const url = isEditing
-      ? `${BASE_URL}/publications/${editingPublication._id}`
-      : `${BASE_URL}/publications`;
+      ? `${BASE_URL}/api/publications/${editingPublication._id}`
+      : `${BASE_URL}/api/publications`;
     const method = isEditing ? "PUT" : "POST";
 
     try {

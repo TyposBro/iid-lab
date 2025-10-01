@@ -166,7 +166,8 @@ export const Team = () => {
     setProfLoading(true);
     setProfError(null);
     try {
-      const response = await fetch(`${BASE_URL}/api/professors/all`);
+      // Backend exposes singular professor resource at /api/prof
+      const response = await fetch(`${BASE_URL}/api/prof`);
       if (!response.ok) {
         // If professor not found, don't throw error, just setProfData to null
         if (response.status === 404) {
@@ -1108,7 +1109,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     if (window.confirm("Are you sure you want to delete the professor's information?")) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`${BASE_URL}/api/professors/${professor._id}`, {
+        const response = await fetch(`${BASE_URL}/api/prof/${professor._id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${adminToken}` },
         });

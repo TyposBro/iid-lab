@@ -40,7 +40,7 @@ export const useCreatePublication = (token, { toast } = {}) => {
         const dataUpload = await resUpload.json();
         image = dataUpload.urls?.[0] || null;
       }
-      const res = await fetch(`${BASE_URL}/publications`, {
+      const res = await fetch(`${BASE_URL}/api/publications`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ...publication, image }),
@@ -104,7 +104,7 @@ export const useUpdatePublication = (token, { toast } = {}) => {
         const dataUpload = await resUpload.json();
         image = dataUpload.urls?.[0] || null;
       }
-      const res = await fetch(`${BASE_URL}/publications/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/publications/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ...update, image }),

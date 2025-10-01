@@ -47,9 +47,10 @@ export const useCreateOrUpdateProfessor = (adminToken) => {
       delete payload._removeCv;
 
       const method = existing?._id ? "PUT" : "POST";
+      // Backend uses singular /api/prof for create (POST) and /api/prof/:id for update
       const endpoint = existing?._id
-        ? `${BASE_URL}/api/professors/${existing._id}`
-        : `${BASE_URL}/api/professors`;
+        ? `${BASE_URL}/api/prof/${existing._id}`
+        : `${BASE_URL}/api/prof`;
 
       const res = await fetch(endpoint, {
         method,
@@ -72,7 +73,7 @@ export const useDeleteProfessor = (adminToken) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id) => {
-      const res = await fetch(`${BASE_URL}/api/professors/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/prof/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${adminToken}` },
       });

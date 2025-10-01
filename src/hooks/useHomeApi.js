@@ -57,14 +57,14 @@ export const useGalleryEvents = (featured = false) => {
   );
 };
 
-// Professors (returns first professor or null)
+// Professor (single) - backend exposes /api/prof returning one document
 export const useProfessors = () => {
   return useQuery(
     buildQueryOptions({
       key: qk.professors(),
-      staleTime: 5 * 60 * 1000, // cache professor data for 5 minutes
-      path: "/api/professors/all",
-      select: (data) => (Array.isArray(data) && data.length > 0 ? data[0] : null),
+      staleTime: 5 * 60 * 1000,
+      path: "/api/prof",
+      select: (data) => data || null,
       retry: (failureCount, error) => {
         if (error.message.includes("404")) return false;
         return failureCount < 3;
@@ -102,12 +102,14 @@ export const useProjects = (status = null) => {
 };
 
 // Publications (optionally type filter; slice to 5 for home display)
+// Backend provides /api/publications/type/:type for type-specific lists
 export const usePublications = (type = null) => {
+  const path = type ? `/api/publications/type/${type}` : "/api/publications"; // all (admin protected) but used only when type null in limited cases
   return useQuery(
     buildQueryOptions({
       key: qk.publications(type),
-      path: `/api/publications${type ? `?type=${type}` : ""}`,
-      select: (data) => data.slice(0, 5),
+      path,
+      select: (data) => (Array.isArray(data) ? data.slice(0, 5) : []),
     })
   );
 };
