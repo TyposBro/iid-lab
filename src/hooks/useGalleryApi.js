@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { buildQueryOptions } from "./useFetcher";
+import { QK } from "./queryKeys";
 
 export const galleryQk = {
-  meta: () => ["gallery", "meta"],
-  events: () => ["gallery", "events"],
+  meta: () => QK.gallery.meta,
+  events: () => QK.gallery.events,
 };
 
 export const useGalleryMeta = () => {

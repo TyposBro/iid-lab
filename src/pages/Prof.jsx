@@ -8,6 +8,7 @@ import { GoTo } from "@/components/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api"; // Import BASE_URL
 import { useProfessors } from "@/hooks";
+import { useCreateOrUpdateProfessor, useDeleteProfessor } from "@/hooks/useProfessorMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { LoadingSpinner } from "@/components";
 import DatePicker from "react-datepicker";
@@ -44,23 +45,33 @@ const Prof = () => {
   const queryClient = useQueryClient();
   const { data: prof, isLoading: loading, error } = useProfessors();
   const [localProfOverride, setLocalProfOverride] = useState(null); // after mutation we can override while query refetches
-  const { isAdmin } = useAdmin();
+  const { isAdmin, adminToken } = useAdmin();
   const [isDownloadingCv, setIsDownloadingCv] = useState(false);
 
   const effectiveProf = localProfOverride || prof;
 
   const handleCvDownloadClick = async () => {
     console.log("[handleCvDownloadClick] Triggered.");
-  console.log("[handleCvDownloadClick] Current prof object:", effectiveProf);
-  console.log("[handleCvDownloadClick] CV Link from prof:", effectiveProf ? effectiveProf.cvLink : "N/A");
+    console.log("[handleCvDownloadClick] Current prof object:", effectiveProf);
+    console.log(
+      "[handleCvDownloadClick] CV Link from prof:",
+      effectiveProf ? effectiveProf.cvLink : "N/A"
+    );
     console.log("[handleCvDownloadClick] isDownloadingCv state:", isDownloadingCv);
 
-    if (!effectiveProf || !effectiveProf.cvLink || typeof effectiveProf.cvLink !== "string" || effectiveProf.cvLink.trim() === "") {
+    if (
+      !effectiveProf ||
+      !effectiveProf.cvLink ||
+      typeof effectiveProf.cvLink !== "string" ||
+      effectiveProf.cvLink.trim() === ""
+    ) {
       console.warn("[handleCvDownloadClick] Exiting: Invalid prof object or CV link.", {
         hasProf: !!effectiveProf,
         cvLink: effectiveProf ? effectiveProf.cvLink : "N/A",
         isCvLinkStringAndNotEmpty:
-          effectiveProf && typeof effectiveProf.cvLink === "string" && effectiveProf.cvLink.trim() !== "",
+          effectiveProf &&
+          typeof effectiveProf.cvLink === "string" &&
+          effectiveProf.cvLink.trim() !== "",
       });
       alert("CV link is not available or invalid.");
       return;
@@ -71,19 +82,25 @@ const Prof = () => {
     }
 
     setIsDownloadingCv(true);
-  console.log(`[handleCvDownloadClick] Attempting to download from: ${effectiveProf.cvLink}`);
+    console.log(`[handleCvDownloadClick] Attempting to download from: ${effectiveProf.cvLink}`);
 
     try {
       // Verify URL structure before fetching
       try {
         new URL(effectiveProf.cvLink); // This will throw if the URL is malformed
       } catch (urlError) {
-        console.error("[handleCvDownloadClick] Invalid URL format:", effectiveProf.cvLink, urlError);
-        throw new Error(`The CV link is not a valid URL: ${effectiveProf.cvLink.substring(0, 100)}...`);
+        console.error(
+          "[handleCvDownloadClick] Invalid URL format:",
+          effectiveProf.cvLink,
+          urlError
+        );
+        throw new Error(
+          `The CV link is not a valid URL: ${effectiveProf.cvLink.substring(0, 100)}...`
+        );
       }
 
       console.log("[handleCvDownloadClick] Fetching CV...");
-  const response = await fetch(effectiveProf.cvLink);
+      const response = await fetch(effectiveProf.cvLink);
       console.log(
         "[handleCvDownloadClick] Fetch response received. Status:",
         response.status,
@@ -112,11 +129,11 @@ const Prof = () => {
       const blob = await response.blob();
       console.log("[handleCvDownloadClick] Blob created:", blob);
 
-  const suggestedFilename = getSuggestedFilenameFromUrl(effectiveProf.cvLink);
+      const suggestedFilename = getSuggestedFilenameFromUrl(effectiveProf.cvLink);
 
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-  link.download = `${effectiveProf.name}_CV.pdf`;
+      link.download = `${effectiveProf.name}_CV.pdf`;
       console.log("[handleCvDownloadClick] Object URL for blob:", link.href);
 
       document.body.appendChild(link);
@@ -139,12 +156,26 @@ const Prof = () => {
     }
   };
 
-  if (loading) return <LoadingSpinner message="Loading Professor..." />;
-  if (error) return <div>Error loading professor: {error.message || String(error)} </div>;
+  if (error) return <div className="pt-32 text-center text-red-600">Error: {error.message || String(error)}</div>;
 
   return (
     <div className="flex flex-col justify-start items-center py-[95px] px-[25px] w-full gap-6">
-      {effectiveProf ? (
+      {loading && (
+        <div className="w-full max-w-xl animate-pulse flex flex-col gap-6 mt-8">
+          <div className="w-full h-72 bg-gray-200 rounded-lg" />
+          <div className="space-y-3">
+            <div className="h-8 w-2/3 bg-gray-200 rounded" />
+            <div className="h-4 w-1/2 bg-gray-200 rounded" />
+            <div className="h-4 w-full bg-gray-200 rounded" />
+            <div className="h-4 w-5/6 bg-gray-200 rounded" />
+          </div>
+          <div className="flex gap-4">
+            <div className="h-12 flex-1 bg-gray-200 rounded" />
+            <div className="h-12 flex-1 bg-gray-200 rounded" />
+          </div>
+        </div>
+      )}
+      {!loading && effectiveProf ? (
         <>
           <Intro prof={effectiveProf} />
           <Background list={effectiveProf.background || []} />
@@ -181,13 +212,14 @@ const Prof = () => {
         </div>
       )}
 
-      {isAdmin && (
+      {isAdmin && !loading && (
         <AdminProfessorControls
           prof={effectiveProf}
           setProf={(updated) => {
-            setLocalProfOverride(updated); // optimistic local override
+            setLocalProfOverride(updated);
             queryClient.invalidateQueries({ queryKey: ["professors"] });
           }}
+          adminToken={adminToken}
         />
       )}
     </div>
@@ -196,7 +228,7 @@ const Prof = () => {
 
 export default Prof;
 
-const AdminProfessorControls = ({ prof, setProf }) => {
+const AdminProfessorControls = ({ prof, setProf, adminToken }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [selectedImageFile, setSelectedImageFile] = useState(null);
@@ -204,7 +236,8 @@ const AdminProfessorControls = ({ prof, setProf }) => {
   const [selectedCvFile, setSelectedCvFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
-  const { adminToken } = useAdmin();
+  const createOrUpdateMutation = useCreateOrUpdateProfessor(adminToken);
+  const deleteMutation = useDeleteProfessor(adminToken);
 
   useEffect(() => {
     const initialFormData = prof || {
@@ -349,59 +382,19 @@ const AdminProfessorControls = ({ prof, setProf }) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError(null);
-
-    let newImageUrl = formData.img;
-    let newCvUrl = formData.cvLink; // Start with current CV link
-
     try {
-      if (selectedImageFile) {
-        newImageUrl = await uploadFile(selectedImageFile, "images");
-      }
-
-      if (selectedCvFile) {
-        // If a new CV file is selected, upload it
-        newCvUrl = await uploadFile(selectedCvFile, "images");
-      } else if (formData.cvLink === "" && prof?.cvLink) {
-        // If cvLink was cleared (handleRemoveCv) and there was an old one
-        newCvUrl = ""; // Explicitly set to empty string to remove it
-      }
-      // If no new CV is selected and cvLink wasn't cleared, newCvUrl remains formData.cvLink (original or already empty)
-
-      const professorDataToSubmit = {
-        ...formData,
-        img: newImageUrl,
-        cvLink: newCvUrl,
-        stats: formData.stats
-          ? formData.stats.map((stat) => ({ ...stat, value: parseFloat(stat.value) || 0 }))
-          : [],
-      };
-
-      const endpoint = prof?._id ? `${BASE_URL}/prof/${prof._id}` : `${BASE_URL}/prof`;
-      const method = prof?._id ? "PUT" : "POST";
-
-      const response = await fetch(endpoint, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
+      await createOrUpdateMutation.mutateAsync({
+        existing: prof,
+        formData: {
+          ...formData,
+          _newImageFile: selectedImageFile || null,
+          _newCvFile: selectedCvFile || null,
+          _removeCv: formData.cvLink === "" && !!prof?.cvLink,
         },
-        body: JSON.stringify(professorDataToSubmit),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || `Failed to ${prof?._id ? "update" : "create"} professor profile`
-        );
-      }
-
-      const result = await response.json();
-      setProf(result); // Update parent state
-      setIsEditing(false); // This will trigger useEffect to reset file states and clear errors
-      // setSelectedImageFile and setSelectedCvFile will be reset by useEffect
-    } catch (error) {
-      console.error("Submission error:", error);
-      setFormError(error.message);
+      setIsEditing(false);
+    } catch (err) {
+      setFormError(err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -409,31 +402,15 @@ const AdminProfessorControls = ({ prof, setProf }) => {
 
   const handleDelete = async () => {
     if (!prof?._id) return;
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this professor profile? This action cannot be undone."
-      )
-    )
-      return;
-
+    if (!window.confirm("Are you sure you want to delete this professor profile?")) return;
     setIsSubmitting(true);
     setFormError(null);
     try {
-      const response = await fetch(`${BASE_URL}/api/professors/${prof._id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${adminToken}` },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Delete failed with status: ${response.status}`);
-      }
-
+      await deleteMutation.mutateAsync(prof._id);
       setProf(null);
       setIsEditing(false);
-    } catch (error) {
-      console.error("Delete error:", error);
-      setFormError(`Failed to delete profile: ${error.message}`);
+    } catch (err) {
+      setFormError(err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -811,6 +788,7 @@ const AdminProfessorControls = ({ prof, setProf }) => {
 AdminProfessorControls.propTypes = {
   prof: PropTypes.object,
   setProf: PropTypes.func.isRequired,
+  adminToken: PropTypes.string,
 };
 
 const Intro = ({ prof }) => {

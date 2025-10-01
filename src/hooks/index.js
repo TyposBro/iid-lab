@@ -3,6 +3,8 @@ export * from "./useHomeApi";
 export * from "./useAboutApi";
 export * from "./useGalleryApi";
 export * from "./useNewsApi";
+export { QK } from "./queryKeys";
+export * from "./useProfessorMutations";
 export { jsonFetcher } from "./useFetcher";
 
 // Temporary backward compatibility: re-export legacy hooks from useHomeApi if old import path `useApi` was used elsewhere

@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { buildQueryOptions } from "./useFetcher";
+import { QK } from "./queryKeys";
 
 export const newsQk = {
-  meta: () => ["news", "meta"],
-  list: () => ["news", "list"],
+  meta: () => QK.news.meta,
+  list: () => QK.news.list,
 };
 
 export const useNewsMeta = () => {

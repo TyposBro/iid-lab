@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { buildQueryOptions } from "./useFetcher";
+import { QK } from "./queryKeys";
 
 export const aboutQk = {
-  meta: () => ["about", "meta"],
-  tracks: () => ["about", "tracks"],
-  carousel: () => ["about", "carousel"],
+  meta: () => QK.about.meta,
+  tracks: () => QK.about.tracks,
+  carousel: () => QK.about.carousel,
 };
 
 // About Page Meta
