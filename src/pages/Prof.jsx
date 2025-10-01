@@ -7,6 +7,8 @@ import { Down_straight_neutral_arrow } from "@/assets";
 import { GoTo } from "@/components/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api"; // Import BASE_URL
+import { useProfessors } from "@/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import { LoadingSpinner } from "@/components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -39,49 +41,26 @@ const getSuggestedFilenameFromUrl = (url) => {
 };
 
 const Prof = () => {
-  const [prof, setProf] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
+  const { data: prof, isLoading: loading, error } = useProfessors();
+  const [localProfOverride, setLocalProfOverride] = useState(null); // after mutation we can override while query refetches
   const { isAdmin } = useAdmin();
   const [isDownloadingCv, setIsDownloadingCv] = useState(false);
 
-  useEffect(() => {
-    const fetchProfessor = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${BASE_URL}/api/professors/all`);
-        if (!response.ok) {
-          if (response.status === 404) {
-            setProf(null);
-          } else {
-            throw new Error(`Failed to fetch professor: ${response.statusText}`);
-          }
-        } else {
-          const data = await response.json();
-          // Take the first professor from the array
-          setProf(Array.isArray(data) && data.length > 0 ? data[0] : null);
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfessor();
-  }, []);
+  const effectiveProf = localProfOverride || prof;
 
   const handleCvDownloadClick = async () => {
     console.log("[handleCvDownloadClick] Triggered.");
-    console.log("[handleCvDownloadClick] Current prof object:", prof);
-    console.log("[handleCvDownloadClick] CV Link from prof:", prof ? prof.cvLink : "N/A");
+  console.log("[handleCvDownloadClick] Current prof object:", effectiveProf);
+  console.log("[handleCvDownloadClick] CV Link from prof:", effectiveProf ? effectiveProf.cvLink : "N/A");
     console.log("[handleCvDownloadClick] isDownloadingCv state:", isDownloadingCv);
 
-    if (!prof || !prof.cvLink || typeof prof.cvLink !== "string" || prof.cvLink.trim() === "") {
+    if (!effectiveProf || !effectiveProf.cvLink || typeof effectiveProf.cvLink !== "string" || effectiveProf.cvLink.trim() === "") {
       console.warn("[handleCvDownloadClick] Exiting: Invalid prof object or CV link.", {
-        hasProf: !!prof,
-        cvLink: prof ? prof.cvLink : "N/A",
+        hasProf: !!effectiveProf,
+        cvLink: effectiveProf ? effectiveProf.cvLink : "N/A",
         isCvLinkStringAndNotEmpty:
-          prof && typeof prof.cvLink === "string" && prof.cvLink.trim() !== "",
+          effectiveProf && typeof effectiveProf.cvLink === "string" && effectiveProf.cvLink.trim() !== "",
       });
       alert("CV link is not available or invalid.");
       return;
@@ -92,19 +71,19 @@ const Prof = () => {
     }
 
     setIsDownloadingCv(true);
-    console.log(`[handleCvDownloadClick] Attempting to download from: ${prof.cvLink}`);
+  console.log(`[handleCvDownloadClick] Attempting to download from: ${effectiveProf.cvLink}`);
 
     try {
       // Verify URL structure before fetching
       try {
-        new URL(prof.cvLink); // This will throw if the URL is malformed
+        new URL(effectiveProf.cvLink); // This will throw if the URL is malformed
       } catch (urlError) {
-        console.error("[handleCvDownloadClick] Invalid URL format:", prof.cvLink, urlError);
-        throw new Error(`The CV link is not a valid URL: ${prof.cvLink.substring(0, 100)}...`);
+        console.error("[handleCvDownloadClick] Invalid URL format:", effectiveProf.cvLink, urlError);
+        throw new Error(`The CV link is not a valid URL: ${effectiveProf.cvLink.substring(0, 100)}...`);
       }
 
       console.log("[handleCvDownloadClick] Fetching CV...");
-      const response = await fetch(prof.cvLink);
+  const response = await fetch(effectiveProf.cvLink);
       console.log(
         "[handleCvDownloadClick] Fetch response received. Status:",
         response.status,
@@ -133,11 +112,11 @@ const Prof = () => {
       const blob = await response.blob();
       console.log("[handleCvDownloadClick] Blob created:", blob);
 
-      const suggestedFilename = getSuggestedFilenameFromUrl(prof.cvLink);
+  const suggestedFilename = getSuggestedFilenameFromUrl(effectiveProf.cvLink);
 
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `${prof.name}_CV.pdf`;
+  link.download = `${effectiveProf.name}_CV.pdf`;
       console.log("[handleCvDownloadClick] Object URL for blob:", link.href);
 
       document.body.appendChild(link);
@@ -161,17 +140,17 @@ const Prof = () => {
   };
 
   if (loading) return <LoadingSpinner message="Loading Professor..." />;
-  if (error) return <div>Error loading professor: {error}</div>;
+  if (error) return <div>Error loading professor: {error.message || String(error)} </div>;
 
   return (
     <div className="flex flex-col justify-start items-center py-[95px] px-[25px] w-full gap-6">
-      {prof ? (
+      {effectiveProf ? (
         <>
-          <Intro prof={prof} />
-          <Background list={prof.background || []} />
-          <Links list={prof.background || []} />
+          <Intro prof={effectiveProf} />
+          <Background list={effectiveProf.background || []} />
+          <Links list={effectiveProf.background || []} />
           <div className="w-full flex flex-col gap-[10px] font-semibold text-[18px]">
-            {prof.cvLink && (
+            {effectiveProf.cvLink && (
               <button
                 target="_blank"
                 rel="noopener noreferrer"
@@ -183,10 +162,10 @@ const Prof = () => {
                 {/* Optionally: Download CV ({getSuggestedFilenameFromUrl(prof.cvLink)}) */}
               </button>
             )}
-            {prof.email && (
+            {effectiveProf.email && (
               <a
                 className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-                href={`mailto:${prof.email}`}
+                href={`mailto:${effectiveProf.email}`}
               >
                 Contact
               </a>
@@ -202,7 +181,15 @@ const Prof = () => {
         </div>
       )}
 
-      {isAdmin && <AdminProfessorControls prof={prof} setProf={setProf} />}
+      {isAdmin && (
+        <AdminProfessorControls
+          prof={effectiveProf}
+          setProf={(updated) => {
+            setLocalProfOverride(updated); // optimistic local override
+            queryClient.invalidateQueries({ queryKey: ["professors"] });
+          }}
+        />
+      )}
     </div>
   );
 };
