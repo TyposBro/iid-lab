@@ -1,27 +1,25 @@
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/Gallery.jsx
 
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useCallback, useMemo } from "react"; // Added useCallback, useMemo
+import { useState, useMemo } from "react"; // Removed unnecessary hooks
 import PropTypes from "prop-types";
 import { Filter, MainCarousel, LoadingSpinner, AdminMetaControls } from "@/components"; // Added AdminMetaControls
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
+import { useGalleryMeta, useGalleryEvents } from "@/hooks/useGalleryApi";
+import { useQueryClient } from "@tanstack/react-query";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const Gallery = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
+  const { data: events = [], isLoading: loading, error } = useGalleryEvents();
   const [selected, setSelected] = useState("Latest");
   const { isAdmin, adminToken } = useAdmin(); // adminToken is used in AdminGalleryControls
 
-  // --- Meta Data State and Fetching ---
-  const [galleryMeta, setGalleryMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshMetaKey, setRefreshMetaKey] = useState(0);
+  // --- Meta Data via React Query ---
+  const { data: galleryMeta, isLoading: metaLoading, error: metaError } = useGalleryMeta();
 
   const defaultGalleryMeta = useMemo(
     () => ({
@@ -31,63 +29,11 @@ export const Gallery = () => {
     []
   );
 
-  const fetchGalleryMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/gallery`); // Ensure this endpoint exists
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn("Gallery meta data not found, using defaults.");
-          setGalleryMeta(defaultGalleryMeta);
-          document.title = defaultGalleryMeta.title + " - I&I Design Lab"; // Update document title
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      } else {
-        const data = await response.json();
-        setGalleryMeta(data);
-        document.title = (data.title || defaultGalleryMeta.title) + " - I&I Design Lab"; // Update document title
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      console.error("Failed to fetch gallery meta:", err);
-      setGalleryMeta(defaultGalleryMeta);
-      document.title = defaultGalleryMeta.title + " - I&I Design Lab"; // Update document title
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultGalleryMeta]);
-
-  useEffect(() => {
-    fetchGalleryMeta();
-  }, [fetchGalleryMeta, refreshMetaKey]);
-
   const handleMetaUpdated = () => {
-    setRefreshMetaKey((prev) => prev + 1);
+    queryClient.invalidateQueries({ queryKey: ["gallery", "meta"] });
   };
   // --- End Meta Data ---
-
-  useEffect(() => {
-    fetchGalleryEvents();
-  }, []);
-
-  const fetchGalleryEvents = async () => {
-    setLoading(true); // Keep this for gallery events loading
-    setError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/gallery`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setEvents(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false); // Keep this for gallery events loading
-    }
-  };
+  // Events fetching handled by useGalleryEvents
 
   // Use resolved meta or defaults for display
   const currentTitle = galleryMeta?.title || defaultGalleryMeta.title;
@@ -155,8 +101,9 @@ export const Gallery = () => {
               {isAdmin && (
                 <AdminGalleryControls
                   events={events}
-                  setEvents={setEvents}
-                  refetchGalleryEvents={fetchGalleryEvents}
+                  refetchGalleryEvents={() =>
+                    queryClient.invalidateQueries({ queryKey: ["gallery", "events"] })
+                  }
                 />
               )}
               <div className="w-full flex flex-col gap-[16px] py-8">
