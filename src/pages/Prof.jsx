@@ -46,115 +46,8 @@ const Prof = () => {
   const { data: prof, isLoading: loading, error } = useProfessors();
   const [localProfOverride, setLocalProfOverride] = useState(null); // after mutation we can override while query refetches
   const { isAdmin, adminToken } = useAdmin();
-  const [isDownloadingCv, setIsDownloadingCv] = useState(false);
 
   const effectiveProf = localProfOverride || prof;
-
-  const handleCvDownloadClick = async () => {
-    console.log("[handleCvDownloadClick] Triggered.");
-    console.log("[handleCvDownloadClick] Current prof object:", effectiveProf);
-    console.log(
-      "[handleCvDownloadClick] CV Link from prof:",
-      effectiveProf ? effectiveProf.cvLink : "N/A"
-    );
-    console.log("[handleCvDownloadClick] isDownloadingCv state:", isDownloadingCv);
-
-    if (
-      !effectiveProf ||
-      !effectiveProf.cvLink ||
-      typeof effectiveProf.cvLink !== "string" ||
-      effectiveProf.cvLink.trim() === ""
-    ) {
-      console.warn("[handleCvDownloadClick] Exiting: Invalid prof object or CV link.", {
-        hasProf: !!effectiveProf,
-        cvLink: effectiveProf ? effectiveProf.cvLink : "N/A",
-        isCvLinkStringAndNotEmpty:
-          effectiveProf &&
-          typeof effectiveProf.cvLink === "string" &&
-          effectiveProf.cvLink.trim() !== "",
-      });
-      alert("CV link is not available or invalid.");
-      return;
-    }
-    if (isDownloadingCv) {
-      console.warn("[handleCvDownloadClick] Exiting: Download already in progress.");
-      return;
-    }
-
-    setIsDownloadingCv(true);
-    console.log(`[handleCvDownloadClick] Attempting to download from: ${effectiveProf.cvLink}`);
-
-    try {
-      // Verify URL structure before fetching
-      try {
-        new URL(effectiveProf.cvLink); // This will throw if the URL is malformed
-      } catch (urlError) {
-        console.error(
-          "[handleCvDownloadClick] Invalid URL format:",
-          effectiveProf.cvLink,
-          urlError
-        );
-        throw new Error(
-          `The CV link is not a valid URL: ${effectiveProf.cvLink.substring(0, 100)}...`
-        );
-      }
-
-      console.log("[handleCvDownloadClick] Fetching CV...");
-      const response = await fetch(effectiveProf.cvLink);
-      console.log(
-        "[handleCvDownloadClick] Fetch response received. Status:",
-        response.status,
-        response.statusText
-      );
-      console.log(
-        "[handleCvDownloadClick] Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
-
-      if (!response.ok) {
-        let errorBody = "Could not retrieve error body.";
-        try {
-          errorBody = await response.text();
-        } catch (e) {
-          console.warn("[handleCvDownloadClick] Failed to read error body from response.");
-        }
-        console.error(
-          `[handleCvDownloadClick] Fetch failed. Status: ${response.status}. Body: ${errorBody}`
-        );
-        throw new Error(
-          `Server responded with ${response.status} ${response.statusText}. Check if the link is public and correct.`
-        );
-      }
-
-      const blob = await response.blob();
-      console.log("[handleCvDownloadClick] Blob created:", blob);
-
-      const suggestedFilename = getSuggestedFilenameFromUrl(effectiveProf.cvLink);
-
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `${effectiveProf.name}_CV.pdf`;
-      console.log("[handleCvDownloadClick] Object URL for blob:", link.href);
-
-      document.body.appendChild(link);
-      console.log("[handleCvDownloadClick] Temporary link appended to body. Simulating click...");
-      link.click();
-      console.log("[handleCvDownloadClick] Temporary link clicked.");
-      document.body.removeChild(link);
-      console.log("[handleCvDownloadClick] Temporary link removed from body.");
-
-      URL.revokeObjectURL(link.href);
-      console.log("[handleCvDownloadClick] Object URL revoked.");
-    } catch (error) {
-      console.error("[handleCvDownloadClick] Error during download process:", error);
-      alert(`Could not download CV: ${error.message}`);
-    } finally {
-      setIsDownloadingCv(false);
-      console.log(
-        "[handleCvDownloadClick] Download process finished. isDownloadingCv set to false."
-      );
-    }
-  };
 
   if (error)
     return (
@@ -183,28 +76,6 @@ const Prof = () => {
           <Intro prof={effectiveProf} />
           <Background list={effectiveProf.background || []} />
           <Links list={effectiveProf.background || []} />
-          <div className="w-full flex flex-col gap-[10px] font-semibold text-[18px]">
-            {effectiveProf.cvLink && (
-              <button
-                target="_blank"
-                rel="noopener noreferrer"
-                disabled={isDownloadingCv}
-                onClick={handleCvDownloadClick} // Set the suggested filename
-                className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-              >
-                Download CV
-                {/* Optionally: Download CV ({getSuggestedFilenameFromUrl(prof.cvLink)}) */}
-              </button>
-            )}
-            {effectiveProf.email && (
-              <a
-                className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full h-[50px] text-primary_main active:text-white no-underline"
-                href={`mailto:${effectiveProf.email}`}
-              >
-                Contact
-              </a>
-            )}
-          </div>
         </>
       ) : (
         <div className="text-center py-10">
@@ -966,20 +837,22 @@ const Links = ({ list }) => {
       </h2>
       <div className="flex flex-col gap-[10px]">
         <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
-          <h2 className="font-semibold text-[24px] leading-[48px]">Publications</h2>
-          <a href="/publications?type=journal" className="no-underline">
+          <h2 className="font-semibold text-[24px] leading-[48px]">Projects</h2>
+          <a href="/projects" className="no-underline">
             <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
           </a>
         </div>
+
         <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
-          <h2 className="font-semibold text-[24px] leading-[48px]">Conference Papers</h2>
-          <a href="/publications?type=conference" className="no-underline">
-            <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
-          </a>
-        </div>
-        <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
-          <h2 className="font-semibold text-[24px] leading-[48px]">Design Awards</h2>
+          <h2 className="font-semibold text-[24px] leading-[48px]">Awards</h2>
           <a href="/publications?type=awards" className="no-underline">
+            <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
+          </a>
+        </div>
+
+        <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
+          <h2 className="font-semibold text-[24px] leading-[48px]">Publications</h2>
+          <a href="/publications" className="no-underline">
             <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
           </a>
         </div>
