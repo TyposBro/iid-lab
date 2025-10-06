@@ -966,7 +966,7 @@ const Links = ({ list }) => {
       </h2>
       <div className="flex flex-col gap-[10px]">
         <div className="flex justify-between items-center w-full relative border-b-text_black_primary">
-          <h2 className="font-semibold text-[24px] leading-[48px]">Journal Papers</h2>
+          <h2 className="font-semibold text-[24px] leading-[48px]">Publications</h2>
           <a href="/publications?type=journal" className="no-underline">
             <Down_straight_neutral_arrow className="size-[30px] text-white bg-primary_main rounded-full p-[5px] -rotate-90" />
           </a>

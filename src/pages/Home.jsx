@@ -82,7 +82,7 @@ export const Home = () => {
               label: "Current Projects Section Description",
               type: "textarea",
             },
-            { name: "journalPapersTitle", label: "Journal Papers Section Title", type: "text" },
+            { name: "journalPapersTitle", label: "Publications Section Title", type: "text" },
             {
               name: "conferencePapersTitle",
               label: "Conference Papers Section Title",
@@ -242,14 +242,14 @@ const Prof = ({ navigate }) => {
     );
 
   return (
-    <div className="flex flex-col sm:flex-row gap-6 sm:gap-[30px] my-6 sm:my-[30px] px-4 sm:px-6 lg:px-[25px] w-full">
+    <div className="flex flex-col sm:flex-row gap-6 sm:gap-[30px] my-6 sm:my-[30px] px-4 sm:px-6 lg:px-[25px] w-full max-w-screen-xl mx-auto">
       <div
         className="mx-auto sm:mx-0 rounded-[20px] sm:rounded-[30px] w-full max-w-[240px] sm:w-[240px] h-[300px] bg-gray-200 sm:flex-shrink-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${prof.img || "/img/placeholder.png"})` }}
         role="img"
         aria-label={`Image of ${prof.name}`}
       ></div>
-      <div className="flex flex-col gap-6 sm:gap-[30px] sm:justify-between w-full">
+      <div className="flex flex-col gap-6 sm:gap-[30px] sm:justify-between">
         <div className="flex flex-col gap-1 sm:gap-[5px] w-full">
           <h2 className="font-bold text-lg sm:text-[20px] text-primary_main">{prof.role}</h2>
           <h1 className="font-bold text-3xl sm:text-[36px] text-text_black_primary leading-tight sm:leading-[36px]">
@@ -297,7 +297,7 @@ const Members = ({ sectionTitle }) => {
     );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-[30px] my-6 sm:my-[30px] w-full shrink-0">
+    <div className="flex flex-col gap-6 sm:gap-[30px] my-6 sm:my-[30px] w-full shrink-0 max-w-screen-xl mx-auto">
       <div className="flex flex-col gap-2 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px]">
         <h1 className="font-semibold text-5xl sm:text-[42px] text-text_black_primary leading-tight sm:leading-[46px]">
           {sectionTitle}
@@ -448,13 +448,13 @@ const Journal = ({ sectionTitle }) => {
   if (loading)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] bg-primary_main py-10 text-center w-full">
-        <LoadingSpinner variant="block" message="Loading journal papers..." />
+        <LoadingSpinner variant="block" message="Loading publications..." />
       </div>
     );
   if (error)
     return (
       <div className="px-4 sm:px-6 lg:px-[25px] bg-primary_main py-10 text-center text-red-300 w-full">
-        Error loading journal papers: {error.message}
+        Error loading publications: {error.message}
       </div>
     );
 
@@ -469,7 +469,7 @@ const Journal = ({ sectionTitle }) => {
         <div className="w-1 sm:w-3 shrink-0" />
         {list.length === 0 && !loading && (
           <div className="py-10 text-center text-text_black_secondary w-full">
-            No journal papers found.
+            No publications found.
           </div>
         )}
         {list.map((paper) => (
@@ -517,7 +517,7 @@ const Journal = ({ sectionTitle }) => {
           className="flex justify-center items-center gap-[10px] border-2 border-text_black_primary border-solid rounded-[15px] w-full h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-text_black_primary hover:bg-text_black_primary hover:text-primary_main transition-colors duration-200"
           to="/publications#journal"
         >
-          <span>All Journal Papers</span>
+          <span>All Publications</span>
           <Up_right_neutral_arrow className="size-4 sm:size-5" alt="arrow icon" />
         </HashLink>
       </div>
@@ -544,7 +544,7 @@ const Conference = ({ sectionTitle }) => {
     );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-[30px] py-6 sm:py-[30px] w-full">
+    <div className="flex flex-col gap-6 sm:gap-[30px] py-6 sm:py-[30px] w-full ">
       <h2 className="flex justify-between items-end px-4 sm:px-6 lg:px-[25px] text-5xl font-semibold text-text_black_primary tracking-normal">
         <span>{sectionTitle}</span>
         <Down_left_dark_arrow className="size-12 lg:size-14" style={{ path: { strokeWidth: 1 } }} />
