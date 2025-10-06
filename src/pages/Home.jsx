@@ -544,7 +544,7 @@ const Conference = ({ sectionTitle }) => {
     );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-[30px] py-6 sm:py-[30px] w-full ">
+    <div className="flex flex-col gap-6 sm:gap-[30px] py-6 sm:py-[30px] w-full">
       <h2 className="flex justify-between items-end px-4 sm:px-6 lg:px-[25px] text-5xl font-semibold text-text_black_primary tracking-normal">
         <span>{sectionTitle}</span>
         <Down_left_dark_arrow className="size-12 lg:size-14" style={{ path: { strokeWidth: 1 } }} />

@@ -84,13 +84,13 @@ export const About = () => {
             { name: "researchTracksTitle", label: "Research Tracks Section Title", type: "text" },
           ]}
           onUpdateSuccess={handleMetaDataChange}
-          containerClass="w-full max-w-[1340px] mx-auto px-4 md:px-[50px] pt-4 bg-gray-50"
+          containerClass="w-full max-w-screen-xl mx-auto px-4 md:px-[50px] pt-4 bg-gray-50"
         />
       )}
 
       <section className="w-full px-4 md:px-[50px] pt-6">
         {!metaLoading && (
-          <div className="max-w-[1340px] mx-auto mb-8 md:text-left">
+          <div className="max-w-screen-xl mx-auto mb-8 md:text-left">
             <h1 className="text-4xl md:text-5xl lg:text-[60px] font-bold text-text_black_primary leading-tight mb-3">
               {currentTitle}
             </h1>
@@ -102,10 +102,10 @@ export const About = () => {
           </div>
         )}
         {metaLoading && (
-          <div className="max-w-[1340px] mx-auto mb-8 h-24 bg-gray-200 animate-pulse rounded-md"></div>
+          <div className="max-w-screen-xl mx-auto mb-8 h-24 bg-gray-200 animate-pulse rounded-md"></div>
         )}
 
-        <div className="w-full max-w-[1340px] mx-auto mb-6 md:mb-12">
+        <div className="w-full max-w-screen-xl mx-auto mb-6 md:mb-12">
           {loadingCarousel && (
             <div className="w-full h-[200px] md:h-[465px] bg-gray-200 rounded-lg md:rounded-[30px] flex items-center justify-center">
               <LoadingSpinner variant="block" message="Loading visuals..." />

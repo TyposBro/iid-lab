@@ -66,7 +66,7 @@ export const News = () => {
   };
 
   return (
-    <div className="flex flex-col justify-start items-center pt-[95px] pb-12 sm:pb-16 w-full min-h-screen px-4 sm:px-6 lg:px-7 gap-6 sm:gap-8">
+    <div className="flex flex-col justify-start items-center pt-[95px] pb-12 sm:pb-16 w-full min-h-screen gap-6 sm:gap-8">
       {/* META ADMIN CONTROLS - START */}
       {isAdmin && newsMeta && (
         <AdminMetaControls
@@ -126,7 +126,7 @@ export const News = () => {
             <>
               {isAdmin && <AdminNewsControls events={events} refetchNews={refetchNews} />}
 
-              <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-4xl">
+              <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-screen-xl mx-auto">
                 <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-medium">
                   <span>Latest News</span>
                   <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
@@ -164,7 +164,7 @@ export const News = () => {
 // Modified Intro Component
 const Intro = ({ slides, titleText, descriptionText }) => {
   return (
-    <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full max-w-4xl">
+    <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full max-w-screen-xl">
       <div className="flex justify-between items-end">
         <h1 className="text-5xl text-text_black_primary font-semibold">{titleText}</h1>{" "}
         {/* Use h1 for main page title */}
