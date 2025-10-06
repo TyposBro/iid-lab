@@ -176,18 +176,18 @@ export const About = () => {
                       {track.content?.map((block, blockIndex) => (
                         <div
                           key={block._id || blockIndex}
-                          className="flex flex-col md:flex-row md:gap-8 lg:gap-12 items-start"
+                          className="flex flex-col md:flex-row md:gap-8 lg:gap-12 items-center"
                         >
                           {block.img && (
                             <div
-                              className={`w-full md:w-1/2 mt-4 md:mt-0 rounded-lg overflow-hidden shadow-xl ${
+                              className={`w-full md:w-1/2 mt-4 md:mt-0 rounded-lg overflow-hidden ${
                                 blockIndex % 2 !== 0 ? "md:order-2" : "md:order-1"
                               }`}
                             >
                               <img
                                 src={block.img}
                                 alt={block.title || `Image for ${track.title}`}
-                                className="w-full h-auto md:h-64 lg:h-80 object-cover bg-gray-200"
+                                className="w-full h-auto md:h-64 lg:h-80 object-cover"
                               />
                             </div>
                           )}
