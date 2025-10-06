@@ -6,11 +6,11 @@ const Card = ({ title, subtitle, bg, desc = null, action = null }) => {
       key={title}
       className="relative w-full h-[200px] sm:h-96 animate-shrink-right cursor-pointer "
     >
-      <div className="absolute bg-border_dark overflow-hidden rounded-[20px] w-full h-full layer-1">
+      <div className="absolute bg-border_dark overflow-hidden rounded-3xl w-full h-full layer-1">
         {/* Dark Overlay */}
         <img src={bg} alt="" className="absolute block object-cover w-full h-full z-[2]" />
         <div
-          className="absolute inset-0 bg-black rounded-[20px]"
+          className="absolute inset-0 bg-black rounded-3xl"
           style={{ background: "linear-gradient(180deg, #32323200 50%, #32323288 100%)" }}
         ></div>
         {/* Dark Overlay */}

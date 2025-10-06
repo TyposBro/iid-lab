@@ -128,7 +128,7 @@ export const Home = () => {
               activeClass="lyt-activated"
               iframeClass=""
               playerClass="lty-playbtn"
-              wrapperClass="yt-lite rounded-[20px] sm:rounded-[30px]"
+              wrapperClass="yt-lite rounded-3xl sm:rounded-[30px]"
               muted={true}
             />
           </div>
@@ -244,7 +244,7 @@ const Prof = ({ navigate }) => {
   return (
     <div className="flex flex-col sm:flex-row gap-6 sm:gap-[30px] my-6 sm:my-[30px] px-4 sm:px-6 lg:px-[25px] w-full max-w-screen-xl mx-auto">
       <div
-        className="mx-auto sm:mx-0 rounded-[20px] sm:rounded-[30px] w-full max-w-[240px] sm:w-[240px] h-[300px] bg-gray-200 sm:flex-shrink-0 bg-cover bg-center"
+        className="mx-auto sm:mx-0 rounded-3xl sm:rounded-[30px] w-full max-w-[240px] sm:w-[240px] h-[300px] bg-gray-200 sm:flex-shrink-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${prof.img || "/img/placeholder.png"})` }}
         role="img"
         aria-label={`Image of ${prof.name}`}
@@ -312,7 +312,7 @@ const Members = ({ sectionTitle }) => {
         {members.map((member) => (
           <div key={member._id} className="flex flex-col gap-3 sm:gap-[14px] w-auto shrink-0">
             <div
-              className="bg-gray-200 rounded-[20px] w-[170px] h-[270px] shrink-0 bg-cover bg-center bg-no-repeat"
+              className="bg-gray-200 rounded-3xl w-[170px] h-[270px] shrink-0 bg-cover bg-center bg-no-repeat"
               style={{ backgroundImage: `url(${member.img || "/img/placeholder.png"})` }}
               role="img"
               aria-label={`Image of ${member.name}`}

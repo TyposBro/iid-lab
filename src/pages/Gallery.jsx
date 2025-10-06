@@ -188,12 +188,12 @@ const Event = ({ event }) => {
             <img
               src={image}
               alt={`${event.title} - Image ${index + 1}`}
-              className="rounded-[20px] w-full h-full object-cover" // Use object-cover
+              className="rounded-3xl w-full h-full object-cover" // Use object-cover
             />
           </div>
         ))}
         {(!event?.images || event.images.length === 0) && (
-          <div className="rounded-[20px] w-[280px] sm:w-[300px] h-[180px] sm:h-[200px] bg-gray-200 flex items-center justify-center text-gray-500">
+          <div className="rounded-3xl w-[280px] sm:w-[300px] h-[180px] sm:h-[200px] bg-gray-200 flex items-center justify-center text-gray-500">
             No images for this event
           </div>
         )}

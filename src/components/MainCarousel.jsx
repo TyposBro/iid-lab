@@ -51,7 +51,7 @@ export const MainCarousel = ({ slides, autoplay = true }) => {
             <div
               src={slide}
               alt=""
-              className="w-full h-[200px] rounded-[20px] sm:min-h-[500px] xl:min-h-[1000px]"
+              className="w-full h-[200px] rounded-3xl sm:min-h-[500px] xl:min-h-[1000px]"
               style={{
                 backgroundImage: `url(${slide})`,
                 backgroundSize: "100% 100%",
