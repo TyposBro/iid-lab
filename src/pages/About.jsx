@@ -187,7 +187,7 @@ export const About = () => {
                               <img
                                 src={block.img}
                                 alt={block.title || `Image for ${track.title}`}
-                                className="w-full h-auto md:h-64 lg:h-80 object-cover"
+                                className="w-full h-auto md:h-64 lg:h-80 object-fit"
                               />
                             </div>
                           )}
