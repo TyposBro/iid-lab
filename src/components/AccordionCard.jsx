@@ -8,7 +8,7 @@ const AccordionCard = ({ title, subtitle, desc, bg, linkedIn }) => {
 
   return (
     <div key={title} className="w-full flex flex-col gap-1.5">
-      <img className="w-full h-52 rounded-3xl " src={bg} />
+      <img className="w-full h-72 rounded-3xl object-cover object-top" src={bg} />
       <div className="w-full flex justify-between items-center px-4">
         <div className="font-bold text-black">
           <h2 className="text-xl">{title}</h2>
