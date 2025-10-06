@@ -334,11 +334,11 @@ const TeamProf = ({ prof, loading, error }) => {
     );
 
   return (
-    <div className="flex flex-col gap-[30px] my-[30px] w-full max-w-screen-xl mx-auto sm:grid sm:grid-cols-2 sm:grid-rows-auto sm:gap-5 items-center">
+    <div className="flex flex-col gap-8 my-[30px] w-full max-w-screen-xl mx-auto sm:grid sm:grid-rows-4 sm:grid-cols-3 sm:gap-y-0 sm:gap-x-14 items-stretch">
       {" "}
       {/* Added max-width, items-center */}
       <div
-        className="rounded-[30px] w-full h-[300px] sm:h-[360px] md:w-96 md:h-96 mx-auto sm:col-start-2 sm:row-start-1 sm:row-span-2 bg-gray-200"
+        className="rounded-[30px] w-full h-[300px] sm:h-96 sm:col-start-3 sm:row-start-1 sm:row-end-5 bg-gray-200"
         style={{
           backgroundImage: `url(${prof.img || "/img/placeholder.png"})`,
           backgroundSize: "cover",
@@ -347,15 +347,17 @@ const TeamProf = ({ prof, loading, error }) => {
         role="img"
         aria-label={`Image of ${prof.name}`}
       ></div>
-      <div className="flex flex-col gap-[5px] w-full sm:row-start-1 sm:col-start-1">
-        <h2 className="font-bold text-lg sm:text-[20px] text-primary_main">{prof.role}</h2>
-        <h1 className="font-bold text-3xl sm:text-[36px] text-text_black_primary leading-tight sm:leading-[36px]">
-          {prof.name}
-        </h1>
-        <h3 className="text-sm sm:text-[12px] text-text_black_secondary max-w-lg">{prof.desc}</h3>{" "}
+      <div className="flex flex-col gap-10 w-full sm:row-start-1 sm:col-start-1 sm:col-end-3 sm:row-end-4">
+        <div>
+          <h2 className="font-bold text-lg sm:text-[20px] text-primary_main">{prof.role}</h2>
+          <h1 className="font-bold text-3xl sm:text-[36px] text-text_black_primary leading-tight sm:leading-[36px]">
+            {prof.name}
+          </h1>
+        </div>
+        <h3 className="text-sm sm:text-[12px] text-text_black_secondary">{prof.desc}</h3>{" "}
         {/* Added max-width */}
       </div>
-      <div className="flex flex-col gap-[10px] font-semibold text-base sm:text-[18px] sm:flex-row sm:w-auto sm:col-start-1 sm:row-start-2">
+      <div className="flex flex-col gap-[10px] items-end font-semibold text-base sm:text-[18px] sm:flex-row sm:w-auto sm:col-start-1 sm:row-start-4">
         {" "}
         {/* Adjusted width for buttons */}
         <HashLink
