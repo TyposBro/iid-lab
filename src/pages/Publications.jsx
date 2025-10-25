@@ -331,17 +331,17 @@ const PublicationList = ({
               </a>
               <div className="flex justify-between items-end mt-4">
                 <div
-                  className="flex flex-col text-xs sm:text-sm truncate w-3/5"
+                  className="flex flex-col text-xs sm:text-sm w-3/5"
                   style={{ color: listType === "journal" ? "#08DBE9" : "#10719A" }}
                 >
                   {" "}
                   {/* Dynamic author color */}
                   {item.authors.slice(0, 3).map((author, index) => (
-                    <span key={index} className="truncate" title={author}>
+                    <span key={index} className="" title={author}>
                       {author}
                     </span>
                   ))}
-                  {item.authors.length > 3 && <span className="truncate italic">et al.</span>}
+                  {item.authors.length > 3 && <span className=" italic">et al.</span>}
                 </div>
                 <div
                   className="flex flex-col items-end gap-1 text-right"
@@ -350,7 +350,7 @@ const PublicationList = ({
                   {item.year && <div className="text-lg sm:text-xl opacity-80">{item.year}</div>}
                   {item.venue && (
                     <div
-                      className="font-bold text-xs sm:text-sm max-w-[100px] sm:max-w-[150px] truncate"
+                      className="font-bold text-xs sm:text-sm max-w-[100px] sm:max-w-[150px]"
                       title={item.venue}
                     >
                       {item.venue}
@@ -358,7 +358,7 @@ const PublicationList = ({
                   )}
                   {item.location && (
                     <div
-                      className="text-xs sm:text-sm opacity-70 max-w-[100px] sm:max-w-[150px] truncate"
+                      className="text-xs sm:text-sm opacity-70 max-w-[100px] sm:max-w-[150px]"
                       title={item.location}
                     >
                       {item.location}

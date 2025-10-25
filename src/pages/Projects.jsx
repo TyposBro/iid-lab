@@ -346,18 +346,18 @@ const Awards = ({ refreshKey }) => {
   useEffect(() => {
     const filters = new Set(["All"]);
     const categoryMap = new Map(); // Map to store category -> awards mapping
-    
+
     allAwards.forEach((award) => {
       if (award.awardName) {
         // Extract the base award name (before "Award" or other common suffixes)
         let category = award.awardName.trim();
-        
+
         // Common patterns to extract category
         // e.g., "Reddot Design Award" -> "Reddot"
         // e.g., "iF Design Award" -> "iF"
         // e.g., "Spark Award" -> "Spark"
         const awardLower = category.toLowerCase();
-        
+
         if (awardLower.includes("reddot")) {
           category = "Reddot";
         } else if (awardLower.includes("if")) {
@@ -370,9 +370,9 @@ const Awards = ({ refreshKey }) => {
             category = words[0];
           }
         }
-        
+
         filters.add(category);
-        
+
         // Store the mapping
         if (!categoryMap.has(category)) {
           categoryMap.set(category, []);
@@ -380,7 +380,7 @@ const Awards = ({ refreshKey }) => {
         categoryMap.get(category).push(award);
       }
     });
-    
+
     setAvailableFilters([...filters]);
     // Store category map for filtering
     setFilteredAwards(allAwards);
@@ -393,10 +393,10 @@ const Awards = ({ refreshKey }) => {
       setFilteredAwards(
         allAwards.filter((award) => {
           if (!award.awardName) return false;
-          
+
           const awardLower = award.awardName.toLowerCase();
           const filterLower = selectedFilter.toLowerCase();
-          
+
           // Check if the award name contains the filter category
           return awardLower.includes(filterLower);
         })
