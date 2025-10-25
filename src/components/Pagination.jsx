@@ -24,7 +24,9 @@ const Pagination = ({ totalItems, itemsPerPage, setLimit }) => {
       {Array.from({ length: totalPages }, (_, i) => (
         <button
           key={i}
-          className={`px-3 py-1 rounded font-semibold ${currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+          className={`px-3 py-1 rounded font-semibold ${
+            currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
+          }`}
           onClick={() => setCurrentPage(i + 1)}
         >
           {i + 1}
