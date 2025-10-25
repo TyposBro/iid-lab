@@ -102,11 +102,7 @@ export const News = () => {
       {/* Render page content once meta (even default) is resolved */}
       {(!metaLoading || newsMeta) && (
         <>
-
-          <Intro
-            titleText={currentMetaTitle}
-            descriptionText={currentMetaDescription}
-          />
+          <Intro titleText={currentMetaTitle} descriptionText={currentMetaDescription} />
 
           {/* LATEST NEWS SECTION - horizontal cards */}
           {filteredEvents.length > 0 && (
@@ -123,17 +119,35 @@ export const News = () => {
                         src={event.images[0]}
                         alt={event.title}
                         className="w-full h-48 object-contain bg-gray-100"
-                        style={{ objectFit: 'contain', aspectRatio: '16/9' }}
+                        style={{ objectFit: "contain", aspectRatio: "16/9" }}
                         loading="lazy"
                       />
                     )}
                     <div className="flex flex-col gap-2 p-4">
                       <div className="flex justify-between items-center text-xs mb-1">
-                        <span className="text-gray-500">{event.date ? new Date(event.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "No Date"}</span>
-                        <span className="font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-600 text-white text-[10px]">{event.type}</span>
+                        <span className="text-gray-500">
+                          {event.date
+                            ? new Date(event.date).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })
+                            : "No Date"}
+                        </span>
+                        <span className="font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-600 text-white text-[10px]">
+                          {event.type}
+                        </span>
                       </div>
-                      <h4 className="text-lg font-semibold text-text_black_primary truncate" title={event.title}>{event.title}</h4>
-                      <div className="text-sm text-gray-700 line-clamp-3 min-h-[3.5em]">{event.content?.slice(0, 120)}{event.content?.length > 120 ? '...' : ''}</div>
+                      <h4
+                        className="text-lg font-semibold text-text_black_primary truncate"
+                        title={event.title}
+                      >
+                        {event.title}
+                      </h4>
+                      <div className="text-sm text-gray-700 line-clamp-3 min-h-[3.5em]">
+                        {event.content?.slice(0, 120)}
+                        {event.content?.length > 120 ? "..." : ""}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -159,26 +173,6 @@ export const News = () => {
           {!loading && !error && (
             <>
               {isAdmin && <AdminNewsControls events={events} refetchNews={refetchNews} />}
-
-
-              <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-screen-xl mx-auto">
-                <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-medium">
-                  <span>All News</span>
-                  <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
-                </h2>
-                <Filter selected={selected} setSelected={changeSelected} list={uniqueTypes} />
-                <div className="flex flex-col gap-6 sm:gap-8">
-                  {filteredEvents.length > 0 ? (
-                    filteredEvents
-                      .slice(0, limit)
-                      .map((event) => <Event key={event._id || event.title} event={event} />)
-                  ) : (
-                    <p className="text-center text-gray-500 py-6">
-                      No news items found{selected !== "Latest" ? ` for type "${selected}"` : ""}.
-                    </p>
-                  )}
-                </div>
-              </div>
 
               {/* Pagination for 'All' news */}
               {selected === "Latest" && filteredEvents.length > 0 && (
@@ -249,11 +243,14 @@ const Event = ({ event }) => {
       {event?.images?.length > 0 && (
         <div className="w-full h-60 overflow-x-auto flex snap-x snap-mandatory no-scrollbar bg-gray-100">
           {event.images.map((image, index) => (
-            <div key={image || index} className="snap-center flex-shrink-0 w-full h-full flex items-center justify-center">
+            <div
+              key={image || index}
+              className="snap-center flex-shrink-0 w-full h-full flex items-center justify-center"
+            >
               <img
                 src={image}
                 className="w-full h-full object-contain bg-gray-100"
-                style={{ aspectRatio: '16/9', maxHeight: '15rem' }}
+                style={{ aspectRatio: "16/9", maxHeight: "15rem" }}
                 alt={`${event.title} - image ${index + 1}`}
                 loading="lazy"
               />
