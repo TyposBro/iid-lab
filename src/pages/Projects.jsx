@@ -505,22 +505,29 @@ const Awards = ({ refreshKey }) => {
                   >
                     Previous
                   </button>
-                  {Array.from({ length: Math.ceil(filteredAwards.length / AWARDS_PER_PAGE) }, (_, i) => (
-                    <button
-                      key={i + 1}
-                      className={`px-3 py-1 rounded border border-gray-400 mx-1 ${
-                        currentPage === i + 1
-                          ? "bg-black text-white border-black"
-                          : "bg-white text-black hover:bg-gray-200"
-                      }`}
-                      onClick={() => setCurrentPage(i + 1)}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
+                  {Array.from(
+                    { length: Math.ceil(filteredAwards.length / AWARDS_PER_PAGE) },
+                    (_, i) => (
+                      <button
+                        key={i + 1}
+                        className={`px-3 py-1 rounded border border-gray-400 mx-1 ${
+                          currentPage === i + 1
+                            ? "bg-black text-white border-black"
+                            : "bg-white text-black hover:bg-gray-200"
+                        }`}
+                        onClick={() => setCurrentPage(i + 1)}
+                      >
+                        {i + 1}
+                      </button>
+                    )
+                  )}
                   <button
                     className="px-3 py-1 rounded border border-gray-400 bg-white text-black disabled:opacity-50"
-                    onClick={() => setCurrentPage((p) => Math.min(Math.ceil(filteredAwards.length / AWARDS_PER_PAGE), p + 1))}
+                    onClick={() =>
+                      setCurrentPage((p) =>
+                        Math.min(Math.ceil(filteredAwards.length / AWARDS_PER_PAGE), p + 1)
+                      )
+                    }
                     disabled={currentPage === Math.ceil(filteredAwards.length / AWARDS_PER_PAGE)}
                   >
                     Next
