@@ -17,27 +17,27 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-  
+
   /* Show scrollbar for gallery containers */
   .gallery-scroll-container::-webkit-scrollbar {
     display: block;
     height: 8px;
   }
-  
+
   .gallery-scroll-container::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
   }
-  
+
   .gallery-scroll-container::-webkit-scrollbar-thumb {
     background: #cbd5e0;
     border-radius: 10px;
   }
-  
+
   .gallery-scroll-container::-webkit-scrollbar-thumb:hover {
     background: #a0aec0;
   }
-  
+
   .gallery-scroll-container {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f1f1f1;

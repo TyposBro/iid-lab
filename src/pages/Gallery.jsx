@@ -206,15 +206,15 @@ const Event = ({ event }) => {
       <div className="flex flex-col gap-[10px] py-4 px-4 sm:px-6 lg:px-[25px]">
         {" "}
         {/* Added responsive padding */}
-        <div 
+        <div
           ref={scrollContainerRef}
           className="flex gap-[15px] w-full overflow-x-auto pb-2 cursor-grab active:cursor-grabbing gallery-scroll-container"
         >
           {" "}
           {/* Added cursor styles and custom class */}
           {event?.images?.map((image, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="flex-shrink-0 w-[280px] sm:w-[300px] h-[180px] sm:h-[200px] cursor-pointer transition-transform hover:scale-105"
               onClick={() => handleImageClick(index)}
             >
@@ -266,6 +266,7 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [newTitle, setNewTitle] = useState("");
+  const [newNumber, setNewNumber] = useState("");
   const [newDate, setNewDate] = useState(null);
   const [newLocation, setNewLocation] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -309,11 +310,15 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
   };
 
   const handleCreate = () => {
+    if (!newTitle) return alert("Please enter a title.");
+    if (!newNumber && newNumber !== 0) return alert("Please enter a number.");
+    if (isNaN(Number(newNumber))) return alert("Number must be a valid number.");
     if (!newDate) return alert("Please select a date.");
     if (selectedFiles.length === 0) return alert("Please upload at least one image.");
     const isoDate = newDate.toISOString();
     createMutation.mutate({
       title: newTitle,
+      number: Number(newNumber),
       date: isoDate,
       location: newLocation,
       type: newType,
@@ -325,6 +330,7 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
     setIsEditing(true);
     setEditingEvent(event);
     setNewTitle(event.title);
+    setNewNumber(event.number ?? "");
     setNewDate(event.date ? new Date(event.date) : null);
     setNewLocation(event.location);
     setNewType(event.type);
@@ -337,7 +343,11 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
   };
 
   const handleUpdate = () => {
-    if (!editingEvent || !newDate) return;
+    if (!editingEvent) return;
+    if (!newTitle) return alert("Please enter a title.");
+    if (!newNumber && newNumber !== 0) return alert("Please enter a number.");
+    if (isNaN(Number(newNumber))) return alert("Number must be a valid number.");
+    if (!newDate) return alert("Please select a date.");
     const isoDate = newDate.toISOString();
     updateMutation.mutate(
       {
@@ -345,6 +355,7 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
         files: selectedFiles,
         update: {
           title: newTitle,
+          number: Number(newNumber),
           date: isoDate,
           location: newLocation,
           images: imagesToKeep, // existing kept images; new images handled inside mutation
@@ -356,6 +367,7 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
           setIsEditing(false);
           setEditingEvent(null);
           setNewTitle("");
+          setNewNumber("");
           setNewDate(null);
           setNewLocation("");
           setSelectedFiles([]);
@@ -468,6 +480,14 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
             onChange={(e) => setNewTitle(e.target.value)}
             className={inputClass}
           />
+          <input
+            type="number"
+            placeholder="Number (for ordering)"
+            value={newNumber}
+            onChange={(e) => setNewNumber(e.target.value)}
+            className={inputClass}
+            min="0"
+          />
           <div className="mb-3">
             <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="create-date">
               Date
@@ -536,6 +556,15 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             className={inputClass}
+            disabled={isSubmitting}
+          />
+          <input
+            type="number"
+            placeholder="Number (for ordering)"
+            value={newNumber}
+            onChange={(e) => setNewNumber(e.target.value)}
+            className={inputClass}
+            min="0"
             disabled={isSubmitting}
           />
           <div className="mb-3">

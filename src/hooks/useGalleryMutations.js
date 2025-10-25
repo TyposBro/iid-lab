@@ -13,7 +13,8 @@ const uploadImages = async (files, token) => {
   });
   if (!res.ok) throw new Error(`Image upload failed (${res.status})`);
   const data = await res.json();
-  return data.urls || [];
+  // Backend returns an array of URLs directly
+  return Array.isArray(data) ? data : [];
 };
 
 export const useCreateGalleryEvent = (token, { onSuccess, toast } = {}) => {
