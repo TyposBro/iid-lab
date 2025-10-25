@@ -18,6 +18,8 @@ export const Gallery = () => {
   const queryClient = useQueryClient();
   const { data: events = [], isLoading: loading, error } = useGalleryEvents();
   const [selected, setSelected] = useState("Latest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const EVENTS_PER_PAGE = 5;
   const { isAdmin, adminToken } = useAdmin(); // adminToken is used in AdminGalleryControls
 
   // --- Meta Data via React Query ---
@@ -110,15 +112,51 @@ export const Gallery = () => {
               )}
               <div className="w-full flex flex-col gap-[16px] py-8">
                 <div className="px-4">
-                  <Filter selected={selected} setSelected={setSelected} list={uniqueTypes} />
+                  <Filter
+                    selected={selected}
+                    setSelected={(val) => {
+                      setSelected(val);
+                      setCurrentPage(1); // Reset page on filter change
+                    }}
+                    list={uniqueTypes}
+                  />
                 </div>
                 <div className="flex flex-col gap-4">
                   {
                     selected === "Latest"
-                      ? events.slice(0, 5).map((event) => <Event key={event._id} event={event} />) // Use event._id for key
-                      : events
-                          .filter((event) => event.type === selected)
-                          .map((event) => <Event key={event._id} event={event} />) // Use event._id for key
+                      ? events.slice(0, 5).map((event) => <Event key={event._id} event={event} />)
+                      : (() => {
+                          const filtered = events.filter((event) => event.type === selected);
+                          const totalPages = Math.ceil(filtered.length / EVENTS_PER_PAGE);
+                          const paged = filtered.slice(
+                            (currentPage - 1) * EVENTS_PER_PAGE,
+                            currentPage * EVENTS_PER_PAGE
+                          );
+                          return (
+                            <>
+                              {paged.map((event) => (
+                                <Event key={event._id} event={event} />
+                              ))}
+                              {filtered.length > EVENTS_PER_PAGE && (
+                                <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
+                                  {Array.from({ length: totalPages }, (_, i) => (
+                                    <button
+                                      key={i + 1}
+                                      className={`px-3 py-1 rounded border border-gray-400 mx-1 mb-1 ${
+                                        currentPage === i + 1
+                                          ? "bg-black text-white border-black"
+                                          : "bg-white text-black hover:bg-gray-200"
+                                      }`}
+                                      onClick={() => setCurrentPage(i + 1)}
+                                    >
+                                      {i + 1}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()
                   }
                   {/* Handle case where filtered events are empty */}
                   {selected !== "Latest" &&
