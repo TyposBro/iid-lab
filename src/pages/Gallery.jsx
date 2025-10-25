@@ -122,42 +122,40 @@ export const Gallery = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-4">
-                  {
-                    selected === "Latest"
-                      ? events.slice(0, 5).map((event) => <Event key={event._id} event={event} />)
-                      : (() => {
-                          const filtered = events.filter((event) => event.type === selected);
-                          const totalPages = Math.ceil(filtered.length / EVENTS_PER_PAGE);
-                          const paged = filtered.slice(
-                            (currentPage - 1) * EVENTS_PER_PAGE,
-                            currentPage * EVENTS_PER_PAGE
-                          );
-                          return (
-                            <>
-                              {paged.map((event) => (
-                                <Event key={event._id} event={event} />
-                              ))}
-                              {filtered.length > EVENTS_PER_PAGE && (
-                                <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
-                                  {Array.from({ length: totalPages }, (_, i) => (
-                                    <button
-                                      key={i + 1}
-                                      className={`px-3 py-1 rounded border border-gray-400 mx-1 mb-1 ${
-                                        currentPage === i + 1
-                                          ? "bg-black text-white border-black"
-                                          : "bg-white text-black hover:bg-gray-200"
-                                      }`}
-                                      onClick={() => setCurrentPage(i + 1)}
-                                    >
-                                      {i + 1}
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
-                            </>
-                          );
-                        })()
-                  }
+                  {selected === "Latest"
+                    ? events.slice(0, 5).map((event) => <Event key={event._id} event={event} />)
+                    : (() => {
+                        const filtered = events.filter((event) => event.type === selected);
+                        const totalPages = Math.ceil(filtered.length / EVENTS_PER_PAGE);
+                        const paged = filtered.slice(
+                          (currentPage - 1) * EVENTS_PER_PAGE,
+                          currentPage * EVENTS_PER_PAGE
+                        );
+                        return (
+                          <>
+                            {paged.map((event) => (
+                              <Event key={event._id} event={event} />
+                            ))}
+                            {filtered.length > EVENTS_PER_PAGE && (
+                              <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                  <button
+                                    key={i + 1}
+                                    className={`px-3 py-1 rounded border border-gray-400 mx-1 mb-1 ${
+                                      currentPage === i + 1
+                                        ? "bg-black text-white border-black"
+                                        : "bg-white text-black hover:bg-gray-200"
+                                    }`}
+                                    onClick={() => setCurrentPage(i + 1)}
+                                  >
+                                    {i + 1}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
                   {/* Handle case where filtered events are empty */}
                   {selected !== "Latest" &&
                     events.filter((event) => event.type === selected).length === 0 && (
