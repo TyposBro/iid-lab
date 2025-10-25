@@ -551,6 +551,7 @@ const AdminTeamControls = ({ refreshData }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
   const [newRole, setNewRole] = useState("");
   const [newType, setNewType] = useState("current");
   const [newBio, setNewBio] = useState("");
@@ -629,6 +630,7 @@ const AdminTeamControls = ({ refreshData }) => {
 
   const resetForm = () => {
     setNewName("");
+    setNewNumber("");
     setNewRole("");
     setNewType("current");
     setNewBio("");
@@ -638,13 +640,14 @@ const AdminTeamControls = ({ refreshData }) => {
   };
 
   const handleCreate = async () => {
-    if (!newName || !newRole || !newType || !uploadedImageUrl) {
-      alert("Name, Role, Type, and Image are required.");
+    if (!newName || !newNumber || !newRole || !newType || !uploadedImageUrl) {
+      alert("Name, Number, Role, Type, and Image are required.");
       return;
     }
     setIsSubmitting(true);
     const newMember = {
       name: newName,
+      number: parseInt(newNumber, 10),
       role: newRole,
       type: newType,
       bio: newBio,
@@ -679,6 +682,7 @@ const AdminTeamControls = ({ refreshData }) => {
     setIsCreating(false);
     setEditingMember(member);
     setNewName(member.name);
+    setNewNumber(member.number ? member.number.toString() : "");
     setNewRole(member.role);
     setNewType(member.type || "current");
     setNewBio(member.bio || "");
@@ -688,13 +692,14 @@ const AdminTeamControls = ({ refreshData }) => {
   };
 
   const handleUpdate = async () => {
-    if (!editingMember || !newName || !newRole || !newType || !uploadedImageUrl) {
-      alert("Name, Role, Type, and Image are required for update.");
+    if (!editingMember || !newName || !newNumber || !newRole || !newType || !uploadedImageUrl) {
+      alert("Name, Number, Role, Type, and Image are required for update.");
       return;
     }
     setIsSubmitting(true);
     const updatedMember = {
       name: newName,
+      number: parseInt(newNumber, 10),
       role: newRole,
       type: newType,
       bio: newBio,
@@ -869,6 +874,15 @@ const AdminTeamControls = ({ refreshData }) => {
             onChange={(e) => setNewName(e.target.value)}
             className={inputClass}
             disabled={isSubmitting}
+          />
+          <input
+            type="number"
+            placeholder="Number (for ordering)"
+            value={newNumber}
+            onChange={(e) => setNewNumber(e.target.value)}
+            className={inputClass}
+            disabled={isSubmitting}
+            min="0"
           />
           <div>
             <label htmlFor="role-select" className="block text-gray-700 text-sm font-bold mb-1">

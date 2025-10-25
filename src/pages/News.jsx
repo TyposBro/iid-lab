@@ -270,6 +270,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [newTitle, setNewTitle] = useState("");
+  const [newNumber, setNewNumber] = useState("");
   const [newContent, setNewContent] = useState("");
   const [newDate, setNewDate] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -283,6 +284,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
     onSuccess: () => {
       setIsCreating(false);
       setNewTitle("");
+      setNewNumber("");
       setNewContent("");
       setNewDate(null);
       setSelectedFiles([]);
@@ -338,11 +340,12 @@ const AdminNewsControls = ({ events, refetchNews }) => {
   };
 
   const handleCreate = () => {
-    if (!newDate || !newTitle || !newContent || !newType || selectedFiles.length === 0)
-      return alert("Please fill in all fields and select at least one image.");
+    if (!newDate || !newTitle || !newNumber || !newContent || !newType || selectedFiles.length === 0)
+      return alert("Please fill in all fields (including number) and select at least one image.");
     const isoDate = newDate.toISOString().split("T")[0];
     createMutation.mutate({
       title: newTitle,
+      number: parseInt(newNumber, 10),
       content: newContent,
       date: isoDate,
       type: newType,
@@ -355,6 +358,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
     setIsCreating(false);
     setEditingEvent(event);
     setNewTitle(event.title);
+    setNewNumber(event.number ? event.number.toString() : "");
     setNewContent(event.content);
     setNewDate(event.date ? new Date(event.date) : null);
     setNewType(event.type);
@@ -365,7 +369,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
 
   const handleUpdate = () => {
     if (!editingEvent || !newDate) return;
-    if (!newTitle || !newContent || !newType) return alert("Please fill in all fields.");
+    if (!newTitle || !newNumber || !newContent || !newType) return alert("Please fill in all fields (including number).");
     if (imagesToKeep.length === 0 && selectedFiles.length === 0)
       return alert("Please keep or add at least one image.");
     const isoDate = newDate.toISOString().split("T")[0];
@@ -375,6 +379,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
         files: selectedFiles,
         update: {
           title: newTitle,
+          number: parseInt(newNumber, 10),
           content: newContent,
           date: isoDate,
           images: imagesToKeep,
@@ -386,6 +391,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
           setIsEditing(false);
           setEditingEvent(null);
           setNewTitle("");
+          setNewNumber("");
           setNewContent("");
           setNewDate(null);
           setSelectedFiles([]);
@@ -410,6 +416,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
     setIsEditing(false);
     setEditingEvent(null);
     setNewTitle("");
+    setNewNumber("");
     setNewContent("");
     setNewDate(null);
     setSelectedFiles([]);
@@ -421,6 +428,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
   const cancelCreating = () => {
     setIsCreating(false);
     setNewTitle("");
+    setNewNumber("");
     setNewContent("");
     setNewDate(null);
     setSelectedFiles([]);
@@ -534,6 +542,15 @@ const AdminNewsControls = ({ events, refetchNews }) => {
             onChange={(e) => setNewTitle(e.target.value)}
             className={inputClass}
             disabled={isSubmitting}
+          />
+          <input
+            type="number"
+            placeholder="Number (for ordering)"
+            value={newNumber}
+            onChange={(e) => setNewNumber(e.target.value)}
+            className={inputClass}
+            disabled={isSubmitting}
+            min="0"
           />
           <textarea
             placeholder="Content (Markdown supported)"
