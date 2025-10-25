@@ -345,29 +345,63 @@ const Awards = ({ refreshKey }) => {
   const defaultAwardsMeta = { title: "", description: "" };
   useEffect(() => {
     const filters = new Set(["All"]);
+    const categoryMap = new Map(); // Map to store category -> awards mapping
+    
     allAwards.forEach((award) => {
-      if (award.awardName?.toLowerCase().includes("reddot")) filters.add("Reddot");
-      else if (award.awardName?.toLowerCase().includes("if")) filters.add("iF");
-      else if (award.awardName) filters.add("Others");
+      if (award.awardName) {
+        // Extract the base award name (before "Award" or other common suffixes)
+        let category = award.awardName.trim();
+        
+        // Common patterns to extract category
+        // e.g., "Reddot Design Award" -> "Reddot"
+        // e.g., "iF Design Award" -> "iF"
+        // e.g., "Spark Award" -> "Spark"
+        const awardLower = category.toLowerCase();
+        
+        if (awardLower.includes("reddot")) {
+          category = "Reddot";
+        } else if (awardLower.includes("if")) {
+          category = "iF";
+        } else {
+          // Extract the first word or meaningful part before "award"
+          const words = category.split(/\s+/);
+          if (words.length > 0) {
+            // Take the first significant word
+            category = words[0];
+          }
+        }
+        
+        filters.add(category);
+        
+        // Store the mapping
+        if (!categoryMap.has(category)) {
+          categoryMap.set(category, []);
+        }
+        categoryMap.get(category).push(award);
+      }
     });
+    
     setAvailableFilters([...filters]);
+    // Store category map for filtering
+    setFilteredAwards(allAwards);
   }, [allAwards]);
   useEffect(() => {
-    if (selectedFilter === "All") setFilteredAwards(allAwards);
-    else if (selectedFilter === "Reddot")
-      setFilteredAwards(allAwards.filter((a) => a.awardName?.toLowerCase().includes("reddot")));
-    else if (selectedFilter === "iF")
-      setFilteredAwards(allAwards.filter((a) => a.awardName?.toLowerCase().includes("if")));
-    else if (selectedFilter === "Others")
+    if (selectedFilter === "All") {
+      setFilteredAwards(allAwards);
+    } else {
+      // Filter based on the selected category
       setFilteredAwards(
-        allAwards.filter(
-          (a) =>
-            a.awardName &&
-            !a.awardName.toLowerCase().includes("reddot") &&
-            !a.awardName.toLowerCase().includes("if")
-        )
+        allAwards.filter((award) => {
+          if (!award.awardName) return false;
+          
+          const awardLower = award.awardName.toLowerCase();
+          const filterLower = selectedFilter.toLowerCase();
+          
+          // Check if the award name contains the filter category
+          return awardLower.includes(filterLower);
+        })
       );
-    else setFilteredAwards(allAwards);
+    }
   }, [allAwards, selectedFilter]);
   const handleFilter = (filter) => setSelectedFilter(filter);
   const sectionTitle = awardsMeta?.title || defaultAwardsMeta.title;

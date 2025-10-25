@@ -29,9 +29,10 @@ export const ProjectCard = ({
     }
   };
 
-  // Determine display title and subtitle (useful for awards where awardName is primary)
-  const displayTitle = awardName || title;
-  const displaySubtitle = awardName ? title : subtitle; // If awardName is the title, original title becomes subtitle
+  // Determine display title and subtitle
+  // For awards: Project title is primary, award name is secondary
+  const displayTitle = title;
+  const displaySubtitle = awardName || subtitle;
 
   return (
     <div className={`relative ${customClasses}`}>
