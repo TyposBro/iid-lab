@@ -2,64 +2,46 @@
 import PropTypes from "prop-types";
 import { Down_left_dark_arrow } from "@/assets/";
 import { truncateText } from "@/utils/text";
-import { useState, useEffect, useCallback, useMemo } from "react"; // Added useMemo
+import { useState, useEffect, useMemo } from "react";
 import { useAdmin } from "@/contexts/AdminContext";
-import { BASE_URL } from "@/config/api";
-import { LoadingSpinner, AdminMetaControls } from "@/components"; // Added AdminMetaControls
+import { LoadingSpinner, AdminMetaControls } from "@/components";
+import {
+  usePublicationsPageMeta,
+  usePublicationsSectionMeta,
+  usePublicationsList,
+} from "@/hooks/usePublicationsApi";
+import {
+  useCreatePublication,
+  useUpdatePublication,
+  useDeletePublication,
+} from "@/hooks/usePublicationMutations";
+import { useToast } from "@/contexts/ToastContext";
 
 // --- Main Publications Page ---
 export const Publications = () => {
   const { isAdmin } = useAdmin();
-  const [refreshKey, setRefreshKey] = useState(0);
 
-  // --- Overall Publications Page Meta ---
-  const [publicationsPageMeta, setPublicationsPageMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshPageMetaKey, setRefreshPageMetaKey] = useState(0);
+  // Use the hook for page meta
+  const {
+    data: publicationsPageMeta,
+    isLoading: metaLoading,
+    error: metaError,
+  } = usePublicationsPageMeta();
 
   const defaultPublicationsPageMeta = useMemo(
     () => ({
-      title: "",
-      description: "",
+      title: "Publications",
+      description:
+        "Explore our research publications including journal articles and conference papers.",
     }),
     []
   );
 
-  const fetchPublicationsPageMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/publications`); // e.g., /meta/publications-main
-      if (!response.ok) {
-        if (response.status === 404) {
-          setPublicationsPageMeta(defaultPublicationsPageMeta);
-          document.title = defaultPublicationsPageMeta.title + " - I&I Design Lab";
-        } else throw new Error(`HTTP error! status: ${response.status}`);
-      } else {
-        const data = await response.json();
-        setPublicationsPageMeta(data);
-        document.title = (data.title || defaultPublicationsPageMeta.title) + " - I&I Design Lab";
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      setPublicationsPageMeta(defaultPublicationsPageMeta);
-      document.title = defaultPublicationsPageMeta.title + " - I&I Design Lab";
-      console.error("Failed to fetch publications page meta:", err);
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultPublicationsPageMeta]);
-
+  // Update document title when meta changes
   useEffect(() => {
-    fetchPublicationsPageMeta();
-  }, [fetchPublicationsPageMeta, refreshPageMetaKey]);
-  const handlePublicationsPageMetaUpdated = () => setRefreshPageMetaKey((prev) => prev + 1);
-
-  // Callback to trigger refetch in child lists
-  const refetchPublications = useCallback(() => {
-    setRefreshKey((prevKey) => prevKey + 1);
-  }, []);
+    const title = publicationsPageMeta?.title || defaultPublicationsPageMeta.title;
+    document.title = title + " - I&I Design Lab";
+  }, [publicationsPageMeta, defaultPublicationsPageMeta]);
 
   const currentPageTitle = publicationsPageMeta?.title || defaultPublicationsPageMeta.title;
   const currentPageDescription =
@@ -80,17 +62,19 @@ export const Publications = () => {
             },
             { name: "description", label: "Publications Page Main Introduction", type: "textarea" },
           ]}
-          onUpdateSuccess={handlePublicationsPageMetaUpdated}
+          onUpdateSuccess={() => {}} // React Query will auto-refetch
           containerClass="w-full max-w-screen-xl mx-auto px-4 md:px-[25px] py-2 bg-gray-50 rounded-b-lg shadow mb-6"
         />
       )}
       {metaLoading && (
         <div className="text-center py-6">
-          <LoadingSpinner variant="block" message="Loading page details..." />
+          <LoadingSpinner message="Loading page details..." />
         </div>
       )}
-      {metaError && (
-        <div className="text-red-500 text-center p-4">Error loading page details: {metaError}</div>
+      {metaError && !metaError.message?.includes("404") && (
+        <div className="text-red-500 text-center p-4">
+          Error loading page details: {metaError.message || metaError}
+        </div>
       )}
 
       {(!metaLoading || publicationsPageMeta) && (
@@ -106,10 +90,10 @@ export const Publications = () => {
         </div>
       )}
 
-      {isAdmin && <AdminControls onPublicationsUpdated={refetchPublications} />}
+      {isAdmin && <AdminControls />}
 
       <PublicationList
-        titleKey="journal" // Unique key for meta fetching (e.g., 'publications-journal')
+        titleKey="journal"
         defaultTitle="Journal Publications"
         defaultDescription="Explore our peer-reviewed journal articles."
         bg="#ffffff"
@@ -119,10 +103,9 @@ export const Publications = () => {
         cardBg="#231F20"
         cartTextColor="#ffffff"
         listType="journal"
-        refreshKey={refreshKey}
       />
       <PublicationList
-        titleKey="conference" // Unique key for meta fetching (e.g., 'publications-conference')
+        titleKey="conference"
         defaultTitle="Conference Publications"
         defaultDescription="Discover our contributions to academic conferences."
         bg="#25AAE1"
@@ -132,7 +115,6 @@ export const Publications = () => {
         cardBg="#C1EDFF"
         cartTextColor="#231F20"
         listType="conference"
-        refreshKey={refreshKey}
       />
     </div>
   );
@@ -142,9 +124,9 @@ export default Publications;
 
 // --- Publication List Component ---
 const PublicationList = ({
-  titleKey, // New prop for meta identifier
-  defaultTitle, // New prop for default title
-  defaultDescription, // New prop for default description
+  titleKey,
+  defaultTitle,
+  defaultDescription,
   bg,
   buttonBg,
   buttonBorderColor,
@@ -152,20 +134,22 @@ const PublicationList = ({
   cardBg,
   cartTextColor,
   listType,
-  refreshKey,
 }) => {
-  const [publications, setPublications] = useState([]);
-  const [loading, setLoading] = useState(true); // For publication items
-  const [error, setError] = useState(null); // For publication items
   const [selectedYear, setSelectedYear] = useState(null);
-  const [availableYears, setAvailableYears] = useState([]);
   const { isAdmin } = useAdmin();
 
-  // --- Section Meta State ---
-  const [sectionMeta, setSectionMeta] = useState(null);
-  const [metaLoading, setMetaLoading] = useState(true);
-  const [metaError, setMetaError] = useState(null);
-  const [refreshSectionMetaKey, setRefreshSectionMetaKey] = useState(0);
+  // Use hooks for meta and publications
+  const {
+    data: sectionMeta,
+    isLoading: metaLoading,
+    error: metaError,
+  } = usePublicationsSectionMeta(titleKey);
+
+  const {
+    data: publications = [],
+    isLoading: loading,
+    error: publicationsError,
+  } = usePublicationsList(listType);
 
   const defaultSectionMeta = useMemo(
     () => ({
@@ -175,62 +159,12 @@ const PublicationList = ({
     [defaultTitle, defaultDescription]
   );
 
-  const fetchSectionMeta = useCallback(async () => {
-    setMetaLoading(true);
-    setMetaError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/meta/publications-${titleKey}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          setSectionMeta(defaultSectionMeta);
-        } else throw new Error(`HTTP error! status: ${response.status}`);
-      } else {
-        const data = await response.json();
-        setSectionMeta(data);
-      }
-    } catch (err) {
-      setMetaError(err.message);
-      setSectionMeta(defaultSectionMeta);
-      console.error(`Failed to fetch meta for publications-${titleKey}:`, err);
-    } finally {
-      setMetaLoading(false);
-    }
-  }, [defaultSectionMeta, titleKey]);
-
-  useEffect(() => {
-    fetchSectionMeta();
-  }, [fetchSectionMeta, refreshSectionMetaKey]);
-  const handleSectionMetaUpdated = () => setRefreshSectionMetaKey((prev) => prev + 1);
-
-  // Fetch publications
-  const fetchPublications = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/publications?type=${listType}`);
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: `HTTP error! status: ${response.status}` }));
-        throw new Error(errorData.message);
-      }
-      const data = await response.json();
-      setPublications(data);
-      const years = [...new Set(data.map((item) => item.year).filter(Boolean))].sort(
-        (a, b) => b - a
-      );
-      setAvailableYears(years);
-    } catch (err) {
-      console.error(`Error fetching ${listType}:`, err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [listType]);
-
-  useEffect(() => {
-    fetchPublications();
-  }, [fetchPublications, refreshKey]);
+  // Calculate available years from publications
+  const availableYears = useMemo(() => {
+    return [...new Set(publications.map((item) => item.year).filter(Boolean))].sort(
+      (a, b) => b - a
+    );
+  }, [publications]);
 
   const displayYearsCount = 4;
   const topYears = availableYears.slice(0, displayYearsCount);
@@ -268,18 +202,18 @@ const PublicationList = ({
                 type: "textarea",
               },
             ]}
-            onUpdateSuccess={handleSectionMetaUpdated}
-            containerClass="py-2 bg-gray-100 rounded-lg shadow my-2" // Generic styling
+            onUpdateSuccess={() => {}} // React Query will auto-refetch
+            containerClass="py-2 bg-gray-100 rounded-lg shadow my-2"
           />
         )}
         {metaLoading && (
           <div className="text-center py-4">
-            <LoadingSpinner variant="block" message="Loading section details..." />
+            <LoadingSpinner message="Loading section details..." />
           </div>
         )}
-        {metaError && (
+        {metaError && !metaError.message?.includes("404") && (
           <div className={`text-center p-4 ${bg === "#ffffff" ? "text-red-600" : "text-red-300"}`}>
-            Error: {metaError}
+            Error: {metaError.message || metaError}
           </div>
         )}
 
@@ -359,15 +293,15 @@ const PublicationList = ({
           <div
             className={`text-center p-4 ${bg === "#ffffff" ? "text-gray-700" : "text-gray-200"}`}
           >
-            <LoadingSpinner variant="block" message={`Loading ${defaultTitle}...`} />
+            <LoadingSpinner message={`Loading ${defaultTitle}...`} />
           </div>
         )}
-        {error && (
+        {publicationsError && (
           <div className={`text-center p-4 ${bg === "#ffffff" ? "text-red-600" : "text-red-300"}`}>
-            Error loading {defaultTitle}: {error}
+            Error loading {defaultTitle}: {publicationsError.message || publicationsError}
           </div>
         )}
-        {!loading && !error && filteredList.length === 0 && (
+        {!loading && !publicationsError && filteredList.length === 0 && (
           <div
             className={`text-center p-4 ${bg === "#ffffff" ? "text-gray-500" : "text-gray-300"}`}
           >
@@ -379,7 +313,7 @@ const PublicationList = ({
           </div>
         )}
         {!loading &&
-          !error &&
+          !publicationsError &&
           filteredList.map((item) => (
             <div
               key={item._id}
@@ -450,15 +384,25 @@ PublicationList.propTypes = {
   cardBg: PropTypes.string,
   cartTextColor: PropTypes.string,
   listType: PropTypes.oneOf(["journal", "conference"]).isRequired,
-  refreshKey: PropTypes.number.isRequired,
 };
 
 // --- Admin Controls Component ---
-const AdminControls = ({ onPublicationsUpdated }) => {
+const AdminControls = () => {
   const { adminToken } = useAdmin();
-  const [publications, setPublications] = useState([]);
-  const [isLoadingList, setIsLoadingList] = useState(false);
-  const [listError, setListError] = useState(null);
+  const toast = useToast();
+
+  // Use hooks for fetching all publications (admin view)
+  const {
+    data: publications = [],
+    isLoading: isLoadingList,
+    error: listError,
+  } = usePublicationsList(null);
+
+  // Use mutation hooks
+  const createMutation = useCreatePublication(adminToken, { toast });
+  const updateMutation = useUpdatePublication(adminToken, { toast });
+  const deleteMutation = useDeletePublication(adminToken, { toast });
+
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingPublication, setEditingPublication] = useState(null);
@@ -473,41 +417,18 @@ const AdminControls = ({ onPublicationsUpdated }) => {
   const [type, setType] = useState("journal");
   const [selectedFile, setSelectedFile] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
   const [submitError, setSubmitError] = useState(null);
 
-  const fetchAllAdminPublications = useCallback(async () => {
-    setIsLoadingList(true);
-    setListError(null);
-    try {
-      const response = await fetch(`${BASE_URL}/api/publications`, {
-        headers: { Authorization: `Bearer ${adminToken}` },
-      });
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: `HTTP error! Status: ${response.status}` }));
-        throw new Error(errorData.message);
-      }
-      const data = await response.json();
-      setPublications(
-        data.sort(
-          (a, b) =>
-            new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
-        )
-      );
-    } catch (error) {
-      console.error("Error fetching publications for admin:", error);
-      setListError(error.message);
-    } finally {
-      setIsLoadingList(false);
-    }
-  }, [adminToken]);
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  const deletingId = deleteMutation.isPending ? deleteMutation.variables : null;
 
-  useEffect(() => {
-    fetchAllAdminPublications();
-  }, [fetchAllAdminPublications, onPublicationsUpdated]);
+  // Sort publications by most recent
+  const sortedPublications = useMemo(() => {
+    return [...publications].sort(
+      (a, b) =>
+        new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
+    );
+  }, [publications]);
 
   const resetForm = () => {
     setTitle("");
@@ -540,32 +461,6 @@ const AdminControls = ({ onPublicationsUpdated }) => {
     }
   };
 
-  const uploadImage = async (file) => {
-    if (!file) return null;
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const uploadResponse = await fetch(`${BASE_URL}/api/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${adminToken}` },
-        body: formData,
-      });
-      if (!uploadResponse.ok) {
-        const errorData = await uploadResponse
-          .json()
-          .catch(() => ({ message: `Image upload failed: ${uploadResponse.status}` }));
-        throw new Error(errorData.message);
-      }
-      const uploadResult = await uploadResponse.json();
-      const uploadedUrls = uploadResult.urls || [];
-      return uploadedUrls[0] || null;
-    } catch (error) {
-      console.error("Image upload error:", error);
-      setSubmitError(`Image Upload Failed: ${error.message}`);
-      return null;
-    }
-  };
-
   const parseAuthors = (authorString) =>
     authorString
       .split(",")
@@ -585,21 +480,7 @@ const AdminControls = ({ onPublicationsUpdated }) => {
       return;
     }
 
-    setIsSubmitting(true);
-    let finalImageUrl = isEditing ? editingPublication?.image || null : null;
-
-    if (selectedFile) {
-      const uploadedUrl = await uploadImage(selectedFile);
-      if (uploadedUrl === null && selectedFile) {
-        setIsSubmitting(false);
-        return;
-      }
-      finalImageUrl = uploadedUrl;
-    } else if (isEditing && currentImageUrl === null && editingPublication?.image) {
-      finalImageUrl = undefined; // Signal removal
-    }
-
-    const pubData = {
+    const publicationData = {
       title,
       authors: authorsArray,
       venue,
@@ -609,34 +490,25 @@ const AdminControls = ({ onPublicationsUpdated }) => {
       abstract,
       type,
       location,
-      image: finalImageUrl,
+      image: currentImageUrl,
     };
-    Object.keys(pubData).forEach((key) => pubData[key] === undefined && delete pubData[key]);
-
-    const url = isEditing
-      ? `${BASE_URL}/api/publications/${editingPublication._id}`
-      : `${BASE_URL}/api/publications`;
-    const method = isEditing ? "PUT" : "POST";
 
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
-        body: JSON.stringify(pubData),
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({
-          message: `Failed to ${isEditing ? "update" : "create"}. Status: ${response.status}`,
-        }));
-        throw new Error(errorData.message);
+      if (isEditing) {
+        await updateMutation.mutateAsync({
+          id: editingPublication._id,
+          file: selectedFile,
+          update: publicationData,
+        });
+      } else {
+        await createMutation.mutateAsync({
+          file: selectedFile,
+          publication: publicationData,
+        });
       }
       resetForm();
-      onPublicationsUpdated();
     } catch (error) {
-      console.error(`Error ${isEditing ? "updating" : "creating"} publication:`, error);
       setSubmitError(error.message);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -660,26 +532,11 @@ const AdminControls = ({ onPublicationsUpdated }) => {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this publication and its image?")) {
-      setDeletingId(id);
-      setSubmitError(null);
       try {
-        const response = await fetch(`${BASE_URL}/api/publications/${id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${adminToken}` },
-        });
-        if (!response.ok) {
-          const errorData = await response
-            .json()
-            .catch(() => ({ message: `Failed to delete. Status: ${response.status}` }));
-          throw new Error(errorData.message);
-        }
-        onPublicationsUpdated();
+        await deleteMutation.mutateAsync(id);
         if (editingPublication?._id === id) resetForm();
       } catch (error) {
-        console.error("Error deleting publication:", error);
         setSubmitError(error.message);
-      } finally {
-        setDeletingId(null);
       }
     }
   };
@@ -913,11 +770,11 @@ const AdminControls = ({ onPublicationsUpdated }) => {
           <div className="w-full space-y-3 max-h-96 overflow-y-auto pr-2">
             {listError && (
               <div className="p-3 text-red-700 bg-red-100 border border-red-300 rounded-md">
-                Error loading list: {listError}
+                Error loading list: {listError.message || listError}
               </div>
             )}
             {!isLoadingList &&
-              publications.map((pub) => (
+              sortedPublications.map((pub) => (
                 <div
                   key={pub._id}
                   className="border border-gray-200 rounded-md p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-white shadow-sm hover:shadow-md transition-shadow"
@@ -961,7 +818,7 @@ const AdminControls = ({ onPublicationsUpdated }) => {
                   </div>
                 </div>
               ))}
-            {!isLoadingList && !listError && publications.length === 0 && (
+            {!isLoadingList && !listError && sortedPublications.length === 0 && (
               <p className="text-gray-500 italic text-center py-4">
                 No publications found. Click &quot;Add New Publication&quot; to create one.
               </p>
@@ -1002,7 +859,4 @@ const AdminControls = ({ onPublicationsUpdated }) => {
       </div>
     </div>
   );
-};
-AdminControls.propTypes = {
-  onPublicationsUpdated: PropTypes.func.isRequired,
 };

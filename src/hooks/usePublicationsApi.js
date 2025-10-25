@@ -41,12 +41,15 @@ export const usePublicationsSectionMeta = (section) => {
   );
 };
 
-// Full list for type (journal|conference). Do not slice (home hook slices separately)
+// Full list for type (journal|conference). Backend exposes /api/publications/type/:type for public access.
+// Passing null/undefined hits the admin-protected aggregate endpoint, so consumers should usually supply a type.
 export const usePublicationsList = (type) => {
+  const keyType = type ?? "all";
+  const path = type ? `/api/publications/type/${type}` : "/publications";
   return useQuery(
     buildQueryOptions({
-      key: publicationsListKey(type || "all"),
-      path: `/api/publications${type ? `?type=${type}` : ""}`,
+      key: publicationsListKey(keyType),
+      path,
       select: (data) => data,
       staleTime: 60 * 1000,
     })
