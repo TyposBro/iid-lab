@@ -14,9 +14,9 @@ import { BASE_URL } from "@/config/api";
   - Independent fetch for full list (admin overview) still done here (could be refactored to query hook later)
 */
 
-const ProjectsAdminControls = ({ onProjectsUpdated }) => {
+const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
   const { adminToken } = useAdmin();
-  const { pushToast } = useToast();
+  const toast = useToast();
 
   const [projects, setProjects] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(false);
@@ -70,7 +70,7 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
 
   useEffect(() => {
     fetchAllAdminProjects();
-  }, [fetchAllAdminProjects, onProjectsUpdated]);
+  }, [fetchAllAdminProjects, onProjectsUpdated, refreshKey]);
 
   const resetForm = () => {
     setTitle("");
@@ -167,23 +167,33 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
     if (mode === "edit" && currentImageUrl === null && !selectedFile && editingProject?.image) {
       projectPayload.image = undefined; // indicates deletion
     }
-    const action = mode === "edit" ? updateMutation.mutateAsync : createMutation.mutateAsync;
-    try {
-      await action({
+    let action, actionArgs;
+    if (mode === "edit") {
+      action = updateMutation.mutateAsync;
+      actionArgs = {
         id: editingProject?._id,
+        file: selectedFile,
+        update: projectPayload,
+        token: adminToken,
+      };
+    } else {
+      action = createMutation.mutateAsync;
+      actionArgs = {
         file: selectedFile,
         project: projectPayload,
         token: adminToken,
-      });
-      pushToast({
-        type: "success",
-        message: `Project ${mode === "edit" ? "updated" : "created"} successfully`,
-      });
+      };
+    }
+    try {
+      await action(actionArgs);
+      toast.success(`Project ${mode === "edit" ? "updated" : "created"} successfully`);
       resetForm();
       onProjectsUpdated?.();
     } catch (error) {
-      pushToast({ type: "error", message: error.message || "Operation failed" });
-      setSubmitError(error.message);
+      // Show backend error in UI and toast
+      const msg = error?.message || (error?.response && error.response.data?.message) || "Operation failed";
+      setSubmitError(msg);
+  toast.error(msg);
     }
   };
 
@@ -192,11 +202,13 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
     setDeletingId(id);
     try {
       await deleteMutation.mutateAsync(id); // Pass only the ID string
-      pushToast({ type: "success", message: "Project deleted" });
+  toast.success("Project deleted");
       if (editingProject?._id === id) resetForm();
       onProjectsUpdated?.();
     } catch (error) {
-      pushToast({ type: "error", message: error.message || "Delete failed" });
+      const msg = error?.message || (error?.response && error.response.data?.message) || "Delete failed";
+      setSubmitError(msg);
+  toast.error(msg);
     } finally {
       setDeletingId(null);
     }
