@@ -13,6 +13,7 @@ export const AdminMetaControls = ({
 }) => {
   const { adminToken } = useAdmin();
   const [formData, setFormData] = useState({});
+  const [imageFiles, setImageFiles] = useState({}); // Track uploaded files for image fields
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -35,6 +36,13 @@ export const AdminMetaControls = ({
     }));
   };
 
+  const handleImageChange = (fieldName, file) => {
+    setImageFiles((prev) => ({
+      ...prev,
+      [fieldName]: file,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -42,13 +50,45 @@ export const AdminMetaControls = ({
     setSuccess(null);
 
     try {
+      // First, upload any images
+      const updatedFormData = { ...formData };
+      
+      for (const fieldName in imageFiles) {
+        if (imageFiles[fieldName]) {
+          const file = imageFiles[fieldName];
+          const formDataUpload = new FormData();
+          formDataUpload.append("images", file);
+
+          const uploadRes = await fetch(`${BASE_URL}/api/upload`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${adminToken}` },
+            body: formDataUpload,
+          });
+
+          if (!uploadRes.ok) {
+            throw new Error(`Image upload failed for ${fieldName}`);
+          }
+
+          const uploadResult = await uploadRes.json();
+          // The upload endpoint returns an array of URLs
+          const imageUrl = Array.isArray(uploadResult) ? uploadResult[0] : uploadResult.urls?.[0];
+          
+          if (!imageUrl) {
+            throw new Error(`No image URL returned for ${fieldName}`);
+          }
+
+          updatedFormData[fieldName] = imageUrl;
+        }
+      }
+
+      // Then update the meta data
       const response = await fetch(`${BASE_URL}/api/meta/${pageIdentifier}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(updatedFormData),
       });
 
       if (!response.ok) {
@@ -57,6 +97,7 @@ export const AdminMetaControls = ({
       }
       setSuccess("Meta data updated successfully!");
       setIsEditing(false);
+      setImageFiles({}); // Clear image files after successful upload
       if (onUpdateSuccess) {
         onUpdateSuccess(); // Trigger parent refetch
       }
@@ -106,6 +147,48 @@ export const AdminMetaControls = ({
                   className="w-full p-2 border border-gray-300 rounded shadow-sm"
                   disabled={isSubmitting}
                 />
+              ) : field.type === "image" ? (
+                <div className="space-y-2">
+                  {/* Show current image if exists */}
+                  {formData[field.name] && !imageFiles[field.name] && (
+                    <div className="relative w-full max-w-md">
+                      <img
+                        src={formData[field.name]}
+                        alt="Current"
+                        className="w-full h-auto rounded border border-gray-300"
+                        style={{ maxHeight: "300px", objectFit: "cover" }}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Current image</p>
+                    </div>
+                  )}
+                  {/* Show preview of newly selected image */}
+                  {imageFiles[field.name] && (
+                    <div className="relative w-full max-w-md">
+                      <img
+                        src={URL.createObjectURL(imageFiles[field.name])}
+                        alt="Preview"
+                        className="w-full h-auto rounded border border-green-500"
+                        style={{ maxHeight: "300px", objectFit: "cover" }}
+                      />
+                      <p className="text-xs text-green-600 mt-1">New image selected</p>
+                    </div>
+                  )}
+                  {/* File input */}
+                  <input
+                    type="file"
+                    id={field.name}
+                    name={field.name}
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleImageChange(field.name, file);
+                      }
+                    }}
+                    className="w-full p-2 border border-gray-300 rounded shadow-sm"
+                    disabled={isSubmitting}
+                  />
+                </div>
               ) : (
                 <input
                   type={field.type || "text"}
@@ -140,6 +223,7 @@ export const AdminMetaControls = ({
                   initialForm[f.name] = initialData?.[f.name] || f.defaultValue || "";
                 });
                 setFormData(initialForm);
+                setImageFiles({}); // Clear any pending image uploads
                 setError(null);
                 setSuccess(null);
               }}
