@@ -407,6 +407,7 @@ const AdminControls = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingPublication, setEditingPublication] = useState(null);
   const [title, setTitle] = useState("");
+  const [number, setNumber] = useState("");
   const [authors, setAuthors] = useState("");
   const [venue, setVenue] = useState("");
   const [year, setYear] = useState("");
@@ -432,6 +433,7 @@ const AdminControls = () => {
 
   const resetForm = () => {
     setTitle("");
+    setNumber("");
     setAuthors("");
     setVenue("");
     setYear("");
@@ -471,17 +473,22 @@ const AdminControls = () => {
     event.preventDefault();
     setSubmitError(null);
     const authorsArray = parseAuthors(authors);
-    if (!title || authorsArray.length === 0 || !year || !type) {
-      setSubmitError("Title, Authors, Year, and Type are required.");
+    if (!title || authorsArray.length === 0 || !year || !type || !number) {
+      setSubmitError("Title, Authors (as array), Year, Type, and Number are required.");
       return;
     }
     if (isNaN(parseInt(year, 10))) {
       setSubmitError("Year must be a number.");
       return;
     }
+    if (isNaN(parseInt(number, 10))) {
+      setSubmitError("Number must be a valid number.");
+      return;
+    }
 
     const publicationData = {
       title,
+      number: parseInt(number, 10),
       authors: authorsArray,
       venue,
       year: parseInt(year, 10),
@@ -518,6 +525,7 @@ const AdminControls = () => {
     setIsCreating(false);
     setEditingPublication(pub);
     setTitle(pub.title);
+    setNumber(pub.number ? pub.number.toString() : "");
     setAuthors(pub.authors.join(", "));
     setVenue(pub.venue || "");
     setYear(pub.year.toString());
@@ -558,7 +566,7 @@ const AdminControls = () => {
           {submitError}
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <div>
           <label htmlFor="pub-title" className="block text-sm font-medium text-gray-700 mb-1">
             Title *
@@ -571,6 +579,21 @@ const AdminControls = () => {
             className={inputClass}
             required
             disabled={isSubmitting}
+          />
+        </div>
+        <div>
+          <label htmlFor="pub-number" className="block text-sm font-medium text-gray-700 mb-1">
+            Number (for ordering) *
+          </label>
+          <input
+            type="number"
+            id="pub-number"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+            className={inputClass}
+            required
+            disabled={isSubmitting}
+            min="0"
           />
         </div>
         <div>
