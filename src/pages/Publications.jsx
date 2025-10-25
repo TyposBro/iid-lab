@@ -255,7 +255,7 @@ const PublicationList = ({
                 color: selectedYear === null ? buttonBg : buttonBorderColor,
               }}
             >
-              All
+              Recent
             </button>
             {topYears.map((year) => (
               <button
