@@ -10,7 +10,7 @@ export const aboutQk = {
 
 // About Page Meta
 export const useAboutMeta = () => {
-  const defaults = { title: "", description: "", researchTracksTitle: "" };
+  const defaults = { title: "", description: "", researchTracksTitle: "", aboutYoutubeId: "" };
   return useQuery(
     buildQueryOptions({
       key: aboutQk.meta(),

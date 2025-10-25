@@ -1,11 +1,8 @@
 // {PATH_TO_THE_PROJECT}/src/pages/Home.jsx
 
 import { useRef } from "react";
-import { MainCarousel } from "@/components/";
 import { useNavigate } from "react-router";
 import { HashLink } from "react-router-hash-link";
-import LiteYouTubeEmbed from "react-lite-youtube-embed";
-import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import PropTypes from "prop-types";
 
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
@@ -50,7 +47,7 @@ export const Home = () => {
 
   const currentTitle = homePageMeta?.title || "";
   const currentDescription = homePageMeta?.description || "";
-  const currentYoutubeId = homePageMeta?.homeYoutubeId || "";
+  const currentStaticImage = homePageMeta?.homeStaticImage || "";
   const currentProjectsTitle = homePageMeta?.currentProjectsTitle || "";
   const currentProjectsDescription = homePageMeta?.currentProjectsDescription || "";
   const journalPapersTitle = homePageMeta?.journalPapersTitle || "";
@@ -75,7 +72,7 @@ export const Home = () => {
               label: "Page Description/Subtitle (Below title)",
               type: "textarea",
             },
-            { name: "homeYoutubeId", label: "Home Page YouTube Video ID", type: "text" },
+            { name: "homeStaticImage", label: "Home Page Static Image URL", type: "text" },
             { name: "currentProjectsTitle", label: "Current Projects Section Title", type: "text" },
             {
               name: "currentProjectsDescription",
@@ -113,25 +110,8 @@ export const Home = () => {
             navigate={navigate}
             titleText={currentTitle}
             descriptionText={currentDescription}
+            staticImage={currentStaticImage}
           />
-          <div className="my-6 sm:my-[30px] px-4 sm:px-6 lg:px-[25px] w-full">
-            <LiteYouTubeEmbed
-              id={currentYoutubeId}
-              adNetwork={true}
-              params=""
-              playlist={false}
-              playlistCoverId={currentYoutubeId}
-              poster="hqdefault"
-              title={currentTitle + " Lab Video"}
-              noCookie={true}
-              ref={ref}
-              activeClass="lyt-activated"
-              iframeClass=""
-              playerClass="lty-playbtn"
-              wrapperClass="yt-lite rounded-3xl "
-              muted={true}
-            />
-          </div>
           <Prof navigate={navigate} />
           <Members sectionTitle={currentTeamTitle} />
           <Projects
@@ -147,9 +127,7 @@ export const Home = () => {
 };
 
 // Intro Component
-const Intro = ({ navigate, titleText, descriptionText }) => {
-  const { data: events = [], isLoading: loading, error } = useGalleryEvents(true);
-
+const Intro = ({ navigate, titleText, descriptionText, staticImage }) => {
   let titlePart1 = titleText || "Integration & Innovation Design";
   let titleEmphasis = "";
   let titlePart2 = "";
@@ -167,19 +145,21 @@ const Intro = ({ navigate, titleText, descriptionText }) => {
     titlePart1 = titleWithoutSuffix;
   }
 
-  if (loading && !events.length)
-    return (
-      <div className="w-full px-4 sm:px-6 lg:px-[25px]">
-        <div className="h-64 sm:h-80 md:h-96 bg-gray-200 animate-pulse rounded-lg my-6"></div>
-      </div>
-    );
-
   return (
-    <div className="flex flex-col px-4 sm:px-6 lg:px-[25px] w-full gap-6 sm:gap-8">
-      {events.length > 0 && <MainCarousel slides={events} />}
-      {error && !loading && (
-        <div className="text-xs text-red-400 text-center py-2">
-          Could not load gallery images: {error.message}
+    <div className="flex flex-col px-4 sm:px-6 lg:px-[25px] w-full gap-6 sm:gap-8 max-w-screen-xl mx-auto">
+      {staticImage && (
+        <div className="w-full rounded-3xl overflow-hidden">
+          <img
+            src={staticImage}
+            alt="IID Lab"
+            className="w-full h-auto object-cover rounded-3xl"
+            style={{ maxHeight: "600px" }}
+          />
+        </div>
+      )}
+      {!staticImage && (
+        <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] bg-gray-200 rounded-3xl flex items-center justify-center text-gray-500">
+          No image available
         </div>
       )}
       <div className="flex flex-col gap-6 sm:gap-[30px] w-full sm:flex-row sm:justify-between">
@@ -216,6 +196,7 @@ Intro.propTypes = {
   navigate: PropTypes.func.isRequired,
   titleText: PropTypes.string.isRequired,
   descriptionText: PropTypes.string.isRequired,
+  staticImage: PropTypes.string,
 };
 
 // Prof Component

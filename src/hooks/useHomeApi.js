@@ -19,6 +19,7 @@ export const useHomePageMeta = () => {
     title: "",
     description: "",
     homeYoutubeId: "",
+    homeStaticImage: "",
     currentProjectsTitle: "",
     currentProjectsDescription: "",
     journalPapersTitle: "",

@@ -1,15 +1,18 @@
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/About.jsx
 
-import { useState, useMemo } from "react";
-import { MainCarousel, LoadingSpinner, Filter } from "@/components";
+import { useState, useMemo, useRef } from "react";
+import { LoadingSpinner, Filter } from "@/components";
 import { AdminAboutControls } from "@/components/admin/AboutControls";
 import { AdminMetaControls } from "@/components/AdminMetaControls";
 import { useAdmin } from "@/contexts/AdminContext";
 import { Down_left_dark_arrow } from "@/assets/";
-import { useAboutMeta, useResearchTracks, useAboutCarousel } from "@/hooks/useAboutApi";
+import { useAboutMeta, useResearchTracks } from "@/hooks/useAboutApi";
 import { useQueryClient } from "@tanstack/react-query";
+import LiteYouTubeEmbed from "react-lite-youtube-embed";
+import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 
 export const About = () => {
+  const videoRef = useRef(null);
   const queryClient = useQueryClient();
   const { data: aboutMeta, isLoading: metaLoading } = useAboutMeta();
   const {
@@ -17,12 +20,11 @@ export const About = () => {
     isLoading: loadingAboutTracks,
     error: tracksError,
   } = useResearchTracks();
-  const { data: carouselSlides = [], isLoading: loadingCarousel } = useAboutCarousel();
   // selection state
   const { isAdmin, adminToken } = useAdmin();
   const [selectedTrackFilter, setSelectedTrackFilter] = useState(null); // Initialize to null
   const defaultAboutMeta = useMemo(
-    () => ({ title: "", description: "", researchTracksTitle: "" }),
+    () => ({ title: "", description: "", researchTracksTitle: "", aboutYoutubeId: "" }),
     []
   );
 
@@ -67,6 +69,7 @@ export const About = () => {
   const currentDescription = aboutMeta?.description || defaultAboutMeta.description;
   const researchTracksTitle =
     aboutMeta?.researchTracksTitle || defaultAboutMeta.researchTracksTitle;
+  const currentYoutubeId = aboutMeta?.aboutYoutubeId || defaultAboutMeta.aboutYoutubeId;
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen pt-[95px] bg-white pb-12">
@@ -82,6 +85,7 @@ export const About = () => {
               type: "textarea",
             },
             { name: "researchTracksTitle", label: "Research Tracks Section Title", type: "text" },
+            { name: "aboutYoutubeId", label: "About Page YouTube Video ID", type: "text" },
           ]}
           onUpdateSuccess={handleMetaDataChange}
           containerClass="w-full max-w-screen-xl mx-auto px-4 md:px-[50px] pt-4 bg-gray-50"
@@ -106,19 +110,26 @@ export const About = () => {
         )}
 
         <div className="w-full max-w-screen-xl mx-auto mb-6 md:mb-12">
-          {loadingCarousel && (
-            <div className="w-full h-[200px] md:h-[465px] bg-gray-200 rounded-lg md:rounded-[30px] flex items-center justify-center">
-              <LoadingSpinner variant="block" message="Loading visuals..." />
-            </div>
-          )}
-          {!loadingCarousel && carouselSlides.length > 0 && (
-            <div className="w-full h-[200px] md:h-[465px] bg-gray-100 rounded-lg md:rounded-[30px] overflow-hidden shadow-lg">
-              <MainCarousel slides={carouselSlides} />
-            </div>
-          )}
-          {!loadingCarousel && carouselSlides.length === 0 && (
+          {currentYoutubeId ? (
+            <LiteYouTubeEmbed
+              id={currentYoutubeId}
+              adNetwork={true}
+              params=""
+              playlist={false}
+              playlistCoverId={currentYoutubeId}
+              poster="hqdefault"
+              title={currentTitle + " Lab Video"}
+              noCookie={true}
+              ref={videoRef}
+              activeClass="lyt-activated"
+              iframeClass=""
+              playerClass="lty-playbtn"
+              wrapperClass="yt-lite rounded-3xl"
+              muted={true}
+            />
+          ) : (
             <div className="w-full h-[200px] md:h-[465px] bg-gray-100 rounded-lg md:rounded-[30px] flex items-center justify-center text-gray-500 shadow">
-              No carousel images available.
+              No video available. {isAdmin && "Add a YouTube video ID in the admin controls above."}
             </div>
           )}
         </div>
