@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useCreateProject, useUpdateProject, useDeleteProject } from "@/hooks";
@@ -39,11 +39,12 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
   const [currentImageUrl, setCurrentImageUrl] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [number, setNumber] = useState("");
 
-  // Mutations
-  const createMutation = useCreateProject();
-  const updateMutation = useUpdateProject();
-  const deleteMutation = useDeleteProject();
+  // Mutations: always use latest adminToken
+  const createMutation = useCreateProject(adminToken);
+  const updateMutation = useUpdateProject(adminToken);
+  const deleteMutation = useDeleteProject(adminToken);
 
   const isSubmitting = createMutation.isLoading || updateMutation.isLoading;
 
@@ -86,6 +87,7 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
     setEditingProject(null);
     setMode("idle");
     setSubmitError(null);
+    setNumber("");
   };
 
   const handleFileChange = (e) => {
@@ -120,6 +122,7 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
     setAwardName(project.awardName || "");
     setTags(project.tags?.join(", ") || "");
     setCurrentImageUrl(project.image || null);
+    setNumber(project.number?.toString() || "");
   };
 
   const validate = () => {
@@ -127,6 +130,8 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
     if ((status === "award" || status === "completed") && !year)
       return "Year is required for this status";
     if (status === "award" && !awardName) return "Award Name is required for Award status";
+    if (!number && number !== 0) return "Project number is required";
+    if (isNaN(Number(number))) return "Project number must be a valid number";
     return null;
   };
 
@@ -140,13 +145,14 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
     }
 
     // Build payload
-    const payload = {
+    const projectPayload = {
       title,
       subtitle: subtitle || undefined,
       description: description || undefined,
       link: link || undefined,
       status,
       year: year ? parseInt(year, 10) : undefined,
+      number: Number(number),
       authors: authors
         .split(",")
         .map((a) => a.trim())
@@ -156,19 +162,17 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
-      image: selectedFile ? selectedFile : currentImageUrl || null,
     };
-
     // When editing and existing image removed explicitly
     if (mode === "edit" && currentImageUrl === null && !selectedFile && editingProject?.image) {
-      payload.image = undefined; // indicates deletion
+      projectPayload.image = undefined; // indicates deletion
     }
-
     const action = mode === "edit" ? updateMutation.mutateAsync : createMutation.mutateAsync;
     try {
       await action({
         id: editingProject?._id,
-        project: payload,
+        file: selectedFile,
+        project: projectPayload,
         token: adminToken,
       });
       pushToast({
@@ -187,7 +191,7 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
     if (!window.confirm("Delete this project?")) return;
     setDeletingId(id);
     try {
-      await deleteMutation.mutateAsync({ id, token: adminToken });
+      await deleteMutation.mutateAsync(id); // Pass only the ID string
       pushToast({ type: "success", message: "Project deleted" });
       if (editingProject?._id === id) resetForm();
       onProjectsUpdated?.();
@@ -327,6 +331,22 @@ const ProjectsAdminControls = ({ onProjectsUpdated }) => {
                     className={inputClass}
                     required
                     disabled={isSubmitting}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="number" className="block text-sm font-medium text-gray-700 mb-1">
+                    Project Number *
+                  </label>
+                  <input
+                    id="number"
+                    type="number"
+                    value={number}
+                    onChange={(e) => setNumber(e.target.value)}
+                    className={inputClass}
+                    required
+                    min="0"
+                    disabled={isSubmitting}
+                    placeholder="For ordering"
                   />
                 </div>
                 <div>

@@ -27,7 +27,8 @@ export const useGalleryEvents = () => {
     buildQueryOptions({
       key: galleryQk.events(),
       path: "/api/gallery",
-      select: (data) => (Array.isArray(data) ? [...data].sort((a, b) => (b.number ?? 0) - (a.number ?? 0)) : []),
+      select: (data) =>
+        Array.isArray(data) ? [...data].sort((a, b) => (b.number ?? 0) - (a.number ?? 0)) : [],
     })
   );
 };
