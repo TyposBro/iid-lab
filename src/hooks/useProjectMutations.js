@@ -17,7 +17,7 @@ const uploadImage = async (file, token) => {
   });
   if (!res.ok) throw new Error(`Image upload failed (${res.status})`);
   const data = await res.json();
-  return data.urls?.[0] || null;
+  return data[0] || null;
 };
 
 export const useCreateProject = (token, { toast } = {}) => {

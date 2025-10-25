@@ -191,9 +191,10 @@ const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
       onProjectsUpdated?.();
     } catch (error) {
       // Show backend error in UI and toast
-      const msg = error?.message || (error?.response && error.response.data?.message) || "Operation failed";
+      const msg =
+        error?.message || (error?.response && error.response.data?.message) || "Operation failed";
       setSubmitError(msg);
-  toast.error(msg);
+      toast.error(msg);
     }
   };
 
@@ -202,13 +203,14 @@ const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
     setDeletingId(id);
     try {
       await deleteMutation.mutateAsync(id); // Pass only the ID string
-  toast.success("Project deleted");
+      toast.success("Project deleted");
       if (editingProject?._id === id) resetForm();
       onProjectsUpdated?.();
     } catch (error) {
-      const msg = error?.message || (error?.response && error.response.data?.message) || "Delete failed";
+      const msg =
+        error?.message || (error?.response && error.response.data?.message) || "Delete failed";
       setSubmitError(msg);
-  toast.error(msg);
+      toast.error(msg);
     } finally {
       setDeletingId(null);
     }

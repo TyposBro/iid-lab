@@ -87,7 +87,10 @@ export const Projects = () => {
             </div>
           }
         >
-          <AdminProjectControlsLazy onProjectsUpdated={refetchAllProjects} refreshKey={refreshKey} />
+          <AdminProjectControlsLazy
+            onProjectsUpdated={refetchAllProjects}
+            refreshKey={refreshKey}
+          />
         </Suspense>
       )}
 
