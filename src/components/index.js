@@ -12,3 +12,4 @@ export { default as MainCarousel } from "./MainCarousel";
 export { default as AdminMetaControls } from "./AdminMetaControls";
 export { default as Markdown } from "./Markdown";
 export { default as ToastContainer } from "./ToastContainer";
+export { Lightbox } from "./Lightbox";

@@ -1,9 +1,9 @@
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/Gallery.jsx
 
 /* eslint-disable no-unused-vars */
-import { useState, useMemo, useEffect } from "react"; // Added useEffect
+import { useState, useMemo, useEffect, useRef } from "react"; // Added useRef
 import PropTypes from "prop-types";
-import { Filter, MainCarousel, LoadingSpinner, AdminMetaControls } from "@/components"; // Added AdminMetaControls
+import { Filter, MainCarousel, LoadingSpinner, AdminMetaControls, Lightbox } from "@/components"; // Added Lightbox
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
@@ -173,38 +173,84 @@ Intro.propTypes = {
 const Event = ({ event }) => {
   const date = event.date ? new Date(event.date) : null;
   const year = date ? date.getFullYear() : "";
+  const scrollContainerRef = useRef(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Horizontal scroll with mouse wheel
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e) => {
+      // Only handle horizontal scrolling if there's overflow
+      if (container.scrollWidth > container.clientWidth) {
+        // Prevent default vertical scroll
+        e.preventDefault();
+        // Scroll horizontally instead
+        container.scrollLeft += e.deltaY;
+      }
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => container.removeEventListener("wheel", handleWheel);
+  }, []);
+
+  const handleImageClick = (index) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
 
   return (
-    <div className="flex flex-col gap-[10px] py-4 px-4 sm:px-6 lg:px-[25px]">
-      {" "}
-      {/* Added responsive padding */}
-      <div className="flex gap-[15px] w-full overflow-x-auto no-scrollbar pb-2">
+    <>
+      <div className="flex flex-col gap-[10px] py-4 px-4 sm:px-6 lg:px-[25px]">
         {" "}
-        {/* Added no-scrollbar and pb-2 */}
-        {event?.images?.map((image, index) => (
-          <div key={index} className="flex-shrink-0 w-[280px] sm:w-[300px] h-[180px] sm:h-[200px]">
-            {" "}
-            {/* Responsive sizing */}
-            <img
-              src={image}
-              alt={`${event.title} - Image ${index + 1}`}
-              className="rounded-3xl w-full h-full object-cover" // Use object-cover
-            />
-          </div>
-        ))}
-        {(!event?.images || event.images.length === 0) && (
-          <div className="rounded-3xl w-[280px] sm:w-[300px] h-[180px] sm:h-[200px] bg-gray-200 flex items-center justify-center text-gray-500">
-            No images for this event
-          </div>
-        )}
+        {/* Added responsive padding */}
+        <div 
+          ref={scrollContainerRef}
+          className="flex gap-[15px] w-full overflow-x-auto pb-2 cursor-grab active:cursor-grabbing gallery-scroll-container"
+        >
+          {" "}
+          {/* Added cursor styles and custom class */}
+          {event?.images?.map((image, index) => (
+            <div 
+              key={index} 
+              className="flex-shrink-0 w-[280px] sm:w-[300px] h-[180px] sm:h-[200px] cursor-pointer transition-transform hover:scale-105"
+              onClick={() => handleImageClick(index)}
+            >
+              {" "}
+              {/* Added cursor-pointer and hover effect */}
+              <img
+                src={image}
+                alt={`${event.title} - Image ${index + 1}`}
+                className="rounded-3xl w-full h-full object-cover" // Use object-cover
+              />
+            </div>
+          ))}
+          {(!event?.images || event.images.length === 0) && (
+            <div className="rounded-3xl w-[280px] sm:w-[300px] h-[180px] sm:h-[200px] bg-gray-200 flex items-center justify-center text-gray-500">
+              No images for this event
+            </div>
+          )}
+        </div>
+        <div className="text-center text-sm sm:text-base text-text_black_secondary">
+          {" "}
+          {/* Responsive text */}
+          <span className="font-semibold text-text_black_primary">{event?.title}</span> ({year}),{" "}
+          {event?.location}
+        </div>
       </div>
-      <div className="text-center text-sm sm:text-base text-text_black_secondary">
-        {" "}
-        {/* Responsive text */}
-        <span className="font-semibold text-text_black_primary">{event?.title}</span> ({year}),{" "}
-        {event?.location}
-      </div>
-    </div>
+
+      {/* Lightbox */}
+      {lightboxOpen && event?.images && event.images.length > 0 && (
+        <Lightbox
+          images={event.images}
+          currentIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={setLightboxIndex}
+        />
+      )}
+    </>
   );
 };
 
