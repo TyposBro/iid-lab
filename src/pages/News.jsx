@@ -1,9 +1,10 @@
+import Pagination from "@/components/Pagination";
 /* eslint-disable no-unused-vars */
 // {PATH_TO_THE_PROJECT}/frontend/src/pages/News.jsx
 
 import { useState, useMemo, useEffect } from "react"; // Added useEffect for previews & syncing
 import PropTypes from "prop-types";
-import { Filter, MainCarousel, Markdown, LoadingSpinner, AdminMetaControls } from "@/components/"; // Added AdminMetaControls
+import { Filter, Markdown, LoadingSpinner, AdminMetaControls } from "@/components/"; // Removed MainCarousel
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
@@ -101,11 +102,44 @@ export const News = () => {
       {/* Render page content once meta (even default) is resolved */}
       {(!metaLoading || newsMeta) && (
         <>
+
           <Intro
-            slides={slides}
             titleText={currentMetaTitle}
             descriptionText={currentMetaDescription}
           />
+
+          {/* LATEST NEWS SECTION - horizontal cards */}
+          {filteredEvents.length > 0 && (
+            <div className="w-full max-w-screen-xl mx-auto mt-2 mb-8">
+              <h3 className="text-2xl font-bold mb-4 text-text_black_primary">Latest News</h3>
+              <div className="flex gap-6 overflow-x-auto pb-2 snap-x snap-mandatory no-scrollbar">
+                {filteredEvents.slice(0, 3).map((event) => (
+                  <div
+                    key={event._id || event.title}
+                    className="min-w-[320px] max-w-xs bg-white rounded-2xl shadow-md border flex-shrink-0 snap-center flex flex-col overflow-hidden"
+                  >
+                    {event.images && event.images[0] && (
+                      <img
+                        src={event.images[0]}
+                        alt={event.title}
+                        className="w-full h-48 object-contain bg-gray-100"
+                        style={{ objectFit: 'contain', aspectRatio: '16/9' }}
+                        loading="lazy"
+                      />
+                    )}
+                    <div className="flex flex-col gap-2 p-4">
+                      <div className="flex justify-between items-center text-xs mb-1">
+                        <span className="text-gray-500">{event.date ? new Date(event.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "No Date"}</span>
+                        <span className="font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-600 text-white text-[10px]">{event.type}</span>
+                      </div>
+                      <h4 className="text-lg font-semibold text-text_black_primary truncate" title={event.title}>{event.title}</h4>
+                      <div className="text-sm text-gray-700 line-clamp-3 min-h-[3.5em]">{event.content?.slice(0, 120)}{event.content?.length > 120 ? '...' : ''}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Loading and Error States for News Items */}
           {loading &&
@@ -126,9 +160,10 @@ export const News = () => {
             <>
               {isAdmin && <AdminNewsControls events={events} refetchNews={refetchNews} />}
 
+
               <div className="flex flex-col gap-4 sm:gap-6 w-full max-w-screen-xl mx-auto">
                 <h2 className="flex justify-between items-end text-5xl text-text_black_primary font-medium">
-                  <span>Latest News</span>
+                  <span>All News</span>
                   <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
                 </h2>
                 <Filter selected={selected} setSelected={changeSelected} list={uniqueTypes} />
@@ -145,13 +180,13 @@ export const News = () => {
                 </div>
               </div>
 
-              {limit < filteredEvents.length && (
-                <button
-                  className="flex justify-center items-center w-full max-w-xs h-12 text-base sm:text-lg font-bold text-primary_main bg-primary_light rounded-lg hover:bg-blue-200 transition-colors duration-200"
-                  onClick={loadMore}
-                >
-                  Load More
-                </button>
+              {/* Pagination for 'All' news */}
+              {selected === "Latest" && filteredEvents.length > 0 && (
+                <Pagination
+                  totalItems={filteredEvents.length}
+                  itemsPerPage={limit}
+                  setLimit={setLimit}
+                />
               )}
             </>
           )}
@@ -161,8 +196,8 @@ export const News = () => {
   );
 };
 
-// Modified Intro Component
-const Intro = ({ slides, titleText, descriptionText }) => {
+// Modified Intro Component (carousel removed)
+const Intro = ({ titleText, descriptionText }) => {
   return (
     <div className="flex flex-col gap-4 sm:gap-6 py-4 sm:py-8 w-full max-w-screen-xl">
       <div className="flex justify-between items-end">
@@ -173,13 +208,11 @@ const Intro = ({ slides, titleText, descriptionText }) => {
       {descriptionText && (
         <p className="text-lg text-text_black_secondary mt-1">{descriptionText}</p>
       )}
-      {slides.length > 0 && <MainCarousel slides={slides} />}
     </div>
   );
 };
 
 Intro.propTypes = {
-  slides: PropTypes.array.isRequired,
   titleText: PropTypes.string.isRequired,
   descriptionText: PropTypes.string,
 };
@@ -214,13 +247,13 @@ const Event = ({ event }) => {
       {" "}
       {/* Added bg-white and shadow */}
       {event?.images?.length > 0 && (
-        // Image carousel/slider at the top of the card
-        <div className="w-full h-60 overflow-x-auto flex snap-x snap-mandatory no-scrollbar">
+        <div className="w-full h-60 overflow-x-auto flex snap-x snap-mandatory no-scrollbar bg-gray-100">
           {event.images.map((image, index) => (
-            <div key={image || index} className="snap-center flex-shrink-0 w-full h-full">
+            <div key={image || index} className="snap-center flex-shrink-0 w-full h-full flex items-center justify-center">
               <img
                 src={image}
-                className="w-full h-full object-cover bg-gray-200"
+                className="w-full h-full object-contain bg-gray-100"
+                style={{ aspectRatio: '16/9', maxHeight: '15rem' }}
                 alt={`${event.title} - image ${index + 1}`}
                 loading="lazy"
               />
@@ -230,13 +263,10 @@ const Event = ({ event }) => {
       )}
       {/* Content Area */}
       <div className="flex flex-col gap-3 p-4 sm:p-5">
-        {" "}
         {/* Consistent padding */}
         <div className="flex justify-between text-text_black_secondary text-sm">
           <span>{displayDate}</span>
-          <span className="font-bold uppercase text-xs tracking-wider px-2 py-1 bg-gray-100 text-gray-700 rounded">
-            {" "}
-            {/* Styled type */}
+          <span className="font-bold uppercase text-xs tracking-wider px-2 py-1 rounded bg-blue-600 text-white shadow-sm">
             {event.type}
           </span>
         </div>

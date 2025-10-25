@@ -72,12 +72,7 @@ export const Home = () => {
               label: "Page Description/Subtitle (Below title)",
               type: "textarea",
             },
-            { 
-              name: "homeStaticImage", 
-              label: "Home Page Hero Image", 
-              type: "image",
-              hint: "Upload an image to display at the top of the home page."
-            },
+            { name: "homeStaticImage", label: "Home Page Static Image URL", type: "text" },
             { name: "currentProjectsTitle", label: "Current Projects Section Title", type: "text" },
             {
               name: "currentProjectsDescription",
