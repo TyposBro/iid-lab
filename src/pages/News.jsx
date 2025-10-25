@@ -340,7 +340,14 @@ const AdminNewsControls = ({ events, refetchNews }) => {
   };
 
   const handleCreate = () => {
-    if (!newDate || !newTitle || !newNumber || !newContent || !newType || selectedFiles.length === 0)
+    if (
+      !newDate ||
+      !newTitle ||
+      !newNumber ||
+      !newContent ||
+      !newType ||
+      selectedFiles.length === 0
+    )
       return alert("Please fill in all fields (including number) and select at least one image.");
     const isoDate = newDate.toISOString().split("T")[0];
     createMutation.mutate({
@@ -369,7 +376,8 @@ const AdminNewsControls = ({ events, refetchNews }) => {
 
   const handleUpdate = () => {
     if (!editingEvent || !newDate) return;
-    if (!newTitle || !newNumber || !newContent || !newType) return alert("Please fill in all fields (including number).");
+    if (!newTitle || !newNumber || !newContent || !newType)
+      return alert("Please fill in all fields (including number).");
     if (imagesToKeep.length === 0 && selectedFiles.length === 0)
       return alert("Please keep or add at least one image.");
     const isoDate = newDate.toISOString().split("T")[0];

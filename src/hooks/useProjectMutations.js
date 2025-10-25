@@ -9,7 +9,7 @@ const listKey = (status) => QK.projects(status);
 const uploadImage = async (file, token) => {
   if (!file) return null;
   const fd = new FormData();
-  fd.append("file", file);
+  fd.append("images", file);
   const res = await fetch(`${BASE_URL}/api/upload`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },

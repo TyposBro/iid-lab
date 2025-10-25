@@ -5,7 +5,7 @@ import { BASE_URL } from "@/config/api";
 const uploadImages = async (files, token) => {
   if (!files || files.length === 0) return [];
   const fd = new FormData();
-  [...files].forEach((f) => fd.append("file", f));
+  [...files].forEach((f) => fd.append("images", f));
   const res = await fetch(`${BASE_URL}/api/upload`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },

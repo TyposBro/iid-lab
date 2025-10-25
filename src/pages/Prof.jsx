@@ -224,7 +224,7 @@ const AdminProfessorControls = ({ prof, setProf, adminToken }) => {
 
   const uploadFile = async (file, fieldNameInFormData) => {
     const fileData = new FormData();
-    fileData.append("file", file); // Always use "file" for our Worker API
+    fileData.append("images", file);
 
     try {
       const response = await fetch(`${BASE_URL}/api/upload`, {

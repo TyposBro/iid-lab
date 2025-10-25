@@ -244,7 +244,7 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
       if (cb.imageFile) {
         // New image to upload
         const formData = new FormData();
-        formData.append("file", cb.imageFile);
+        formData.append("images", cb.imageFile);
         try {
           const res = await fetch(`${BASE_URL}/api/upload`, {
             method: "POST",

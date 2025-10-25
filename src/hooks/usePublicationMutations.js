@@ -30,7 +30,7 @@ export const useCreatePublication = (token, { toast } = {}) => {
       let image = publication.image;
       if (file) {
         const fd = new FormData();
-        fd.append("file", file);
+        fd.append("images", file);
         const resUpload = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -94,7 +94,7 @@ export const useUpdatePublication = (token, { toast } = {}) => {
       let image = update.image;
       if (file) {
         const fd = new FormData();
-        fd.append("file", file);
+        fd.append("images", file);
         const resUpload = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

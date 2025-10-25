@@ -601,7 +601,7 @@ const AdminTeamControls = ({ refreshData }) => {
     if (file) {
       setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("images", file);
       try {
         const response = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
@@ -1038,7 +1038,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     if (file) {
       setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("images", file);
       try {
         const response = await fetch(`${BASE_URL}/api/upload`, {
           method: "POST",
