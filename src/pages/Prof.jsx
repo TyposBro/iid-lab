@@ -690,8 +690,8 @@ const Intro = ({ prof }) => {
         </div>
         {prof.desc && <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>}
         {prof.stats && prof.stats.length > 0 && (
-          <div className="flex flex-col items-center gap-4 w-full py-6 ">
-            <div className="flex justify-center gap-4 w-full">
+          <div className="flex flex-col items-center gap-4 w-full py-6 lg:flex-row">
+            <div className="flex justify-center gap-4 w-full lg:justify-end lg:gap-8 lg:basis-[2]">
               {prof.stats.slice(0, 2).map(
                 (elem) =>
                   elem.key &&
@@ -704,7 +704,7 @@ const Intro = ({ prof }) => {
               )}
             </div>
             {prof.stats.length > 2 && (
-              <div className="flex justify-center gap-4 w-full mt-4">
+              <div className="flex justify-center gap-4 w-full mt-4 lg:justify-start lg:mt-0 lg:gap-8 lg:basis-[3]">
                 {prof.stats.slice(2, 5).map(
                   (elem) =>
                     elem.key &&
