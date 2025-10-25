@@ -690,46 +690,16 @@ const Intro = ({ prof }) => {
         </div>
         {prof.desc && <h3 className="text-[12px] text-text_black_secondary">{prof.desc}</h3>}
         {prof.stats && prof.stats.length > 0 && (
-          <div className="flex flex-col items-center gap-4 w-full py-6 lg:flex-row">
-            <div className="flex justify-center gap-4 w-full lg:justify-end lg:gap-8 lg:basis-[2]">
-              {prof.stats.slice(0, 2).map(
-                (elem) =>
-                  elem.key &&
-                  elem.value && (
-                    <div key={elem.key} className="max-w-[120px] text-center">
-                      <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
-                      <h3 className="text-[12px] text-text_black_secondary">{elem.key}</h3>
-                    </div>
-                  )
-              )}
-            </div>
-            {prof.stats.length > 2 && (
-              <div className="flex justify-center gap-4 w-full mt-4 lg:justify-start lg:mt-0 lg:gap-8 lg:basis-[3]">
-                {prof.stats.slice(2, 5).map(
-                  (elem) =>
-                    elem.key &&
-                    elem.value && (
-                      <div key={elem.key} className="max-w-[120px] text-center">
-                        <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
-                        <h3 className="text-[12px] text-text_black_secondary">{elem.key}</h3>
-                      </div>
-                    )
-                )}
-              </div>
-            )}
-            {prof.stats.length > 5 && (
-              <div className="flex flex-wrap justify-center gap-4 w-full mt-4">
-                {prof.stats.slice(5).map(
-                  (elem) =>
-                    elem.key &&
-                    elem.value && (
-                      <div key={elem.key} className="max-w-[120px] text-center">
-                        <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
-                        <h3 className="text-[12px] text-text_black_secondary">{elem.key}</h3>
-                      </div>
-                    )
-                )}
-              </div>
+          <div className="flex flex-wrap justify-center gap-4 lg:gap-8 w-full py-6">
+            {prof.stats.map(
+              (elem) =>
+                elem.key &&
+                elem.value && (
+                  <div key={elem.key} className="max-w-[120px] text-center">
+                    <h1 className="font-semibold text-[64px] leading-[48px]">{elem.value}</h1>
+                    <h3 className="text-[12px] text-text_black_secondary">{elem.key}</h3>
+                  </div>
+                )
             )}
           </div>
         )}
@@ -808,12 +778,10 @@ const AccordionCard = ({ title, items }) => {
           {(items || []).map((item, index) => (
             <div
               key={`${item.period}-${index}`}
-              className="flex flex-col sm:flex-row gap-2 sm:gap-4"
+              className="flex flex-col sm:flex-row sm:gap-2 lg:gap-10"
             >
               {item.period && (
-                <div className="font-semibold text-[11px] flex-shrink-0 sm:w-1/3">
-                  {item.period}
-                </div>
+                <div className="font-semibold text-[11px] flex-shrink-0">{item.period}</div>
               )}
               {item.desc && <div className="font-light text-[11px] flex-1">{item.desc}</div>}
             </div>
