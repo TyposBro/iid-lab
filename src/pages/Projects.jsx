@@ -128,7 +128,7 @@ const Current = ({ refreshKey }) => {
               type: "textarea",
             },
           ]}
-          onUpdateSuccess={handleCurrentProjectsMetaUpdated}
+          onUpdateSuccess={() => {}} // React Query will auto-refetch
           containerClass="py-2 bg-gray-100 rounded-lg shadow my-4"
         />
       )}
@@ -230,10 +230,10 @@ const Completed = ({ refreshKey }) => {
       <div className="flex flex-col gap-4 md:gap-[25px] px-4 md:px-[25px] max-w-screen-xl mx-auto w-full">
         {" "}
         {/* Added max-width & w-full */}
-        {isAdmin && completedProjectsMeta && (
+        {isAdmin && completedMeta && (
           <AdminMetaControls
             pageIdentifier="projects-completed"
-            initialData={completedProjectsMeta}
+            initialData={completedMeta}
             fieldsConfig={[
               { name: "title", label: "Completed Projects Section Title", type: "text" },
               {
@@ -242,7 +242,7 @@ const Completed = ({ refreshKey }) => {
                 type: "textarea",
               },
             ]}
-            onUpdateSuccess={handleCompletedProjectsMetaUpdated}
+            onUpdateSuccess={() => {}} // React Query will auto-refetch
             containerClass="py-2 bg-gray-700 text-white rounded-lg shadow my-4" // Adjusted bg for dark section
           />
         )}
@@ -252,7 +252,7 @@ const Completed = ({ refreshKey }) => {
           </div>
         )}
         {metaError && <div className="text-red-400 text-center p-4">Error: {metaError}</div>}
-        {(!metaLoading || completedProjectsMeta) && (
+        {(!metaLoading || completedMeta) && (
           <>
             <div className="flex justify-between items-center">
               <h2 className="font-extralight text-4xl md:text-[48px] text-white leading-tight md:leading-[50px]">
@@ -386,7 +386,7 @@ const Awards = ({ refreshKey }) => {
               { name: "title", label: "Awards Section Title", type: "text" },
               { name: "description", label: "Awards Section Intro (Optional)", type: "textarea" },
             ]}
-            onUpdateSuccess={handleAwardsMetaUpdated}
+            onUpdateSuccess={() => {}} // React Query will auto-refetch
             containerClass="py-2 bg-blue-200 text-black rounded-lg shadow my-4" // Adjusted bg for primary_main section
           />
         )}
