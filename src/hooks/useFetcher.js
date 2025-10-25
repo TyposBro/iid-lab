@@ -47,9 +47,13 @@ export const buildQueryOptions = ({
   gcTime = 5 * 60 * 1000,
   retry,
   structuralSharing,
+  token,
 }) => ({
   queryKey: key,
-  queryFn: () => jsonFetcher(path).then(unwrapData),
+  queryFn: () => {
+    const options = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    return jsonFetcher(path, options).then(unwrapData);
+  },
   select,
   enabled,
   staleTime,

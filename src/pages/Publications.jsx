@@ -391,12 +391,12 @@ const AdminControls = () => {
   const { adminToken } = useAdmin();
   const toast = useToast();
 
-  // Use hooks for fetching all publications (admin view)
+  // Use hooks for fetching all publications (admin view) - pass adminToken
   const {
     data: publications = [],
     isLoading: isLoadingList,
     error: listError,
-  } = usePublicationsList(null);
+  } = usePublicationsList(null, adminToken);
 
   // Use mutation hooks
   const createMutation = useCreatePublication(adminToken, { toast });

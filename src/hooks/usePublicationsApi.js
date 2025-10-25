@@ -43,15 +43,17 @@ export const usePublicationsSectionMeta = (section) => {
 
 // Full list for type (journal|conference). Backend exposes /api/publications/type/:type for public access.
 // Passing null/undefined hits the admin-protected aggregate endpoint, so consumers should usually supply a type.
-export const usePublicationsList = (type) => {
+// If adminToken is provided, it will be used for authentication (required for fetching all publications).
+export const usePublicationsList = (type, adminToken = null) => {
   const keyType = type ?? "all";
-  const path = type ? `/api/publications/type/${type}` : "/publications";
+  const path = type ? `/api/publications/type/${type}` : "/api/publications";
   return useQuery(
     buildQueryOptions({
       key: publicationsListKey(keyType),
       path,
       select: (data) => data,
       staleTime: 60 * 1000,
+      token: adminToken,
     })
   );
 };
