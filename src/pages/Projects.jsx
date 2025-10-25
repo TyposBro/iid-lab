@@ -345,68 +345,57 @@ const Awards = ({ refreshKey }) => {
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [filteredAwards, setFilteredAwards] = useState([]);
   const [availableFilters, setAvailableFilters] = useState(["All"]);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const AWARDS_PER_PAGE = 4;
   const defaultAwardsMeta = { title: "", description: "" };
   useEffect(() => {
     const filters = new Set(["All"]);
-    const categoryMap = new Map(); // Map to store category -> awards mapping
-
+    const categoryMap = new Map();
     allAwards.forEach((award) => {
       if (award.awardName) {
-        // Extract the base award name (before "Award" or other common suffixes)
         let category = award.awardName.trim();
-
-        // Common patterns to extract category
-        // e.g., "Reddot Design Award" -> "Reddot"
-        // e.g., "iF Design Award" -> "iF"
-        // e.g., "Spark Award" -> "Spark"
         const awardLower = category.toLowerCase();
-
         if (awardLower.includes("reddot")) {
           category = "Reddot";
         } else if (awardLower.includes("if")) {
           category = "iF";
         } else {
-          // Extract the first word or meaningful part before "award"
           const words = category.split(/\s+/);
           if (words.length > 0) {
-            // Take the first significant word
             category = words[0];
           }
         }
-
         filters.add(category);
-
-        // Store the mapping
         if (!categoryMap.has(category)) {
           categoryMap.set(category, []);
         }
         categoryMap.get(category).push(award);
       }
     });
-
     setAvailableFilters([...filters]);
-    // Store category map for filtering
     setFilteredAwards(allAwards);
+    setCurrentPage(1); // Reset page on awards change
   }, [allAwards]);
   useEffect(() => {
+    setCurrentPage(1); // Reset to first page on filter change
     if (selectedFilter === "All") {
       setFilteredAwards(allAwards);
     } else {
-      // Filter based on the selected category
       setFilteredAwards(
         allAwards.filter((award) => {
           if (!award.awardName) return false;
-
           const awardLower = award.awardName.toLowerCase();
           const filterLower = selectedFilter.toLowerCase();
-
-          // Check if the award name contains the filter category
           return awardLower.includes(filterLower);
         })
       );
     }
   }, [allAwards, selectedFilter]);
-  const handleFilter = (filter) => setSelectedFilter(filter);
+  const handleFilter = (filter) => {
+    setSelectedFilter(filter);
+    setCurrentPage(1);
+  };
   const sectionTitle = awardsMeta?.title || defaultAwardsMeta.title;
   const sectionDescription = awardsMeta?.description;
 
@@ -479,34 +468,90 @@ const Awards = ({ refreshKey }) => {
 
       {!loading && !error && filteredAwards.length > 0 && (
         <div className="max-w-screen-xl mx-auto w-full">
-          {" "}
-          {/* Added container */}
-          <div className="flex gap-4 md:gap-[6px] px-4 md:px-[25px] w-full overflow-x-auto no-scrollbar pb-4">
-            {filteredAwards.map((award) => (
-              <ProjectCard
-                key={award._id}
-                imageSrc={award.image || "/img/placeholder.png"}
-                awardName={award.awardName}
-                title={award.title}
-                projectYear={award.year}
-                projectAuthors={award.authors}
-                link={award.link}
-                buttonText="Details"
-                cardBgColor="bg-white"
-                borderColor="border-gray-200"
-                primaryTextColor="text-text_black_primary"
-                secondaryTextColor="text-text_black_primary"
-                buttonBorderColor="border-primary_main"
-                buttonTextColor="text-primary_main"
-                imageHeight="h-64"
-                customClasses="w-[280px] md:w-[300px] shrink-0"
-              />
-            ))}
-          </div>
-          {/* <button className="flex justify-center items-center gap-[10px] rounded-[15px] h-[50px] font-bold text-base md:text-lg text-black hover:bg-blue-100 transition-colors duration-200 mt-6 mx-auto px-6">
-            <span>View All Awards</span>
-            <Up_right_neutral_arrow alt="up right neutral arrow icon" className="text-black" />
-          </button> */}
+          {/* Pagination logic for 'All' filter */}
+          {selectedFilter === "All" ? (
+            <>
+              <div className="flex gap-4 md:gap-[6px] px-4 md:px-[25px] w-full overflow-x-auto no-scrollbar pb-4">
+                {filteredAwards
+                  .slice((currentPage - 1) * AWARDS_PER_PAGE, currentPage * AWARDS_PER_PAGE)
+                  .map((award) => (
+                    <ProjectCard
+                      key={award._id}
+                      imageSrc={award.image || "/img/placeholder.png"}
+                      awardName={award.awardName}
+                      title={award.title}
+                      projectYear={award.year}
+                      projectAuthors={award.authors}
+                      link={award.link}
+                      buttonText="Details"
+                      cardBgColor="bg-white"
+                      borderColor="border-gray-200"
+                      primaryTextColor="text-text_black_primary"
+                      secondaryTextColor="text-text_black_primary"
+                      buttonBorderColor="border-primary_main"
+                      buttonTextColor="text-primary_main"
+                      imageHeight="h-64"
+                      customClasses="w-[280px] md:w-[300px] shrink-0"
+                    />
+                  ))}
+              </div>
+              {/* Pagination controls */}
+              {filteredAwards.length > AWARDS_PER_PAGE && (
+                <div className="flex justify-center items-center gap-2 mt-4">
+                  <button
+                    className="px-3 py-1 rounded border border-gray-400 bg-white text-black disabled:opacity-50"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+                  {Array.from({ length: Math.ceil(filteredAwards.length / AWARDS_PER_PAGE) }, (_, i) => (
+                    <button
+                      key={i + 1}
+                      className={`px-3 py-1 rounded border border-gray-400 mx-1 ${
+                        currentPage === i + 1
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-black hover:bg-gray-200"
+                      }`}
+                      onClick={() => setCurrentPage(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <button
+                    className="px-3 py-1 rounded border border-gray-400 bg-white text-black disabled:opacity-50"
+                    onClick={() => setCurrentPage((p) => Math.min(Math.ceil(filteredAwards.length / AWARDS_PER_PAGE), p + 1))}
+                    disabled={currentPage === Math.ceil(filteredAwards.length / AWARDS_PER_PAGE)}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex gap-4 md:gap-[6px] px-4 md:px-[25px] w-full overflow-x-auto no-scrollbar pb-4">
+              {filteredAwards.map((award) => (
+                <ProjectCard
+                  key={award._id}
+                  imageSrc={award.image || "/img/placeholder.png"}
+                  awardName={award.awardName}
+                  title={award.title}
+                  projectYear={award.year}
+                  projectAuthors={award.authors}
+                  link={award.link}
+                  buttonText="Details"
+                  cardBgColor="bg-white"
+                  borderColor="border-gray-200"
+                  primaryTextColor="text-text_black_primary"
+                  secondaryTextColor="text-text_black_primary"
+                  buttonBorderColor="border-primary_main"
+                  buttonTextColor="text-primary_main"
+                  imageHeight="h-64"
+                  customClasses="w-[280px] md:w-[300px] shrink-0"
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
