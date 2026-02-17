@@ -4,10 +4,10 @@ import Pagination from "@/components/Pagination";
 
 import { useState, useMemo, useEffect } from "react"; // Added useEffect for previews & syncing
 import PropTypes from "prop-types";
-import { Filter, Markdown, LoadingSpinner, AdminMetaControls } from "@/components/"; // Removed MainCarousel
+import { Filter, Markdown, LoadingSpinner, AdminMetaControls, CategoryOrderEditor, ImageCropModal } from "@/components/";
+import { applyCategoryOrder } from "@/utils/categoryOrder";
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
-import { BASE_URL } from "@/config/api";
 import { useNewsMeta, useNewsItems } from "@/hooks/useNewsApi";
 import { useCreateNewsItem, useUpdateNewsItem, useDeleteNewsItem } from "@/hooks";
 import { useToast } from "@/contexts/ToastContext";
@@ -19,8 +19,9 @@ import "../styles/datepicker-override.css"; // Optional: Add a CSS file for cust
 export const News = () => {
   const queryClient = useQueryClient();
   const { data: events = [], isLoading: loading, error } = useNewsItems();
-  const [selected, setSelected] = useState("Latest");
-  const [limit, setLimit] = useState(5);
+  const [selected, setSelected] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 6;
   const { isAdmin } = useAdmin();
 
   // --- Meta Data State and Fetching ---
@@ -48,22 +49,25 @@ export const News = () => {
   const currentMetaDescription = newsMeta?.description || defaultNewsMeta.description;
 
   // Prepare data for components
-  const slides = events.flatMap((event) => event.images || []).filter(Boolean);
-  const uniqueTypes = ["Latest", ...new Set(events.map((event) => event.type))];
+  const uniqueTypes = applyCategoryOrder(
+    ["All", ...new Set(events.map((event) => event.type))],
+    newsMeta?.categoryOrder
+  );
 
   const filteredEvents =
-    selected === "Latest"
-      ? events // Already sorted by date
-      : events.filter((event) => event.type === selected); // Keeps original sort order (date)
+    selected === "All"
+      ? events
+      : events.filter((event) => event.type === selected);
 
-  // Handlers
-  const loadMore = () => {
-    setLimit((prev) => Math.min(prev + 5, filteredEvents.length)); // Ensure limit doesn't exceed length
-  };
+  const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE);
+  const paginatedEvents = filteredEvents.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const changeSelected = (value) => {
     setSelected(value);
-    setLimit(5); // Reset limit when filter changes
+    setCurrentPage(1);
   };
 
   return (
@@ -104,56 +108,18 @@ export const News = () => {
         <>
           <Intro titleText={currentMetaTitle} descriptionText={currentMetaDescription} />
 
-          {/* LATEST NEWS SECTION - horizontal cards */}
-          {filteredEvents.length > 0 && (
-            <div className="w-full max-w-screen-xl mx-auto mt-2 mb-8">
-              <h3 className="text-2xl font-bold mb-4 text-text_black_primary">Latest News</h3>
-              <div className="flex gap-6 overflow-x-auto pb-2 snap-x snap-mandatory no-scrollbar">
-                {filteredEvents.slice(0, 3).map((event) => (
-                  <div
-                    key={event._id || event.title}
-                    className="min-w-[320px] max-w-xs bg-white rounded-2xl shadow-md border flex-shrink-0 snap-center flex flex-col overflow-hidden"
-                  >
-                    {event.images && event.images[0] && (
-                      <img
-                        src={event.images[0]}
-                        alt={event.title}
-                        className="w-full h-48 object-contain bg-gray-100"
-                        style={{ objectFit: "contain", aspectRatio: "16/9" }}
-                        loading="lazy"
-                      />
-                    )}
-                    <div className="flex flex-col gap-2 p-4">
-                      <div className="flex justify-between items-center text-xs mb-1">
-                        <span className="text-gray-500">
-                          {event.date
-                            ? new Date(event.date).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })
-                            : "No Date"}
-                        </span>
-                        <span className="font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-600 text-white text-[10px]">
-                          {event.type}
-                        </span>
-                      </div>
-                      <h4
-                        className="text-lg font-semibold text-text_black_primary truncate"
-                        title={event.title}
-                      >
-                        {event.title}
-                      </h4>
-                      <div className="text-sm text-gray-700 line-clamp-3 min-h-[3.5em]">
-                        {event.content?.slice(0, 120)}
-                        {event.content?.length > 120 ? "..." : ""}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Filter bar */}
+          <div className="w-full max-w-screen-xl mx-auto flex flex-col gap-3">
+            <Filter selected={selected} setSelected={changeSelected} list={uniqueTypes} />
+            {isAdmin && (
+              <CategoryOrderEditor
+                pageIdentifier="news"
+                categories={uniqueTypes}
+                savedOrder={newsMeta?.categoryOrder}
+                onSave={handleMetaUpdated}
+              />
+            )}
+          </div>
 
           {/* Loading and Error States for News Items */}
           {loading &&
@@ -174,14 +140,23 @@ export const News = () => {
             <>
               {isAdmin && <AdminNewsControls events={events} refetchNews={refetchNews} />}
 
-              {/* Pagination for 'All' news */}
-              {selected === "Latest" && filteredEvents.length > 0 && (
-                <Pagination
-                  totalItems={filteredEvents.length}
-                  itemsPerPage={limit}
-                  setLimit={setLimit}
-                />
+              {/* News Grid */}
+              {paginatedEvents.length > 0 ? (
+                <div className="w-full max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {paginatedEvents.map((event) => (
+                    <Event key={event._id || event.title} event={event} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">No news items found.</p>
               )}
+
+              {/* Pagination */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </>
           )}
         </>
@@ -241,16 +216,15 @@ const Event = ({ event }) => {
       {" "}
       {/* Added bg-white and shadow */}
       {event?.images?.length > 0 && (
-        <div className="w-full h-60 overflow-x-auto flex snap-x snap-mandatory no-scrollbar bg-gray-100">
+        <div className="w-full h-52 overflow-x-auto flex snap-x snap-mandatory no-scrollbar">
           {event.images.map((image, index) => (
             <div
               key={image || index}
-              className="snap-center flex-shrink-0 w-full h-full flex items-center justify-center"
+              className="snap-center flex-shrink-0 w-full h-full"
             >
               <img
                 src={image}
-                className="w-full h-full object-contain bg-gray-100"
-                style={{ aspectRatio: "16/9", maxHeight: "15rem" }}
+                className="w-full h-full object-cover"
                 alt={`${event.title} - image ${index + 1}`}
                 loading="lazy"
               />
@@ -263,7 +237,7 @@ const Event = ({ event }) => {
         {/* Consistent padding */}
         <div className="flex justify-between text-text_black_secondary text-sm">
           <span>{displayDate}</span>
-          <span className="font-bold uppercase text-xs tracking-wider px-2 py-1 rounded bg-blue-600 text-white shadow-sm">
+          <span className="bg-primary_main text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
             {event.type}
           </span>
         </div>
@@ -328,6 +302,8 @@ const AdminNewsControls = ({ events, refetchNews }) => {
     createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
   const [imagesToKeep, setImagesToKeep] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [cropQueue, setCropQueue] = useState([]);
+  const [newsCropSrc, setNewsCropSrc] = useState(null);
 
   useEffect(() => {
     if (isEditing && editingEvent) {
@@ -352,10 +328,31 @@ const AdminNewsControls = ({ events, refetchNews }) => {
     };
   }, [selectedFiles]);
 
+  // When queue has items and no crop is active, show next
+  useEffect(() => {
+    if (cropQueue.length > 0 && !newsCropSrc) {
+      const reader = new FileReader();
+      reader.onload = (ev) => setNewsCropSrc(ev.target.result);
+      reader.readAsDataURL(cropQueue[0]);
+    }
+  }, [cropQueue, newsCropSrc]);
+
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
-      setSelectedFiles((prevFiles) => [...prevFiles, ...Array.from(event.target.files)]);
+      setCropQueue((prev) => [...prev, ...Array.from(event.target.files)]);
     }
+  };
+
+  const handleNewsCropComplete = (croppedBlob) => {
+    const croppedFile = new File([croppedBlob], `cropped-news-${Date.now()}.jpg`, { type: "image/jpeg" });
+    setSelectedFiles((prev) => [...prev, croppedFile]);
+    setNewsCropSrc(null);
+    setCropQueue((prev) => prev.slice(1));
+  };
+
+  const handleNewsCropCancel = () => {
+    setNewsCropSrc(null);
+    setCropQueue((prev) => prev.slice(1));
   };
 
   const handleRemoveExistingImage = (imageUrlToRemove) => {
@@ -483,6 +480,15 @@ const AdminNewsControls = ({ events, refetchNews }) => {
   const successButtonClass = `bg-green-600 hover:bg-green-700 text-white ${buttonClass}`;
 
   return (
+    <>
+    {newsCropSrc && (
+      <ImageCropModal
+        imageSrc={newsCropSrc}
+        aspect={16 / 9}
+        onCropComplete={handleNewsCropComplete}
+        onCancel={handleNewsCropCancel}
+      />
+    )}
     <div className="p-4 sm:p-6 border rounded-lg shadow-lg w-full bg-gray-50 mb-8 max-w-4xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-200">
         <h3 className="text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Admin: Manage News</h3>
@@ -705,6 +711,7 @@ const AdminNewsControls = ({ events, refetchNews }) => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

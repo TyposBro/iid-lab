@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { LoadingSpinner } from "@/components";
+import { LoadingSpinner, ImageCropModal } from "@/components";
 import { BASE_URL } from "@/config/api";
 
 // --- Reusable Form Field Components (Keep as is) ---
@@ -103,6 +103,8 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
 
   const [isLoading, setIsLoading] = useState(false); // For save, delete operations
   const [error, setError] = useState(null);
+  const [cropSrc, setCropSrc] = useState(null);
+  const [cropCbIndex, setCropCbIndex] = useState(null);
 
   useEffect(() => {
     setTracks(fetchedTracks.map(prepareTrackForEdit)); // Prepare all fetched tracks initially
@@ -158,21 +160,38 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
   };
 
   const handleContentBlockFileChange = (cbIndex, file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCropSrc(reader.result);
+      setCropCbIndex(cbIndex);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropComplete = (blob) => {
+    const file = new File([blob], "content-cropped.jpg", { type: "image/jpeg" });
     setEditedTrackData((prev) => {
       const newContent = [...prev.content];
-      if (newContent[cbIndex]) {
-        // Revoke old preview if exists
-        if (newContent[cbIndex].imagePreview) {
-          URL.revokeObjectURL(newContent[cbIndex].imagePreview);
+      if (newContent[cropCbIndex]) {
+        if (newContent[cropCbIndex].imagePreview) {
+          URL.revokeObjectURL(newContent[cropCbIndex].imagePreview);
         }
-        newContent[cbIndex] = {
-          ...newContent[cbIndex],
+        newContent[cropCbIndex] = {
+          ...newContent[cropCbIndex],
           imageFile: file,
-          imagePreview: file ? URL.createObjectURL(file) : null,
+          imagePreview: URL.createObjectURL(blob),
         };
       }
       return { ...prev, content: newContent };
     });
+    setCropSrc(null);
+    setCropCbIndex(null);
+  };
+
+  const handleCropCancel = () => {
+    setCropSrc(null);
+    setCropCbIndex(null);
   };
 
   const removeContentBlockImage = (cbIndex) => {
@@ -333,6 +352,7 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
   if (editingTrackId) {
     // FORM VIEW (Create or Edit)
     return (
+      <>
       <div className="w-full max-w-3xl mx-auto p-6 my-8 border rounded-lg shadow-xl bg-gray-100">
         <h2 className="text-2xl font-semibold text-center mb-6">
           {editedTrackData?.isNew ? "Create New Research Track" : "Edit Research Track"}
@@ -405,7 +425,10 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
                       type="file"
                       accept="image/*"
                       id={`cbFile_${cbIndex}`}
-                      onChange={(e) => handleContentBlockFileChange(cbIndex, e.target.files[0])}
+                      onChange={(e) => {
+                        handleContentBlockFileChange(cbIndex, e.target.files[0]);
+                        e.target.value = null;
+                      }}
                       className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
                   </div>
@@ -440,6 +463,15 @@ export const AdminAboutControls = ({ fetchedTracks, onDataChange, adminToken }) 
           </>
         )}
       </div>
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          aspect={16 / 9}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
+      </>
     );
   }
 

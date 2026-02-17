@@ -164,7 +164,7 @@ const Intro = ({ navigate, titleText, descriptionText, staticImage }) => {
       )}
       <div className="flex flex-col gap-6 sm:gap-[30px] w-full sm:flex-row sm:justify-between">
         <div className="flex flex-col gap-2 sm:gap-[8px]">
-          <h1 className="text-6xl text-text_black_primary font-semibold">
+          <h1 className="font-semibold text-5xl text-text_black_primary">
             {titlePart1}
             {titleEmphasis && (
               <span className="text-primary_main">{" " + titleEmphasis + " "}</span>
@@ -172,7 +172,7 @@ const Intro = ({ navigate, titleText, descriptionText, staticImage }) => {
             {titlePart2}
             {(titlePart1 || titlePart2) && labSuffix}
           </h1>
-          <h3 className="text-sm text-text_black_secondary max-w-xl">{descriptionText}</h3>
+          <p className="text-lg text-text_black_secondary max-w-xl">{descriptionText}</p>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-[10px] font-semibold text-base sm:text-[18px] flex-shrink-0">
           <button
@@ -280,9 +280,9 @@ const Members = ({ sectionTitle }) => {
   return (
     <div className="flex flex-col gap-6 sm:gap-[30px] my-6 sm:my-[30px] w-full shrink-0 max-w-screen-xl mx-auto">
       <div className="flex flex-col gap-2 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px]">
-        <h1 className="font-semibold text-5xl sm:text-[42px] text-text_black_primary leading-tight sm:leading-[46px]">
+        <h2 className="font-semibold text-4xl sm:text-5xl text-text_black_primary">
           {sectionTitle}
-        </h1>
+        </h2>
       </div>
       <div className="flex flex-row gap-4 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px] w-full overflow-x-auto no-scrollbar pb-2">
         {members.length === 0 && !loading && (
@@ -368,7 +368,7 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
   return (
     <div className="flex flex-col gap-6 sm:gap-[30px] bg-text_black_primary text-white px-4 sm:px-6 lg:px-[25px] py-6 sm:py-[30px] w-full">
       <div className="flex flex-col gap-4 sm:gap-6 lg:gap-10 sm:items-center sm:flex-row">
-        <h2 className="font-semibold text-5xl sm:text-5xl lg:text-[80px] leading-tight text-text_white_primary sm:shrink-0">
+        <h2 className="font-semibold text-4xl sm:text-5xl text-text_white_primary sm:shrink-0">
           {sectionTitle}
         </h2>
         <h3 className="text-sm sm:text-base lg:text-lg text-text_white_secondary max-w-2xl">

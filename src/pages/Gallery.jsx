@@ -3,7 +3,8 @@
 /* eslint-disable no-unused-vars */
 import { useState, useMemo, useEffect, useRef } from "react"; // Added useRef
 import PropTypes from "prop-types";
-import { Filter, MainCarousel, LoadingSpinner, AdminMetaControls, Lightbox } from "@/components"; // Added Lightbox
+import { Filter, MainCarousel, LoadingSpinner, AdminMetaControls, Lightbox, CategoryOrderEditor, ImageCropModal } from "@/components";
+import { applyCategoryOrder } from "@/utils/categoryOrder";
 import { Down_left_dark_arrow } from "@/assets/";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
@@ -45,10 +46,13 @@ export const Gallery = () => {
 
   // Gallery event slides logic (can remain as is, or be memoized if complex)
   const slides = events.map((event) => event.images[0]).filter(Boolean);
-  const uniqueTypes = ["Latest", ...new Set(events.map((event) => event.type))];
+  const uniqueTypes = applyCategoryOrder(
+    ["Latest", ...new Set(events.map((event) => event.type))],
+    galleryMeta?.categoryOrder
+  );
 
   return (
-    <div className="flex flex-col justify-start items-center pt-16 min-h-screen w-full">
+    <div className="flex flex-col justify-start items-center pt-[95px] pb-12 sm:pb-16 min-h-screen w-full">
       {/* META ADMIN CONTROLS - START */}
       {isAdmin && galleryMeta && (
         <AdminMetaControls
@@ -111,7 +115,7 @@ export const Gallery = () => {
                 />
               )}
               <div className="w-full flex flex-col gap-[16px] py-8">
-                <div className="px-4">
+                <div className="px-4 flex flex-col gap-3">
                   <Filter
                     selected={selected}
                     setSelected={(val) => {
@@ -120,6 +124,14 @@ export const Gallery = () => {
                     }}
                     list={uniqueTypes}
                   />
+                  {isAdmin && (
+                    <CategoryOrderEditor
+                      pageIdentifier="gallery"
+                      categories={uniqueTypes}
+                      savedOrder={galleryMeta?.categoryOrder}
+                      onSave={handleMetaUpdated}
+                    />
+                  )}
                 </div>
                 <div className="flex flex-col gap-4">
                   {selected === "Latest"
@@ -183,13 +195,13 @@ export default Gallery;
 // Modified Intro to accept title and description from meta
 const Intro = ({ slides, titleText, descriptionText }) => {
   return (
-    <div className="flex flex-col gap-[16px] px-6 py-8 w-full">
+    <div className="flex flex-col gap-4 sm:gap-6 px-4 sm:px-6 lg:px-[25px] py-6 sm:py-8 w-full max-w-screen-xl mx-auto">
       <div className="flex justify-between items-end">
-        <h2 className="text-5xl text-text_black_primary tracking-normal">{titleText}</h2>
-        <Down_left_dark_arrow className="size-12 lg:size-14" style={{ strokeWidth: 2 }} />
+        <h1 className="font-semibold text-5xl text-text_black_primary">{titleText}</h1>
+        <Down_left_dark_arrow className="size-10 sm:size-12 lg:size-[51px] shrink-0" />
       </div>
       {descriptionText && (
-        <p className="text-lg text-text_black_secondary mt-2">{descriptionText}</p>
+        <p className="text-lg text-text_black_secondary mt-1">{descriptionText}</p>
       )}
       {slides.length > 0 && <MainCarousel slides={slides} />}
       {slides.length === 0 &&
@@ -311,6 +323,8 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
 
   const [deletingId, setDeletingId] = useState(null);
   const [imagesToKeep, setImagesToKeep] = useState([]);
+  const [galleryCropQueue, setGalleryCropQueue] = useState([]);
+  const [galleryCropSrc, setGalleryCropSrc] = useState(null);
 
   const toast = useToast();
   // Mutations with toast integration
@@ -341,8 +355,31 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
     }
   }, [isEditing, editingEvent]);
 
+  // Queue files for cropping one at a time
+  useEffect(() => {
+    if (galleryCropQueue.length > 0 && !galleryCropSrc) {
+      const reader = new FileReader();
+      reader.onload = (ev) => setGalleryCropSrc(ev.target.result);
+      reader.readAsDataURL(galleryCropQueue[0]);
+    }
+  }, [galleryCropQueue, galleryCropSrc]);
+
   const handleFileChange = (event) => {
-    setSelectedFiles((prevFiles) => [...prevFiles, ...Array.from(event.target.files)]);
+    if (event.target.files && event.target.files.length > 0) {
+      setGalleryCropQueue((prev) => [...prev, ...Array.from(event.target.files)]);
+    }
+  };
+
+  const handleGalleryCropComplete = (croppedBlob) => {
+    const croppedFile = new File([croppedBlob], `cropped-gallery-${Date.now()}.jpg`, { type: "image/jpeg" });
+    setSelectedFiles((prev) => [...prev, croppedFile]);
+    setGalleryCropSrc(null);
+    setGalleryCropQueue((prev) => prev.slice(1));
+  };
+
+  const handleGalleryCropCancel = () => {
+    setGalleryCropSrc(null);
+    setGalleryCropQueue((prev) => prev.slice(1));
   };
 
   const handleCreate = () => {
@@ -434,6 +471,15 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
   const successButtonClass = `${buttonClass} bg-green-500 hover:bg-green-600`;
 
   return (
+    <>
+    {galleryCropSrc && (
+      <ImageCropModal
+        imageSrc={galleryCropSrc}
+        aspect={3 / 2}
+        onCropComplete={handleGalleryCropComplete}
+        onCancel={handleGalleryCropCancel}
+      />
+    )}
     <div className="w-full p-4 sm:p-6 bg-white shadow rounded-lg">
       <div className="w-full flex flex-wrap justify-between items-center mb-6 pb-4 border-b">
         <h3 className="text-2xl font-semibold text-gray-700">Admin: Manage Gallery</h3>
@@ -692,6 +738,7 @@ const AdminGalleryControls = ({ events, refetchGalleryEvents }) => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

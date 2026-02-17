@@ -13,7 +13,7 @@ export const ProjectCard = ({
   onLinkClick, // Optional: if you want a custom click handler instead of direct link
   buttonText = "Learn More",
   cardBgColor = "bg-transparent",
-  borderColor = "border-[#282828f2]",
+  borderColor = "border-gray-300",
   primaryTextColor = "text-text_white_primary",
   secondaryTextColor = "text-text_white_primary",
   buttonBorderColor = "border-primary_main",

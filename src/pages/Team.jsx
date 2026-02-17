@@ -2,7 +2,8 @@
 /* eslint-disable react/prop-types */
 
 import { Down_left_dark_arrow, Up_right_neutral_arrow } from "@/assets/";
-import { AccordionCard, GoTo, LoadingSpinner, AdminMetaControls } from "@/components/"; // Added AdminMetaControls
+import { AccordionCard, GoTo, LoadingSpinner, AdminMetaControls, CategoryOrderEditor, ImageCropModal } from "@/components/";
+import { applyCategoryOrder } from "@/utils/categoryOrder";
 import { useState, useEffect, useCallback, useMemo } from "react"; // Added useMemo
 import { HashLink } from "react-router-hash-link";
 import { useAdmin } from "@/contexts/AdminContext";
@@ -272,6 +273,8 @@ export const Team = () => {
             error={error}
             introTitle={currentTeamSectionTitle}
             introDescription={currentTeamSectionDesc}
+            categoryOrder={currentTeamMeta?.categoryOrder}
+            onCategoryOrderSaved={handleCurrentTeamMetaUpdated}
           />
         )}
       </div>
@@ -308,6 +311,8 @@ export const Team = () => {
             error={error}
             introTitle={alumniSectionTitle}
             introDescription={alumniSectionDesc}
+            categoryOrder={alumniMeta?.categoryOrder}
+            onCategoryOrderSaved={handleAlumniMetaUpdated}
           />
         )}
       </div>
@@ -377,18 +382,20 @@ const TeamProf = ({ prof, loading, error }) => {
   );
 };
 
-const CurrentTeam = ({ members, loading, error, introTitle, introDescription }) => {
+const CurrentTeam = ({ members, loading, error, introTitle, introDescription, categoryOrder, onCategoryOrderSaved }) => {
+  const { isAdmin } = useAdmin();
   const [selected, setSelected] = useState("All");
   const [derivedRoles, setDerivedRoles] = useState(["All"]);
 
   useEffect(() => {
     if (members.length > 0) {
       const uniqueRoles = [...new Set(members.map((member) => member.role))].sort();
-      setDerivedRoles(["All", ...uniqueRoles]);
+      const base = ["All", ...uniqueRoles];
+      setDerivedRoles(applyCategoryOrder(base, categoryOrder));
     } else {
       setDerivedRoles(["All"]);
     }
-  }, [members]);
+  }, [members, categoryOrder]);
 
   if (loading && !members.length)
     return (
@@ -413,22 +420,30 @@ const CurrentTeam = ({ members, loading, error, introTitle, introDescription }) 
         )}
       </div>
       {members.length > 0 && derivedRoles.length > 1 && (
-        <div className="flex gap-2 sm:gap-[10px] flex-wrap">
-          {" "}
-          {/* Added flex-wrap */}
-          {derivedRoles.map((role) => (
-            <button
-              className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full px-3 sm:px-4 h-[30px] text-xs sm:text-sm transition-colors ${
-                role === selected
-                  ? "bg-primary_main text-text_white_primary"
-                  : "text-primary_main hover:bg-primary_light"
-              }`}
-              key={role}
-              onClick={() => setSelected(role)}
-            >
-              {role}
-            </button>
-          ))}
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-2 sm:gap-[10px] flex-wrap">
+            {derivedRoles.map((role) => (
+              <button
+                className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full px-3 sm:px-4 h-[30px] text-xs sm:text-sm transition-colors ${
+                  role === selected
+                    ? "bg-primary_main text-text_white_primary"
+                    : "text-primary_main hover:bg-primary_light"
+                }`}
+                key={role}
+                onClick={() => setSelected(role)}
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+          {isAdmin && (
+            <CategoryOrderEditor
+              pageIdentifier="team-current"
+              categories={derivedRoles}
+              savedOrder={categoryOrder}
+              onSave={onCategoryOrderSaved}
+            />
+          )}
         </div>
       )}
 
@@ -464,18 +479,20 @@ const CurrentTeam = ({ members, loading, error, introTitle, introDescription }) 
   );
 };
 
-const Alumni = ({ members, loading, error, introTitle, introDescription }) => {
+const Alumni = ({ members, loading, error, introTitle, introDescription, categoryOrder, onCategoryOrderSaved }) => {
+  const { isAdmin } = useAdmin();
   const [selected, setSelected] = useState("All");
   const [derivedRoles, setDerivedRoles] = useState(["All"]);
 
   useEffect(() => {
     if (members.length > 0) {
       const uniqueRoles = [...new Set(members.map((member) => member.role))].sort();
-      setDerivedRoles(["All", ...uniqueRoles]);
+      const base = ["All", ...uniqueRoles];
+      setDerivedRoles(applyCategoryOrder(base, categoryOrder));
     } else {
       setDerivedRoles(["All"]);
     }
-  }, [members]);
+  }, [members, categoryOrder]);
 
   if (loading && !members.length)
     return (
@@ -500,20 +517,30 @@ const Alumni = ({ members, loading, error, introTitle, introDescription }) => {
         )}
       </div>
       {members.length > 0 && derivedRoles.length > 1 && (
-        <div className="flex gap-2 sm:gap-[10px] flex-wrap">
-          {derivedRoles.map((role) => (
-            <button
-              className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full px-3 sm:px-4 h-[30px] text-xs sm:text-sm transition-colors  ${
-                role === selected
-                  ? "bg-primary_main text-text_white_primary"
-                  : "text-primary_main hover:bg-primary_light"
-              }`}
-              key={role}
-              onClick={() => setSelected(role)}
-            >
-              {role}
-            </button>
-          ))}
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-2 sm:gap-[10px] flex-wrap">
+            {derivedRoles.map((role) => (
+              <button
+                className={`place-content-center border-2 border-primary_main grid active:bg-primary_main border-solid rounded-full px-3 sm:px-4 h-[30px] text-xs sm:text-sm transition-colors  ${
+                  role === selected
+                    ? "bg-primary_main text-text_white_primary"
+                    : "text-primary_main hover:bg-primary_light"
+                }`}
+                key={role}
+                onClick={() => setSelected(role)}
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+          {isAdmin && (
+            <CategoryOrderEditor
+              pageIdentifier="team-alumni"
+              categories={derivedRoles}
+              savedOrder={categoryOrder}
+              onSave={onCategoryOrderSaved}
+            />
+          )}
         </div>
       )}
 
@@ -565,6 +592,7 @@ const AdminTeamControls = ({ refreshData }) => {
   const { adminToken } = useAdmin();
   const [deletingId, setDeletingId] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [cropImageSrc, setCropImageSrc] = useState(null);
 
   const roles = [
     "PhD",
@@ -595,36 +623,42 @@ const AdminTeamControls = ({ refreshData }) => {
     fetchAdminTeamMembers();
   }, [fetchAdminTeamMembers]);
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
     if (file) {
-      setIsSubmitting(true);
-      const formData = new FormData();
-      formData.append("images", file);
-      try {
-        const response = await fetch(`${BASE_URL}/api/upload`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${adminToken}` },
-          body: formData,
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUploadedImageUrl(data.urls?.[0]);
-        } else {
-          const errorData = await response.json();
-          alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
-          setUploadedImageUrl(editingMember?.img || "");
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        alert("An error occurred during image upload.");
+      const reader = new FileReader();
+      reader.onload = (ev) => setCropImageSrc(ev.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadCroppedImage = async (croppedBlob) => {
+    setCropImageSrc(null);
+    const croppedFile = new File([croppedBlob], "cropped-image.jpg", { type: "image/jpeg" });
+    setSelectedFile(croppedFile);
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("images", croppedFile);
+    try {
+      const response = await fetch(`${BASE_URL}/api/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${adminToken}` },
+        body: formData,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUploadedImageUrl(data.urls?.[0]);
+      } else {
+        const errorData = await response.json();
+        alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
         setUploadedImageUrl(editingMember?.img || "");
-      } finally {
-        setIsSubmitting(false);
       }
-    } else {
-      setUploadedImageUrl(editingMember?.img || ""); // Keep existing if no new file
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("An error occurred during image upload.");
+      setUploadedImageUrl(editingMember?.img || "");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -779,6 +813,15 @@ const AdminTeamControls = ({ refreshData }) => {
     );
 
   return (
+    <>
+    {cropImageSrc && (
+      <ImageCropModal
+        imageSrc={cropImageSrc}
+        aspect={1}
+        onCropComplete={uploadCroppedImage}
+        onCancel={() => setCropImageSrc(null)}
+      />
+    )}
     <div className="p-4 sm:p-6 border border-gray-200 rounded-lg shadow-lg w-full bg-gray-50 mb-8 max-w-screen-xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-200">
         <h3 className="text-2xl font-semibold text-gray-800 mb-3 sm:mb-0">
@@ -991,6 +1034,7 @@ const AdminTeamControls = ({ refreshData }) => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
@@ -1009,6 +1053,7 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
   const { adminToken } = useAdmin();
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [profCropSrc, setProfCropSrc] = useState(null);
 
   useEffect(() => {
     if (professor) {
@@ -1032,36 +1077,42 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
     }
   }, [professor]);
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
     if (file) {
-      setIsSubmitting(true);
-      const formData = new FormData();
-      formData.append("images", file);
-      try {
-        const response = await fetch(`${BASE_URL}/api/upload`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${adminToken}` },
-          body: formData,
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUploadedImageUrl(data.urls?.[0]);
-        } else {
-          const errorData = await response.json();
-          alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
-          setUploadedImageUrl(professor?.img || "");
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        alert("An error occurred during image upload.");
+      const reader = new FileReader();
+      reader.onload = (ev) => setProfCropSrc(ev.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadCroppedProfImage = async (croppedBlob) => {
+    setProfCropSrc(null);
+    const croppedFile = new File([croppedBlob], "cropped-prof.jpg", { type: "image/jpeg" });
+    setSelectedFile(croppedFile);
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("images", croppedFile);
+    try {
+      const response = await fetch(`${BASE_URL}/api/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${adminToken}` },
+        body: formData,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUploadedImageUrl(data.urls?.[0]);
+      } else {
+        const errorData = await response.json();
+        alert(`Image upload failed: ${errorData?.message || "An error occurred"}`);
         setUploadedImageUrl(professor?.img || "");
-      } finally {
-        setIsSubmitting(false);
       }
-    } else {
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("An error occurred during image upload.");
       setUploadedImageUrl(professor?.img || "");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -1260,6 +1311,15 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
   );
 
   return (
+    <>
+    {profCropSrc && (
+      <ImageCropModal
+        imageSrc={profCropSrc}
+        aspect={3 / 4}
+        onCropComplete={uploadCroppedProfImage}
+        onCancel={() => setProfCropSrc(null)}
+      />
+    )}
     <div className="p-4 sm:p-6 mb-8 border border-gray-200 rounded-lg shadow-lg w-full bg-gray-50 max-w-screen-xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-gray-200">
         <h3 className="text-2xl font-semibold text-gray-800 mb-3 sm:mb-0">
@@ -1306,5 +1366,6 @@ const AdminProfessorControls = ({ professor, refreshData }) => {
             </div>
           )}
     </div>
+    </>
   );
 };

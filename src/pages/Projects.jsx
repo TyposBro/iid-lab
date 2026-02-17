@@ -41,7 +41,7 @@ export const Projects = () => {
     projectsPageMeta?.description || defaultProjectsPageMeta.description;
 
   return (
-    <div className="flex flex-col justify-start items-center pt-16 md:pt-[95px] w-full">
+    <div className="flex flex-col justify-start items-center pt-[95px] pb-12 sm:pb-16 w-full">
       {/* Overall Projects Page Meta Controls */}
       {isAdmin && projectsPageMeta && (
         <AdminMetaControls
@@ -66,14 +66,14 @@ export const Projects = () => {
 
       {/* Intro Section - Now driven by meta */}
       {(!metaLoading || projectsPageMeta) && (
-        <div className="flex flex-col gap-[10px] px-4 md:px-[25px] py-8 w-full max-w-screen-xl mx-auto">
-          <h1 className="font-bold text-5xl md:text-[48px] text-black leading-tight md:leading-[48px]">
+        <div className="flex flex-col gap-4 sm:gap-6 px-4 md:px-[25px] py-6 sm:py-8 w-full max-w-screen-xl mx-auto">
+          <h1 className="font-semibold text-5xl text-text_black_primary">
             {currentPageTitle}
           </h1>
           {currentPageDescription && (
-            <div className="border-text_black_secondary text-sm md:text-[12px] max-w-prose">
+            <p className="text-lg text-text_black_secondary max-w-prose">
               {currentPageDescription}
-            </div>
+            </p>
           )}
         </div>
       )}
@@ -145,10 +145,10 @@ const Current = ({ refreshKey }) => {
       {(!metaLoading || currentProjectsMeta) && (
         <>
           <div className="flex items-center justify-between">
-            <h2 className="font-light text-4xl md:text-[48px] text-text_black_primary leading-tight md:leading-[48px]">
+            <h2 className="font-semibold text-4xl sm:text-5xl text-text_black_primary">
               {sectionTitle}
             </h2>
-            <Down_left_dark_arrow className="size-12 md:size-[58px]" />
+            <Down_left_dark_arrow className="size-12 sm:size-14" style={{ strokeWidth: 1 }} />
           </div>
           {sectionDescription && (
             <p className="text-sm text-text_black_secondary max-w-2xl">{sectionDescription}</p>
@@ -178,7 +178,7 @@ const Current = ({ refreshKey }) => {
               link={project.link}
               buttonText="Learn More"
               cardBgColor="bg-transparent"
-              borderColor="border-[#D9D9D9]"
+              borderColor="border-gray-300"
               primaryTextColor="text_black_secondary"
               secondaryTextColor="text_black_secondary"
               buttonBorderColor="border-primary_main"
@@ -230,9 +230,7 @@ const Completed = ({ refreshKey }) => {
       className="flex flex-col gap-6 md:gap-[30px] bg-text_black_primary py-6 md:py-[30px] w-full"
       id="completed"
     >
-      <div className="flex flex-col gap-4 md:gap-[25px] px-4 md:px-[25px] max-w-screen-xl mx-auto w-full">
-        {" "}
-        {/* Added max-width & w-full */}
+      <div className="flex flex-col gap-6 md:gap-[30px] px-4 md:px-[25px] max-w-screen-xl mx-auto w-full">
         {isAdmin && completedMeta && (
           <AdminMetaControls
             pageIdentifier="projects-completed"
@@ -258,10 +256,10 @@ const Completed = ({ refreshKey }) => {
         {(!metaLoading || completedMeta) && (
           <>
             <div className="flex justify-between items-center">
-              <h2 className="font-extralight text-4xl md:text-[48px] text-white leading-tight md:leading-[50px]">
+              <h2 className="font-semibold text-4xl sm:text-5xl text-white">
                 {sectionTitle}
               </h2>
-              <Down_straight_neutral_arrow className="text-text_white_primary -rotate-45 size-12 md:size-[56px]" />
+              <Down_straight_neutral_arrow className="text-text_white_primary -rotate-45 size-12 sm:size-14" />
             </div>
             {sectionDescription && (
               <p className="text-sm text-gray-300 max-w-2xl">{sectionDescription}</p>
@@ -314,7 +312,7 @@ const Completed = ({ refreshKey }) => {
                 link={project.link}
                 buttonText="View Details"
                 cardBgColor="bg-transparent"
-                borderColor="border-[#282828]"
+                borderColor="border-gray-600"
                 primaryTextColor="text-background_light"
                 secondaryTextColor="text-background_light"
                 buttonBorderColor="border-white"
@@ -401,9 +399,7 @@ const Awards = ({ refreshKey }) => {
 
   return (
     <div className="flex flex-col gap-6 md:gap-[30px] bg-primary_main py-6 md:py-[30px] w-full">
-      <div className="flex flex-col gap-4 md:gap-[25px] px-4 md:px-[25px] max-w-screen-xl mx-auto w-full">
-        {" "}
-        {/* Added max-width & w-full */}
+      <div className="flex flex-col gap-6 md:gap-[30px] px-4 md:px-[25px] max-w-screen-xl mx-auto w-full">
         {isAdmin && awardsMeta && (
           <AdminMetaControls
             pageIdentifier="projects-awards"
@@ -425,10 +421,10 @@ const Awards = ({ refreshKey }) => {
         {(!metaLoading || awardsMeta) && (
           <>
             <div className="flex justify-between items-center">
-              <h2 className="font-light text-4xl md:text-[48px] leading-tight md:leading-[48px] text-black">
+              <h2 className="font-semibold text-4xl sm:text-5xl text-black">
                 {sectionTitle}
               </h2>
-              <Down_straight_neutral_arrow className="rotate-45 size-10 md:size-[46px] text-black" />
+              <Down_straight_neutral_arrow className="rotate-45 size-12 sm:size-14 text-black" />
             </div>
             {sectionDescription && (
               <p className="text-sm text-gray-800 max-w-2xl">{sectionDescription}</p>
@@ -485,7 +481,7 @@ const Awards = ({ refreshKey }) => {
                       link={award.link}
                       buttonText="Details"
                       cardBgColor="bg-white"
-                      borderColor="border-gray-200"
+                      borderColor="border-gray-300"
                       primaryTextColor="text-text_black_primary"
                       secondaryTextColor="text-text_black_primary"
                       buttonBorderColor="border-primary_main"
@@ -548,7 +544,7 @@ const Awards = ({ refreshKey }) => {
                   link={award.link}
                   buttonText="Details"
                   cardBgColor="bg-white"
-                  borderColor="border-gray-200"
+                  borderColor="border-gray-300"
                   primaryTextColor="text-text_black_primary"
                   secondaryTextColor="text-text_black_primary"
                   buttonBorderColor="border-primary_main"

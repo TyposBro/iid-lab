@@ -48,7 +48,7 @@ export const Publications = () => {
     publicationsPageMeta?.description || defaultPublicationsPageMeta.description;
 
   return (
-    <div className="flex flex-col justify-start items-center pt-16 md:pt-[95px] w-full overflow-y-scroll no-scrollbar">
+    <div className="flex flex-col justify-start items-center pt-[95px] pb-12 sm:pb-16 w-full overflow-y-scroll no-scrollbar">
       {/* Overall Publications Page Meta Controls */}
       {isAdmin && publicationsPageMeta && (
         <AdminMetaControls
@@ -78,14 +78,14 @@ export const Publications = () => {
       )}
 
       {(!metaLoading || publicationsPageMeta) && (
-        <div className="flex flex-col gap-[10px] px-4 md:px-[25px] py-8 w-full max-w-screen-xl mx-auto">
-          <h1 className="font-bold text-5xl md:text-[48px] text-black leading-tight md:leading-[48px]">
+        <div className="flex flex-col gap-4 sm:gap-6 px-4 md:px-[25px] py-6 sm:py-8 w-full max-w-screen-xl mx-auto">
+          <h1 className="font-semibold text-5xl text-text_black_primary">
             {currentPageTitle}
           </h1>
           {currentPageDescription && (
-            <div className="border-text_black_secondary text-sm md:text-[12px] max-w-prose">
+            <p className="text-lg text-text_black_secondary max-w-prose">
               {currentPageDescription}
-            </div>
+            </p>
           )}
         </div>
       )}

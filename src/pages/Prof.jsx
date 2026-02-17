@@ -10,7 +10,7 @@ import { BASE_URL } from "@/config/api"; // Import BASE_URL
 import { useProfessors } from "@/hooks";
 import { useCreateOrUpdateProfessor, useDeleteProfessor } from "@/hooks/useProfessorMutations";
 import { useQueryClient } from "@tanstack/react-query";
-import { LoadingSpinner } from "@/components";
+import { LoadingSpinner, ImageCropModal } from "@/components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -55,7 +55,7 @@ const Prof = () => {
     );
 
   return (
-    <div className="flex flex-col justify-start items-center py-[95px] px-[25px] w-full gap-6">
+    <div className="flex flex-col justify-start items-center pt-[95px] pb-12 sm:pb-16 px-4 sm:px-6 lg:px-[25px] w-full gap-6">
       {loading && (
         <div className="w-full max-w-xl animate-pulse flex flex-col gap-6 mt-8">
           <div className="w-full h-72 bg-gray-200 rounded-lg" />
@@ -110,6 +110,7 @@ const AdminProfessorControls = ({ prof, setProf, adminToken }) => {
   const [selectedCvFile, setSelectedCvFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState(null);
+  const [cropSrc, setCropSrc] = useState(null);
   const createOrUpdateMutation = useCreateOrUpdateProfessor(adminToken);
   const deleteMutation = useDeleteProfessor(adminToken);
 
@@ -166,12 +167,23 @@ const AdminProfessorControls = ({ prof, setProf, adminToken }) => {
       return;
     }
 
-    setSelectedImageFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result);
+      setCropSrc(reader.result);
     };
     reader.readAsDataURL(file);
+    e.target.value = null;
+  };
+
+  const handleCropComplete = (blob) => {
+    const file = new File([blob], "profile-cropped.jpg", { type: "image/jpeg" });
+    setSelectedImageFile(file);
+    setImagePreview(URL.createObjectURL(blob));
+    setCropSrc(null);
+  };
+
+  const handleCropCancel = () => {
+    setCropSrc(null);
   };
 
   const handleCvFileChange = (e) => {
@@ -347,6 +359,7 @@ const AdminProfessorControls = ({ prof, setProf, adminToken }) => {
   }
 
   return (
+    <>
     <div className="w-full p-4 border-t-2 mt-4">
       <h2 className="text-2xl font-semibold mb-4">
         {prof?._id ? "Edit Profile" : "Create New Profile"}
@@ -656,6 +669,15 @@ const AdminProfessorControls = ({ prof, setProf, adminToken }) => {
         </div>
       </form>
     </div>
+    {cropSrc && (
+      <ImageCropModal
+        imageSrc={cropSrc}
+        aspect={16 / 9}
+        onCropComplete={handleCropComplete}
+        onCancel={handleCropCancel}
+      />
+    )}
+    </>
   );
 };
 
@@ -684,7 +706,7 @@ const Intro = ({ prof }) => {
       <div className="flex flex-col gap-[10px] w-full">
         <div>
           <h2 className="font-semibold text-[16px] text-primary_main">{prof.role}</h2>
-          <h1 className="font-bold text-[36px] text-text_black_primary leading-[36px]">
+          <h1 className="font-semibold text-4xl sm:text-5xl text-text_black_primary">
             {prof.name}
           </h1>
         </div>

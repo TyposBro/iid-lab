@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useCreateProject, useUpdateProject, useDeleteProject } from "@/hooks";
 import { useToast } from "@/contexts/ToastContext";
-import { LoadingSpinner } from "@/components/";
+import { LoadingSpinner, ImageCropModal } from "@/components/";
 import { BASE_URL } from "@/config/api";
 
 /*
@@ -40,6 +40,7 @@ const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
   const [submitError, setSubmitError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [number, setNumber] = useState("");
+  const [cropImageSrc, setCropImageSrc] = useState(null);
 
   // Mutations: always use latest adminToken
   const createMutation = useCreateProject(adminToken);
@@ -93,14 +94,21 @@ const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedFile(file);
       const reader = new FileReader();
-      reader.onload = (ev) => setCurrentImageUrl(ev.target.result);
+      reader.onload = (ev) => setCropImageSrc(ev.target.result);
       reader.readAsDataURL(file);
-    } else {
-      setSelectedFile(null);
-      setCurrentImageUrl(editingProject?.image || null);
     }
+  };
+
+  const handleCropComplete = (croppedBlob) => {
+    const croppedFile = new File([croppedBlob], "cropped-image.jpg", { type: "image/jpeg" });
+    setSelectedFile(croppedFile);
+    setCurrentImageUrl(URL.createObjectURL(croppedBlob));
+    setCropImageSrc(null);
+  };
+
+  const handleCropCancel = () => {
+    setCropImageSrc(null);
   };
 
   const beginCreate = () => {
@@ -227,6 +235,15 @@ const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
   const successBtn = `bg-green-600 hover:bg-green-700 text-white ${buttonBase}`;
 
   return (
+    <>
+    {cropImageSrc && (
+      <ImageCropModal
+        imageSrc={cropImageSrc}
+        aspect={16 / 9}
+        onCropComplete={handleCropComplete}
+        onCancel={handleCropCancel}
+      />
+    )}
     <div className="w-full p-4 max-w-screen-xl mx-auto">
       <div className="p-4 sm:p-6 border border-gray-200 rounded-lg my-8 bg-gray-50 shadow-lg">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-200 w-full">
@@ -555,6 +572,7 @@ const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
