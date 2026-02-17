@@ -126,7 +126,9 @@ export const Home = () => {
   );
 };
 
-// Intro Component
+// ---------------------------------------------------------------------------
+// Intro / Hero
+// ---------------------------------------------------------------------------
 const Intro = ({ navigate, titleText, descriptionText, staticImage }) => {
   let titlePart1 = titleText || "Integration & Innovation Design";
   let titleEmphasis = "";
@@ -146,25 +148,25 @@ const Intro = ({ navigate, titleText, descriptionText, staticImage }) => {
   }
 
   return (
-    <div className="flex flex-col px-4 sm:px-6 lg:px-[25px] w-full gap-6 sm:gap-8 max-w-screen-xl mx-auto">
-      {staticImage && (
-        <div className="w-full rounded-3xl overflow-hidden">
-          <img
-            src={staticImage}
-            alt="IID Lab"
-            className="w-full h-auto object-cover rounded-3xl"
-            style={{ maxHeight: "600px" }}
-          />
-        </div>
-      )}
-      {!staticImage && (
-        <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] bg-gray-200 rounded-3xl flex items-center justify-center text-gray-500">
+    <div className="flex flex-col px-[25px] lg:px-[70px] w-full gap-4 lg:gap-6">
+      {/* Hero image */}
+      {staticImage ? (
+        <img
+          src={staticImage}
+          alt="IID Lab"
+          className="w-full h-[200px] lg:h-[465px] object-cover rounded-[30px]"
+        />
+      ) : (
+        <div className="w-full h-[200px] lg:h-[465px] bg-background_light rounded-[30px] flex items-center justify-center text-text_black_secondary">
           No image available
         </div>
       )}
-      <div className="flex flex-col gap-6 sm:gap-[30px] w-full sm:flex-row sm:justify-between">
-        <div className="flex flex-col gap-2 sm:gap-[8px]">
-          <h1 className="font-semibold text-5xl text-text_black_primary">
+
+      {/* Below image: stacked on mobile, flex-row on desktop */}
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 lg:gap-10 w-full">
+        {/* Title + description */}
+        <div className="flex flex-col gap-2 lg:max-w-[794px]">
+          <h1 className="text-[64px] leading-[56px] font-semibold lg:text-[48px] lg:leading-[61px] lg:tracking-[-0.04em] lg:font-bold font-display text-text_black_primary">
             {titlePart1}
             {titleEmphasis && (
               <span className="text-primary_main">{" " + titleEmphasis + " "}</span>
@@ -172,17 +174,19 @@ const Intro = ({ navigate, titleText, descriptionText, staticImage }) => {
             {titlePart2}
             {(titlePart1 || titlePart2) && labSuffix}
           </h1>
-          <p className="text-lg text-text_black_secondary max-w-xl">{descriptionText}</p>
+          <p className="text-sm lg:text-lg text-text_black_secondary">{descriptionText}</p>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-[10px] font-semibold text-base sm:text-[18px] flex-shrink-0">
+
+        {/* Buttons — stacked vertically */}
+        <div className="flex flex-col gap-3 w-full lg:w-[270px] shrink-0">
           <button
-            className="place-content-center border-2 border-border_dark active:border-border_dark grid active:bg-border_dark border-solid rounded-[15px] w-full sm:w-auto sm:px-10 h-12 sm:h-14 text-border_dark active:text-white no-underline transition-colors duration-200 hover:bg-border_dark hover:text-white"
+            className="grid place-content-center h-[50px] lg:h-[62px] rounded-[15px] border-2 border-border_dark text-border_dark text-[16px] lg:text-[18px] font-bold lg:font-semibold no-underline transition-colors duration-200 hover:bg-border_dark hover:text-white"
             onClick={() => navigate("/projects")}
           >
             Projects
           </button>
           <button
-            className="place-content-center border-2 border-border_dark active:border-border_dark grid active:bg-border_dark border-solid rounded-[15px] w-full sm:w-auto sm:px-10 h-12 sm:h-14 text-border_dark active:text-white no-underline transition-colors duration-200 hover:bg-border_dark hover:text-white"
+            className="grid place-content-center h-[50px] lg:h-[62px] rounded-[15px] border-2 border-border_dark text-border_dark text-[16px] lg:text-[18px] font-bold lg:font-semibold no-underline transition-colors duration-200 hover:bg-border_dark hover:text-white"
             onClick={() => navigate("/publications")}
           >
             Publications
@@ -199,7 +203,9 @@ Intro.propTypes = {
   staticImage: PropTypes.string,
 };
 
-// Prof Component
+// ---------------------------------------------------------------------------
+// Professor
+// ---------------------------------------------------------------------------
 const Prof = ({ navigate }) => {
   const { data: prof, isLoading: loading, error } = useProfessors();
 
@@ -217,38 +223,43 @@ const Prof = ({ navigate }) => {
     );
   if (!prof)
     return (
-      <div className="p-6 text-center text-gray-500 w-full">
+      <div className="p-6 text-center text-text_black_secondary w-full">
         Professor data is not available at the moment.
       </div>
     );
 
   return (
-    <div className="flex flex-col sm:flex-row gap-6 sm:gap-[30px] my-6 sm:my-[30px] px-4 sm:px-6 lg:px-[25px] w-full max-w-screen-xl mx-auto">
-      <div
-        className="mx-auto sm:mx-0 rounded-3xl  w-full sm:w-96 bg-gray-200 sm:flex-shrink-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${prof.img || "/img/placeholder.png"})` }}
-        role="img"
-        aria-label={`Image of ${prof.name}`}
-      ></div>
-      <div className="flex flex-col gap-6 sm:gap-[30px] sm:justify-between">
-        <div className="flex flex-col gap-1 sm:gap-[5px] w-full">
-          <h2 className="font-bold text-lg sm:text-[20px] text-primary_main">{prof.role}</h2>
-          <h1 className="font-bold text-3xl sm:text-[36px] text-text_black_primary leading-tight sm:leading-[36px]">
+    <div className="flex flex-col lg:flex-row gap-[30px] lg:gap-10 py-[30px] lg:py-[100px] px-[25px] lg:px-[70px] w-full items-center lg:items-start">
+      {/* Professor image */}
+      <img
+        src={prof.img || "/img/placeholder.png"}
+        alt={prof.name}
+        className="w-[260px] h-[300px] lg:w-[292px] lg:h-[382px] rounded-[30px] object-cover mx-auto lg:mx-0 shrink-0"
+      />
+
+      {/* Text + buttons */}
+      <div className="flex flex-col gap-[30px] lg:justify-between w-full">
+        <div className="flex flex-col gap-1 w-full">
+          <h2 className="text-[15px] leading-[18px] lg:text-xl font-semibold lg:font-bold text-primary_main">
+            {prof.role}
+          </h2>
+          <h1 className="text-[48px] leading-[48px] lg:text-[32px] lg:leading-[41px] font-semibold lg:font-bold font-display text-text_black_primary">
             {prof.name}
           </h1>
-          <h3 className="text-sm lg:text-[12px] xl:text-sm text-text_black_secondary max-w-lg">
+          <p className="text-sm lg:text-lg text-text_black_secondary lg:max-w-[660px]">
             {prof.desc}
-          </h3>
+          </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-[10px] font-semibold text-base sm:text-[18px]">
+
+        <div className="flex flex-col lg:flex-row gap-3 lg:gap-[10px] font-semibold text-[16px] lg:text-[18px]">
           <button
             onClick={() => navigate("/prof")}
-            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full sm:w-auto sm:px-10 h-12 sm:h-[50px] text-primary_main active:text-white no-underline cursor-pointer transition-colors duration-200 hover:bg-primary_main hover:text-white"
+            className="grid place-content-center h-[50px] lg:h-[60px] rounded-[15px] w-full lg:w-auto lg:px-10 bg-primary_main text-white no-underline cursor-pointer transition-colors duration-200 hover:opacity-90"
           >
             CV
           </button>
           <HashLink
-            className="place-content-center border-2 border-primary_main active:border-primary_main grid active:bg-primary_main border-solid rounded-[15px] w-full sm:w-auto sm:px-10 h-12 sm:h-[50px] text-primary_main active:text-white no-underline transition-colors duration-200 hover:bg-primary_main hover:text-white"
+            className="grid place-content-center h-[50px] lg:h-[60px] rounded-[15px] w-full lg:w-auto lg:px-10 border-2 border-primary_main text-primary_main no-underline transition-colors duration-200 hover:bg-primary_main hover:text-white"
             to="/#contact"
           >
             Contact
@@ -260,56 +271,56 @@ const Prof = ({ navigate }) => {
 };
 Prof.propTypes = { navigate: PropTypes.func.isRequired };
 
-// Members Component - Accepts sectionTitle prop
+// ---------------------------------------------------------------------------
+// Members
+// ---------------------------------------------------------------------------
 const Members = ({ sectionTitle }) => {
   const { data: members = [], isLoading: loading, error } = useTeamMembers(true);
 
   if (loading)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center w-full">
+      <div className="px-[25px] lg:px-[70px] py-10 text-center w-full">
         <LoadingSpinner variant="block" message="Loading team members..." />
       </div>
     );
   if (error)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center text-red-600 w-full">
+      <div className="px-[25px] lg:px-[70px] py-10 text-center text-red-600 w-full">
         Error loading team members: {error.message}
       </div>
     );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-[30px] my-6 sm:my-[30px] w-full shrink-0 max-w-screen-xl mx-auto">
-      <div className="flex flex-col gap-2 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px]">
-        <h2 className="font-semibold text-4xl sm:text-5xl text-text_black_primary">
+    <div className="flex flex-col gap-[15px] lg:gap-[38px] py-[30px] lg:py-[50px] w-full shrink-0">
+      <div className="px-[25px] lg:px-[70px]">
+        <h2 className="text-[48px] leading-[46px] lg:text-[80px] lg:leading-[102px] font-semibold lg:font-light font-display text-text_black_primary">
           {sectionTitle}
         </h2>
       </div>
-      <div className="flex flex-row gap-4 sm:gap-[10px] px-4 sm:px-6 lg:px-[25px] w-full overflow-x-auto no-scrollbar pb-2">
+
+      {/* Horizontal scroll cards */}
+      <div className="flex flex-row gap-[10px] lg:gap-5 px-[25px] lg:px-[70px] w-full overflow-x-auto no-scrollbar pb-2">
         {members.length === 0 && !loading && (
-          <div className="py-10 text-center text-gray-500 w-full">
+          <div className="py-10 text-center text-text_black_secondary w-full">
             No current team members found.
           </div>
         )}
         {members.map((member) => (
-          <div
-            key={member._id}
-            className="flex flex-col gap-3 sm:gap-[14px] w-auto overflow-x-auto"
-          >
+          <div key={member._id} className="flex flex-col gap-2 lg:gap-[14px] shrink-0">
             <img
-              className="rounded-3xl w-[270px] h-[270px] object-cover object-top"
+              className="w-[160px] h-[260px] lg:w-[200px] lg:h-[275px] rounded-[20px] object-cover object-top"
               src={member.img || "/img/placeholder.png"}
-              role="img"
-              aria-label={`Image of ${member.name}`}
+              alt={member.name}
             />
-            <div className="flex flex-col sm:gap-1 w-[270px]">
+            <div className="flex flex-col w-[160px] lg:w-[200px]">
               <h2
-                className="font-bold text-base sm:text-lg text-text_black_primary truncate"
+                className="text-[16px] leading-[19px] lg:text-2xl lg:leading-[29px] font-bold text-text_black_primary truncate"
                 title={member.name}
               >
                 {member.name}
               </h2>
               <h3
-                className="text-xs sm:text-sm text-text_black_primary truncate"
+                className="text-[12px] leading-[14px] lg:text-lg text-text_black_primary truncate"
                 title={member.role}
               >
                 {member.role}
@@ -322,20 +333,22 @@ const Members = ({ sectionTitle }) => {
                   className="mt-1 inline-block"
                   aria-label={`${member.name}'s LinkedIn Profile`}
                 >
-                  <LinkedIn className="text-text_black_primary hover:text-blue-600 size-5 sm:size-[25px]" />
+                  <LinkedIn className="text-text_black_primary hover:text-blue-600 size-5" />
                 </a>
               )}
             </div>
           </div>
         ))}
       </div>
-      <div className="px-4 sm:px-6 lg:px-[25px]">
+
+      {/* View Past Members */}
+      <div className="px-[25px] lg:px-[70px]">
         <HashLink
-          className="flex justify-center items-center gap-[10px] font-semibold text-base sm:text-[18px] text-primary_main no-underline active:border-primary_main active:bg-primary_main active:text-white rounded-[15px] h-12 sm:h-[50px] border-2 border-transparent hover:border-primary_main transition-all duration-200"
+          className="flex justify-center items-center gap-[10px] text-[18px] font-semibold text-primary_main no-underline rounded-[15px] h-12 border-2 border-transparent hover:border-primary_main transition-all duration-200"
           to="/team#alumni"
         >
           <span>View Past Members</span>
-          <Up_right_neutral_arrow className="size-4 sm:size-5" alt="arrow icon" />
+          <Up_right_neutral_arrow className="size-5" alt="arrow icon" />
         </HashLink>
       </div>
     </div>
@@ -343,9 +356,12 @@ const Members = ({ sectionTitle }) => {
 };
 Members.propTypes = { sectionTitle: PropTypes.string.isRequired };
 
-// Projects Component - Accepts sectionTitle and sectionDescription props
+// ---------------------------------------------------------------------------
+// Projects
+// ---------------------------------------------------------------------------
 const Projects = ({ sectionTitle, sectionDescription }) => {
   const { data: projects = [], isLoading: loading, error } = useProjects("current");
+  const navigate = useNavigate();
 
   const handleLearnMore = (projectLink, projectId) => {
     if (projectLink) window.open(projectLink, "_blank", "noopener,noreferrer");
@@ -354,53 +370,68 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
 
   if (loading)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] bg-text_black_primary py-10 text-center w-full">
+      <div className="px-[25px] lg:px-[70px] bg-text_black_primary py-10 text-center w-full">
         <LoadingSpinner variant="block" message="Loading projects..." />
       </div>
     );
   if (error)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] bg-text_black_primary py-10 text-center text-red-400 w-full">
+      <div className="px-[25px] lg:px-[70px] bg-text_black_primary py-10 text-center text-red-400 w-full">
         Error loading projects: {error.message}
       </div>
     );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-[30px] bg-text_black_primary text-white px-4 sm:px-6 lg:px-[25px] py-6 sm:py-[30px] w-full">
-      <div className="flex flex-col gap-4 sm:gap-6 lg:gap-10 sm:items-center sm:flex-row">
-        <h2 className="font-semibold text-4xl sm:text-5xl text-text_white_primary sm:shrink-0">
+    <div className="flex flex-col gap-6 lg:gap-[35px] bg-text_black_primary py-[60px] px-[25px] lg:p-[70px] w-full">
+      {/* Header */}
+      <div className="flex flex-col gap-3 lg:gap-6">
+        <h2 className="text-[48px] leading-[48px] lg:text-[80px] lg:leading-[102px] font-semibold lg:font-light font-display text-text_white_primary">
           {sectionTitle}
         </h2>
-        <h3 className="text-sm sm:text-base lg:text-lg text-text_white_secondary max-w-2xl">
+        <p className="text-[12px] leading-[14px] lg:text-lg text-text_white_secondary text-justify lg:text-left lg:max-w-2xl">
           {sectionDescription}
-        </h3>
+        </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-6 gap-4 sm:gap-6">
+
+      {/* Cards */}
+      <div className="flex flex-col lg:flex-col gap-4 lg:gap-6">
         {projects.length === 0 && !loading && (
-          <div className="py-10 text-center text-gray-400 w-full md:col-span-2">
+          <div className="py-10 text-center text-gray-400 w-full">
             No current projects found.
           </div>
         )}
         {projects.map((project) => (
-          <div key={project._id} className="relative w-full rounded-3xl">
+          <div
+            key={project._id}
+            className="relative w-full rounded-[15px] lg:rounded-[20px] border border-[#282828f2] lg:border-0 overflow-hidden lg:h-[345px]"
+          >
+            {/* Image — stacked on mobile, fills card on desktop */}
             <img
-              className="absolute top-0 left-0 rounded-t-3xl w-full h-60 object-cover z-0"
-              src={`${project.image || "/img/placeholder.png"}`}
+              className="w-full h-[240px] lg:h-full object-cover rounded-t-[15px] lg:rounded-[20px] lg:absolute lg:inset-0"
+              src={project.image || "/img/placeholder.png"}
               alt={project.title || "Project image"}
             />
-            <div className="relative w-full rounded-3xl flex flex-col items-end border border-[#282828f2] bg-transparent overflow-hidden">
-              <div className="w-full h-60 flex-shrink-0" />
-              <div className="w-full flex flex-col gap-2 px-5 pt-4 flex-grow">
-                <h2 className="font-bold text-base sm:text-xl lg:text-[24px] text-text_white_primary">
-                  {project.title}
-                </h2>
-                {project.subtitle && (
-                  <h3 className="text-sm text-text_white_primary">{project.subtitle}</h3>
-                )}
-              </div>
+
+            {/* Desktop gradient overlay */}
+            <div className="hidden lg:block absolute inset-0 rounded-[20px]" style={{ background: "linear-gradient(180deg, rgba(50,50,50,0) 0%, #323232 100%)" }} />
+
+            {/* Content — below image on mobile, overlaid at bottom on desktop */}
+            <div className="relative lg:absolute lg:bottom-0 lg:left-0 lg:right-0 p-5 lg:p-8 flex flex-col gap-1">
+              <h3 className="text-[16px] lg:text-[24px] lg:leading-[31px] font-bold font-display text-[#E6E6E6]">
+                {project.title}
+              </h3>
+              {project.subtitle && (
+                <p className="text-[14px] lg:text-lg text-[#E6E6E6] lg:text-text_white_secondary">
+                  {project.subtitle}
+                </p>
+              )}
+            </div>
+
+            {/* Learn More — mobile only */}
+            <div className="flex justify-end px-5 pb-5 lg:hidden">
               <button
                 onClick={() => handleLearnMore(project.link, project._id)}
-                className="mb-5 mr-5 mt-2 px-4 py-2 border-2 border-primary_main rounded-md font-semibold text-sm text-primary_main hover:bg-primary_main hover:text-text_black_primary transition-colors"
+                className="px-4 py-2 border-2 border-primary_main rounded-[5px] text-primary_main text-[14px] font-semibold hover:bg-primary_main hover:text-text_black_primary transition-colors"
               >
                 Learn More
               </button>
@@ -408,13 +439,22 @@ const Projects = ({ sectionTitle, sectionDescription }) => {
           </div>
         ))}
       </div>
-      <div className="mt-4">
+
+      {/* CTAs */}
+      <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 mt-2">
         <HashLink
-          className="flex justify-center items-center gap-[10px] border-2 border-primary_main border-solid rounded-[15px] h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-primary_main hover:bg-primary_main hover:text-text_black_primary transition-colors duration-200"
+          className="hidden lg:flex justify-center items-center gap-[10px] border-2 border-primary_main rounded-[15px] h-[50px] lg:h-[50px] lg:px-10 font-semibold text-[16px] lg:text-[18px] text-primary_main hover:bg-primary_main hover:text-text_black_primary transition-colors duration-200 no-underline"
+          to="/projects"
+        >
+          <span>Current Projects</span>
+          <Up_right_neutral_arrow className="size-5" alt="arrow icon" />
+        </HashLink>
+        <HashLink
+          className="flex justify-center items-center gap-[10px] border-2 border-primary_main rounded-[15px] h-[50px] lg:px-10 font-semibold text-[16px] lg:text-[18px] text-primary_main hover:bg-primary_main hover:text-text_black_primary transition-colors duration-200 no-underline"
           to="/projects#completed"
         >
           <span>Completed Projects</span>
-          <Up_right_neutral_arrow className="size-4 sm:size-5" alt="arrow icon" />
+          <Up_right_neutral_arrow className="size-5" alt="arrow icon" />
         </HashLink>
       </div>
     </div>
@@ -425,84 +465,117 @@ Projects.propTypes = {
   sectionDescription: PropTypes.string.isRequired,
 };
 
-// Journal Component - Accepts sectionTitle prop
+// ---------------------------------------------------------------------------
+// Journal accent colors (cycle per card)
+// ---------------------------------------------------------------------------
+const JOURNAL_AUTHOR_COLORS = [
+  "#08DBE9",
+  "#F34D4D",
+  "#476BE8",
+  "#AF3BE7",
+  "#2BC04C",
+  "#6E95E0",
+  "#EA37CE",
+];
+
+// ---------------------------------------------------------------------------
+// Journal
+// ---------------------------------------------------------------------------
 const Journal = ({ sectionTitle }) => {
   const { data: list = [], isLoading: loading, error } = usePublications("journal");
 
   if (loading)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] bg-primary_main py-10 text-center w-full">
+      <div className="px-[25px] lg:px-[70px] bg-primary_main py-10 text-center w-full">
         <LoadingSpinner variant="block" message="Loading publications..." />
       </div>
     );
   if (error)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] bg-primary_main py-10 text-center text-red-300 w-full">
+      <div className="px-[25px] lg:px-[70px] bg-primary_main py-10 text-center text-red-300 w-full">
         Error loading publications: {error.message}
       </div>
     );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-[30px] bg-primary_main text-white py-6 sm:py-[30px] w-full">
-      <div className="flex flex-col gap-4 sm:gap-5 px-5 sm:px-6 lg:px-[25px]">
-        <h2 className="text-5xl text-text_black_primary tracking-normal font-semibold">
+    <div className="flex flex-col gap-6 lg:gap-[70px] bg-primary_main py-[60px] lg:pt-[120px] lg:pb-[80px] w-full">
+      <div className="px-[25px] lg:px-[70px]">
+        <h2 className="text-[48px] leading-[48px] lg:text-[80px] lg:leading-[72px] font-semibold lg:font-light font-display text-text_black_primary">
           {sectionTitle}
         </h2>
       </div>
-      <div className="flex gap-2.5 overflow-x-scroll no-scrollbar min-h-[240px] px-2 sm:px-0 pb-2">
-        <div className="w-1 sm:w-3 shrink-0" />
+
+      {/* Horizontal scroll cards */}
+      <div className="flex gap-[10px] overflow-x-auto no-scrollbar pb-2">
+        <div className="w-[15px] lg:w-[70px] shrink-0" />
         {list.length === 0 && !loading && (
           <div className="py-10 text-center text-text_black_secondary w-full">
             No publications found.
           </div>
         )}
-        {list.map((paper) => (
-          <div
-            key={paper._id}
-            className="flex flex-col justify-between bg-text_black_primary p-4 rounded-2xl w-72 shrink-0 shadow-lg"
-          >
-            <a
-              href={paper.link || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm sm:text-[16px] text-text_white_primary break-words hover:underline font-medium"
-              title={paper.title}
+        {list.map((paper, idx) => {
+          const accentColor = JOURNAL_AUTHOR_COLORS[idx % JOURNAL_AUTHOR_COLORS.length];
+          return (
+            <div
+              key={paper._id}
+              className="flex flex-col justify-between bg-text_black_primary rounded-[20px] w-[310px] lg:w-[400px] h-[240px] lg:h-[300px] p-5 shrink-0"
             >
-              {truncateText(paper.title, 130)}
-            </a>
-            <div className="flex justify-between items-end mt-4">
-              <div className="flex flex-col text-sm text-[#08DBE9] truncate">
-                {(Array.isArray(paper.authors)
-                  ? paper.authors
-                  : JSON.parse(paper.authors || "[]")
-                ).map((author, index) => (
-                  <span key={index} className="truncate">
-                    {author}
-                  </span>
-                ))}
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                {paper.year && (
-                  <div className="text-text_white_tertiary text-base">{paper.year}</div>
-                )}
-                {paper.venue && (
-                  <div className="text-text_white_primary font-bold text-base truncate max-w-[120px] sm:max-w-[150px]">
-                    {paper.venue}
-                  </div>
-                )}
+              <a
+                href={paper.link || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[14px] leading-[17px] lg:text-xl text-text_white_primary underline break-words font-medium"
+                title={paper.title}
+              >
+                {truncateText(paper.title, 130)}
+              </a>
+              <div className="flex justify-between items-end mt-4">
+                <div className="flex flex-col text-[14px] lg:text-sm lg:font-semibold truncate" style={{ color: accentColor }}>
+                  {(Array.isArray(paper.authors)
+                    ? paper.authors
+                    : JSON.parse(paper.authors || "[]")
+                  ).map((author, i) => (
+                    <span key={i} className="truncate">
+                      {author}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  {paper.year && (
+                    <div className="text-[16px] lg:text-xl text-text_white_tertiary font-display">
+                      {paper.year}
+                    </div>
+                  )}
+                  {paper.venue && (
+                    <div className="text-[16px] lg:text-xl font-bold font-display text-text_white_primary truncate max-w-[120px] lg:max-w-[180px]">
+                      {paper.venue}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        <div className="w-1 sm:w-3 shrink-0" />
+          );
+        })}
+        <div className="w-[15px] lg:w-[70px] shrink-0" />
       </div>
-      <div className="px-4 sm:px-6 lg:px-[25px] mt-4">
+
+      {/* CTAs */}
+      <div className="px-[25px] lg:px-[70px]">
+        {/* Mobile CTA */}
         <HashLink
-          className="flex justify-center items-center gap-[10px] border-2 border-text_black_primary border-solid rounded-[15px] w-full h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-text_black_primary hover:bg-text_black_primary hover:text-primary_main transition-colors duration-200"
+          className="flex lg:hidden justify-center items-center gap-[10px] border-2 border-text_black_primary rounded-[15px] w-full h-[50px] font-semibold text-[16px] text-text_black_primary hover:bg-text_black_primary hover:text-primary_main transition-colors duration-200 no-underline"
           to="/publications#journal"
         >
-          <span>All Publications</span>
-          <Up_right_neutral_arrow className="size-4 sm:size-5" alt="arrow icon" />
+          <span>All Journal Papers</span>
+          <Up_right_neutral_arrow className="size-5" alt="arrow icon" />
+        </HashLink>
+        {/* Desktop CTA */}
+        <HashLink
+          className="hidden lg:inline-flex items-center gap-[10px] font-semibold text-[18px] text-text_white_primary no-underline hover:underline"
+          to="/publications#journal"
+        >
+          <span>View All Journals</span>
+          <Up_right_neutral_arrow className="size-5" alt="arrow icon" />
         </HashLink>
       </div>
     </div>
@@ -510,84 +583,112 @@ const Journal = ({ sectionTitle }) => {
 };
 Journal.propTypes = { sectionTitle: PropTypes.string.isRequired };
 
-// Conference Component - Accepts sectionTitle prop
+// ---------------------------------------------------------------------------
+// Conference card color palettes (cycle per card)
+// ---------------------------------------------------------------------------
+const CONF_BG_COLORS = ["#C1EDFF", "#FFE5E5", "#C8FBFF", "#EDC8FF", "#C8FFD4", "#E0FFC8"];
+const CONF_AUTHOR_COLORS = ["#10719A", "#F34D4D", "#03ADBB", "#AF3BE7", "#2BC04C", "#6BB92F"];
+
+// ---------------------------------------------------------------------------
+// Conference
+// ---------------------------------------------------------------------------
 const Conference = ({ sectionTitle }) => {
   const { data: list = [], isLoading: loading, error } = usePublications("conference");
 
   if (loading)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center w-full">
+      <div className="px-[25px] lg:px-[70px] py-10 text-center w-full">
         <LoadingSpinner variant="block" message="Loading conference papers..." />
       </div>
     );
   if (error)
     return (
-      <div className="px-4 sm:px-6 lg:px-[25px] py-10 text-center text-red-600 w-full">
+      <div className="px-[25px] lg:px-[70px] py-10 text-center text-red-600 w-full">
         Error loading conference papers: {error.message}
       </div>
     );
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-[30px] py-6 sm:py-[30px] w-full">
-      <h2 className="flex justify-between items-end px-4 sm:px-6 lg:px-[25px] text-5xl font-semibold text-text_black_primary tracking-normal">
+    <div className="flex flex-col gap-6 lg:gap-[70px] py-[60px] lg:pt-[90px] lg:pb-[120px] w-full">
+      <h2 className="flex justify-between items-end px-[25px] lg:px-[70px] text-[48px] leading-[48px] lg:text-[80px] lg:leading-[72px] font-semibold lg:font-light font-display text-text_black_primary">
         <span>{sectionTitle}</span>
-        <Down_left_dark_arrow className="size-12 lg:size-14" style={{ path: { strokeWidth: 1 } }} />
+        <Down_left_dark_arrow className="size-12 lg:size-14" />
       </h2>
-      <div className="flex gap-2.5 overflow-x-auto no-scrollbar min-h-[240px] px-2 sm:px-0 pb-2">
-        <div className="w-1 sm:w-3 shrink-0" />
+
+      {/* Horizontal scroll cards */}
+      <div className="flex gap-[10px] overflow-x-auto no-scrollbar pb-2">
+        <div className="w-[15px] lg:w-[70px] shrink-0" />
         {list.length === 0 && !loading && (
-          <div className="py-10 text-center text-gray-500 w-full">No conference papers found.</div>
+          <div className="py-10 text-center text-text_black_secondary w-full">
+            No conference papers found.
+          </div>
         )}
-        {list.map((item) => (
-          <div
-            key={item._id}
-            className="flex flex-col justify-between bg-[#C1EDFF] p-4 rounded-2xl w-72 shrink-0 shadow-md"
-          >
-            <a
-              href={item.link || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm sm:text-[16px] text-text_black_primary break-words hover:underline font-medium"
-              title={item.title}
+        {list.map((item, idx) => {
+          const bgColor = CONF_BG_COLORS[idx % CONF_BG_COLORS.length];
+          const authorColor = CONF_AUTHOR_COLORS[idx % CONF_AUTHOR_COLORS.length];
+          return (
+            <div
+              key={item._id}
+              className="flex flex-col justify-between rounded-[20px] w-[320px] lg:w-[400px] h-[240px] lg:h-[300px] p-5 shrink-0"
+              style={{ backgroundColor: bgColor }}
             >
-              {truncateText(item.title, 130)}
-            </a>
-            <div className="flex justify-between items-end mt-4">
-              <div className="flex flex-col text-sm text-[#10719A] truncate">
-                {(Array.isArray(item.authors)
-                  ? item.authors
-                  : JSON.parse(item.authors || "[]")
-                ).map((author, index) => (
-                  <span key={index} className="truncate">
-                    {author}
-                  </span>
-                ))}
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                {item.year && <div className="text-text_black_primary text-xl">{item.year}</div>}
-                {item.venue && (
-                  <div className="text-text_black_primary font-bold text-base truncate max-w-[120px] sm:max-w-[150px]">
-                    {item.venue}
-                  </div>
-                )}
-                {item.location && (
-                  <div className="text-text_black_primary text-xl truncate max-w-[120px] sm:max-w-[150px]">
-                    {item.location}
-                  </div>
-                )}
+              <a
+                href={item.link || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[16px] leading-[19px] lg:text-xl text-text_black_primary underline break-words font-medium"
+                title={item.title}
+              >
+                {truncateText(item.title, 130)}
+              </a>
+              <div className="flex justify-between items-end mt-4">
+                <div
+                  className="flex flex-col text-[14px] lg:text-sm font-bold lg:font-semibold truncate"
+                  style={{ color: authorColor }}
+                >
+                  {(Array.isArray(item.authors)
+                    ? item.authors
+                    : JSON.parse(item.authors || "[]")
+                  ).map((author, i) => (
+                    <span key={i} className="truncate">
+                      {author}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  {item.year && (
+                    <div className="text-xl font-display text-text_black_primary">{item.year}</div>
+                  )}
+                  {item.venue && (
+                    <div className="text-[16px] lg:text-xl font-bold font-display text-text_black_primary truncate max-w-[120px] lg:max-w-[180px]">
+                      {item.venue}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        <div className="w-1 sm:w-3 shrink-0" />
+          );
+        })}
+        <div className="w-[15px] lg:w-[70px] shrink-0" />
       </div>
-      <div className="px-4 sm:px-6 lg:px-[25px] mt-4">
+
+      {/* CTAs */}
+      <div className="px-[25px] lg:px-[70px]">
+        {/* Mobile CTA */}
         <HashLink
-          className="flex justify-center items-center gap-[10px] border-2 border-primary_main border-solid rounded-[15px] w-full h-12 sm:h-[50px] font-semibold text-base sm:text-[18px] text-primary_main hover:bg-primary_main hover:text-white transition-colors duration-200"
+          className="flex lg:hidden justify-center items-center gap-[10px] border-2 border-primary_main rounded-[15px] w-full h-[50px] font-semibold text-[16px] text-primary_main hover:bg-primary_main hover:text-white transition-colors duration-200 no-underline"
           to="/publications#conference"
         >
           <span>All Conference Papers</span>
-          <Up_right_neutral_arrow className="size-4 sm:size-5" alt="arrow icon" />
+          <Up_right_neutral_arrow className="size-5" alt="arrow icon" />
+        </HashLink>
+        {/* Desktop CTA */}
+        <HashLink
+          className="hidden lg:inline-flex items-center gap-[10px] font-semibold text-[18px] text-primary_main no-underline hover:underline"
+          to="/publications#conference"
+        >
+          <span>View All Conferences</span>
+          <Up_right_neutral_arrow className="size-5" alt="arrow icon" />
         </HashLink>
       </div>
     </div>
