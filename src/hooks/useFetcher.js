@@ -30,12 +30,23 @@ export const jsonFetcher = async (path, options = {}) => {
   }
 };
 
+/** Map `id` → `_id` so the rest of the app (written for MongoDB) works with D1 responses */
+const addLegacyId = (item) => {
+  if (item && typeof item === "object" && "id" in item && !("_id" in item)) {
+    return { ...item, _id: item.id };
+  }
+  return item;
+};
+
 /** Helper to normalize API responses that may wrap data */
 export const unwrapData = (payload) => {
   if (payload == null) return payload;
-  if (Array.isArray(payload)) return payload; // already array
-  if (typeof payload === "object" && "data" in payload) return payload.data;
-  return payload;
+  if (Array.isArray(payload)) return payload.map(addLegacyId);
+  if (typeof payload === "object" && "data" in payload) {
+    const d = payload.data;
+    return Array.isArray(d) ? d.map(addLegacyId) : addLegacyId(d);
+  }
+  return addLegacyId(payload);
 };
 
 export const buildQueryOptions = ({
