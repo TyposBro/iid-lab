@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback, useMemo } from "react"; // Added useM
 import { HashLink } from "react-router-hash-link";
 import { useAdmin } from "@/contexts/AdminContext";
 import { BASE_URL } from "@/config/api";
+import { unwrapData } from "@/hooks/useFetcher";
 
 export const Team = () => {
   const { isAdmin } = useAdmin();
@@ -154,7 +155,7 @@ export const Team = () => {
     try {
       const response = await fetch(`${BASE_URL}/api/team`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      setTeamData(await response.json());
+      setTeamData(unwrapData(await response.json()));
     } catch (err) {
       setError(err.message);
       console.error("Failed to fetch team data:", err);
@@ -178,7 +179,7 @@ export const Team = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       } else {
-        setProfData(await response.json());
+        setProfData(unwrapData(await response.json()));
       }
     } catch (err) {
       setProfError(err.message);
@@ -609,7 +610,7 @@ const AdminTeamControls = ({ refreshData }) => {
       setLoading(true);
       const response = await fetch(`${BASE_URL}/api/team`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
+      const data = unwrapData(await response.json());
       setMembers(data.sort((a, b) => a.name.localeCompare(b.name)));
       setLoading(false);
     } catch (err) {

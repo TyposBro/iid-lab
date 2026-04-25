@@ -5,6 +5,7 @@ import { useCreateProject, useUpdateProject, useDeleteProject } from "@/hooks";
 import { useToast } from "@/contexts/ToastContext";
 import { LoadingSpinner, ImageCropModal } from "@/components/";
 import { BASE_URL } from "@/config/api";
+import { unwrapData } from "@/hooks/useFetcher";
 
 /*
   Admin Projects Controls (refactored)
@@ -55,7 +56,7 @@ const ProjectsAdminControls = ({ onProjectsUpdated, refreshKey = 0 }) => {
     try {
       const resp = await fetch(`${BASE_URL}/api/projects`);
       if (!resp.ok) throw new Error(`Failed to load projects (${resp.status})`);
-      const data = await resp.json();
+      const data = unwrapData(await resp.json());
       setProjects(
         data.sort(
           (a, b) =>
